@@ -14,6 +14,7 @@ import ThemedText, { ThemedTextProps } from "./ThemedText";
 import useBack from "@/hooks/useBack.hook";
 import { useTheme } from "@/hooks/useTheme.hook";
 import { BottomSheetScrollViewProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetScrollable/types";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const renderBackdrop = (props: BottomSheetBackdropProps) => (
   <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />
@@ -42,7 +43,7 @@ const ThemedBottomSheet = forwardRef<BottomSheetModal, ThemedBottomSheetProps>(
   ) => {
     const bottomSheetRef = useRef<BottomSheetModal>(null);
     const theme = useTheme();
-
+    const insets = useSafeAreaInsets();
     // Handle back navigation
     useBack(() => {
       if (visible) {
@@ -124,7 +125,12 @@ const ThemedBottomSheet = forwardRef<BottomSheetModal, ThemedBottomSheetProps>(
                 {children}
               </BottomSheetScrollView>
             ) : (
-              <BottomSheetBox gap={10} flexGrow={1} {...containerProps}>
+              <BottomSheetBox
+                gap={10}
+                flexGrow={1}
+                pb={insets.bottom + 60}
+                {...containerProps}
+              >
                 {children}
               </BottomSheetBox>
             )}

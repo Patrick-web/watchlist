@@ -1,23 +1,23 @@
 {
   "expo": {
-    "name": "watchlist",
-    "slug": "watchlist",
+    "name": "Watchlist",
+    "slug": "Watchlist",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "watchlist",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.pntx.watchlist"
+      "bundleIdentifier": "xyz.justpatrick.watchlist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.pntx.watchlist"
+      "package": "xyz.justpatrick.watchlist"
     },
     "web": {
       "bundler": "metro",
@@ -38,6 +38,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a043474c-236c-47db-9e0c-d9163d40ab01"
+      }
     }
   }
 }

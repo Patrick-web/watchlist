@@ -2,20 +2,27 @@ import React from "react";
 import Box from "./reusables/Box";
 import { Image } from "expo-image";
 import ThemedText from "./reusables/ThemedText";
-import { ShowInfo } from "@/lib/scrape";
+import { cleanTitle, ShowInfo } from "@/lib/scrape";
 import ThemedButton from "./reusables/ThemedButton";
-import { useAtom } from "jotai";
-import { subscribedShowsAtom } from "@/stores/atoms/subs.atom";
+import { useSnapshot } from "valtio";
+import {
+  addSubscribedShow,
+  isSubscribed,
+  PERSISTED_APP_STATE,
+} from "@/valitio.store";
 
 export default function ShowCard({ show }: { show: ShowInfo }) {
-  const [subscriptions, setSubscriptions] = useAtom(subscribedShowsAtom);
+  const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
 
   function subscribe() {
-    setSubscriptions([show, ...subscriptions]);
-  }
-
-  function isSubscribed() {
-    return subscriptions.find((sub) => sub.url === show.url) ? true : false;
+    let $show = show;
+    if (__DEV__) {
+      $show = {
+        ...show,
+        episode: show.episode !== 1 ? show.episode - 1 : show.episode,
+      };
+    }
+    addSubscribedShow($show);
   }
 
   return (
@@ -35,19 +42,18 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
         }}
       />
       <Box justify="center" align="flex-start" gap={5} height={"100%"} flex={1}>
-        <ThemedText size={"lg"}>{show.title}</ThemedText>
+        <ThemedText size={"lg"}>{cleanTitle(show.title)}</ThemedText>
         <Box direction="row" opacity={0.5} gap={10}>
           <ThemedText size={"sm"}>Season {show.season}</ThemedText>
           <ThemedText size={"sm"}>⋅</ThemedText>
           <ThemedText size={"sm"}>Episode {show.episode}</ThemedText>
         </Box>
         <ThemedButton
-          type={isSubscribed() ? "primary" : "surface"}
+          type={isSubscribed(show) ? "primary" : "surface"}
           size="xs"
-          label={isSubscribed() ? "Subscribed" : "Subscribe"}
-          icon={{ name: isSubscribed() ? "check" : "plus" }}
+          label={isSubscribed(show) ? "Subscribed" : "Subscribe"}
+          icon={{ name: isSubscribed(show) ? "check" : "plus" }}
           mt={10}
-          disabled={isSubscribed()}
           onPress={subscribe}
         />
       </Box>

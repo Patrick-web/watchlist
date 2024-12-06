@@ -15,6 +15,7 @@ import { useTheme } from "../../hooks/useTheme.hook";
 import Box, { AnimatedBox, BoxProps } from "./Box";
 import ThemedIcon, { ThemedIconProps } from "./ThemedIcon";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
+import * as Haptics from "expo-haptics";
 
 const ThemedButton = (props: ThemedButtonProps) => {
   const {
@@ -30,6 +31,7 @@ const ThemedButton = (props: ThemedButtonProps) => {
     radius = 40,
     size = "md",
     iconComponent,
+    pressabelProps,
     children,
     ...outerWrapperProps
   } = props;
@@ -170,9 +172,11 @@ const ThemedButton = (props: ThemedButtonProps) => {
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           if (onPress) onPress();
         }}
         disabled={disabled || loading}
+        {...pressabelProps}
       >
         {children ? (
           <>
@@ -376,6 +380,7 @@ export interface ThemedButtonProps extends BoxWrapper {
   radius?: ViewStyle["borderRadius"];
   children?: JSX.Element | JSX.Element[];
   rightChild?: JSX.Element;
+  pressabelProps?: PressableProps;
 }
 
 interface ButtonIconProps extends ThemedIconProps {

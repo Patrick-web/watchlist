@@ -64,6 +64,7 @@ export default function ThemedTextInput({
           borderWidth={1}
           direction="row"
           align="stretch"
+          justify="center"
           borderColor={theme.stroke}
           color={theme.surface2}
           {...wrapper}
@@ -92,7 +93,7 @@ export default function ThemedTextInput({
                 paddingVertical:
                   Platform.OS === "ios"
                     ? sizeStyles.paddingVertical
-                    : sizeStyles.paddingVertical / 1.5,
+                    : sizeStyles.paddingVertical / 1.1,
                 fontFamily: "Poppins",
                 fontSize: sizeStyles.fontSize,
                 color: theme.text,
@@ -203,118 +204,6 @@ export function ThemedSearchInput(props: ThemedSearchInputProps) {
         </>
       }
     />
-  );
-}
-
-export const ThemedCityInput = forwardRef(
-  (props: ThemedCityInputProps, ref: Ref<ThemedCityInputExposed>) => {
-    const [city, setCity] = useState<City | null>(null);
-    const [showCityPicker, setShowCityPicker] = useState(false);
-
-    function reset() {
-      setCity(null);
-    }
-
-    useImperativeHandle(ref, () => ({
-      reset,
-    }));
-
-    return (
-      <>
-        <TouchableOpacity onPress={() => setShowCityPicker(true)}>
-          <ThemedTextInput
-            placeholder="City"
-            value={city?.name || ""}
-            {...props}
-            wrapper={{ viewProps: { pointerEvents: "none" }, ...props.wrapper }}
-            rightSlot={<ThemedIconButton icon={{ name: "chevron-down" }} />}
-          />
-        </TouchableOpacity>
-        <CityModal
-          close={() => setShowCityPicker(false)}
-          onSelect={(value) => {
-            setCity(value);
-            setShowCityPicker(false);
-            if (props.onInput) props.onInput(value);
-          }}
-          visible={showCityPicker}
-          selectedCityId={props.selectedCityId}
-        />
-      </>
-    );
-  },
-);
-
-export function CityModal({
-  onSelect,
-  close,
-  visible,
-  selectedCityId,
-}: {
-  onSelect: (value: City) => void;
-  close: () => void;
-  visible: boolean;
-  selectedCityId?: string;
-}) {
-  const theme = useTheme();
-
-  // const { cities } = useSelector((state: RootState) => state.auth);
-  const cities: any[] = [];
-  // TODO: Fetch cities
-
-  const [filteredCities, setFilteredCities] = useState<typeof cities>(cities);
-
-  function filterCities(query: string) {
-    const found = cities.filter((city) =>
-      city.name.toLowerCase().includes(query.toLowerCase()),
-    );
-    setFilteredCities(found);
-  }
-
-  useEffect(() => {
-    if (selectedCityId) {
-      const selectedCity = cities.find(
-        (city) => city.id.toString() === selectedCityId,
-      );
-      if (selectedCity) onSelect(selectedCity);
-    }
-  }, []);
-
-  useEffect(() => {
-    setFilteredCities(cities);
-    onSelect(cities[0]);
-  }, [cities]);
-
-  return (
-    <ThemedModal position="bottom" visible={visible} transparent close={close}>
-      <Box height={sHeight - 100} gap={10} block>
-        <ThemedTextInput
-          placeholder="Search City"
-          leftSlot={<ThemedIcon name="search" />}
-          onChangeText={(value) => {
-            filterCities(value);
-          }}
-        />
-        <Box block flex={1}>
-          <FlatList
-            data={filteredCities}
-            renderItem={({ item: city }) => {
-              return (
-                <TouchableOpacity
-                  onPress={() => {
-                    onSelect(city);
-                  }}
-                >
-                  <Box key={city.id} direction="row" block pa={20} gap={10}>
-                    <ThemedText>{city.name}</ThemedText>
-                  </Box>
-                </TouchableOpacity>
-              );
-            }}
-          />
-        </Box>
-      </Box>
-    </ThemedModal>
   );
 }
 

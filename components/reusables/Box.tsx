@@ -10,6 +10,7 @@ import {
   ViewStyle,
 } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
+import { AnimateProps } from "react-native-reanimated/lib/typescript/Animated";
 
 export default function Box({
   viewProps,
@@ -165,6 +166,8 @@ interface ShortStyles extends Omit<ViewStyle, "direction"> {
   viewProps?: Omit<ViewProps, "style">;
 }
 
-export interface AnimatedBoxProps extends Omit<BoxProps, "style"> {
-  style: AnimatedStyle;
+export interface AnimatedBoxProps
+  extends Omit<BoxProps, "style" | "viewProps"> {
+  style?: AnimatedStyle;
+  viewProps?: AnimateProps<ViewProps>;
 }

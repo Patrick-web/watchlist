@@ -35,7 +35,7 @@ interface Theme {
 export const darkTheme: Theme = {
   dark: true,
   colors: {
-    primary: "#0068D0",
+    primary: "#0F83FF",
     primary2: "rgba(10, 87, 208,0.3)",
     lightBackground: "#252525",
     card: "rgb(18, 18, 18)",
@@ -67,7 +67,7 @@ export const darkTheme: Theme = {
 export const lightTheme: Theme = {
   dark: false,
   colors: {
-    primary: "#FF851B",
+    primary: "#0F83FF",
     primary2: "rgba(10, 87, 208,0.3)",
     background: "#fff",
     underline: "#E8E8EA",
@@ -75,15 +75,15 @@ export const lightTheme: Theme = {
     card: "rgb(18, 18, 18)",
     text: "#343A40",
     lightText: "rgba(0,0,0,0.7)",
-    border: "rgb(39, 39, 41)",
+    border: "rgba(0, 0, 0,0.1)",
     notification: "rgb(255, 69, 58)",
     stroke: "rgba(0, 0, 0,0.2)",
     danger: "rgb(255, 69, 58)",
     warning: "#FF5722",
     translucent: "rgba(255,255,255,0.4)",
     surfaceLight: "rgba(0,0,0,0.05)",
-    onSurface: "#000",
-    surface: "#F8F8F8",
+    onSurface: "rgba(0,0,0,0.5)",
+    surface: "rgba(0,0,0,0.08)",
     surface2: "rgba(0,0,0,0.01)",
     surface3: "#2D2A2B",
     accent: "#E6F7FD",

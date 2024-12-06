@@ -1,5 +1,5 @@
 import ThemedButton from "@/components/reusables/ThemedButton";
-import { useTheme } from "@/hooks/useTheme.hook";
+import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, usePathname } from "expo-router";
 import { TabList, Tabs, TabSlot, TabTrigger } from "expo-router/ui";
@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   const theme = useTheme();
+  const themeMode = useThemeMode();
   const currentPath = usePathname();
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -22,38 +23,45 @@ export default function TabLayout() {
           asChild
         >
           <LinearGradient
-            colors={["rgba(32,32,32,0)", theme.background]}
+            colors={[
+              themeMode === "dark" ? "rgba(32,32,32,0)" : "rgba(255,255,255,0)",
+              theme.background,
+            ]}
             style={{
               position: "absolute",
               bottom: 0,
               paddingTop: 20,
+              paddingBottom: 20,
               width: "100%",
               flexDirection: "row",
               justifyContent: "center",
               gap: 20,
             }}
           >
-            <TabTrigger name="fresh" href="/">
+            <TabTrigger name="index" href="/">
               <ThemedButton
                 px={10}
                 py={5}
                 size="sm"
                 type={currentPath === "/" ? "primary" : "surface"}
-                icon={{ name: "activity" }}
+                icon={{ name: "filmstrip", source: "MaterialCommunityIcons" }}
                 onPress={() => {
                   router.push("/");
                 }}
               />
             </TabTrigger>
-            <TabTrigger name="search" href="/shows">
+            <TabTrigger name="watchlist" href="/watchlist">
               <ThemedButton
                 px={10}
                 py={5}
                 size="sm"
-                type={currentPath === "/shows" ? "primary" : "surface"}
-                icon={{ name: "film" }}
+                type={currentPath === "/watchlist" ? "primary" : "surface"}
+                icon={{
+                  name: "video-vintage",
+                  source: "MaterialCommunityIcons",
+                }}
                 onPress={() => {
-                  router.push("/shows");
+                  router.push("/watchlist");
                 }}
               />
             </TabTrigger>

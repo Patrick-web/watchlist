@@ -2,19 +2,17 @@ import React, { useState } from "react";
 import Box from "./reusables/Box";
 import { Image } from "expo-image";
 import ThemedText from "./reusables/ThemedText";
-import { ShowInfo } from "@/lib/scrape";
+import { cleanTitle, ShowInfo } from "@/lib/scrape";
 import ThemedButton from "./reusables/ThemedButton";
-import { useAtom } from "jotai";
-import { subscribedShowsAtom } from "@/stores/atoms/subs.atom";
 import ThemedBottomSheet from "./reusables/ThemedBottomSheet";
 import { sWidth } from "@/constants/dimensions.constant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Platform } from "react-native";
+import { removeSubscribedShow } from "@/valitio.store";
 
-export default function SubscriptionCard({ show }: { show: ShowInfo }) {
-  const [subscriptions, setSubscriptions] = useAtom(subscribedShowsAtom);
-
+export default function SubscribedShow({ show }: { show: ShowInfo }) {
   function unSubscribe() {
-    setSubscriptions(subscriptions.filter((sub) => sub.url !== show.url));
+    removeSubscribedShow(show);
   }
 
   const [showModal, setShowModal] = useState(false);
@@ -28,6 +26,7 @@ export default function SubscriptionCard({ show }: { show: ShowInfo }) {
           setShowModal(true);
         }}
         type="text"
+        alignSelf="center"
       >
         <Image
           source={show.poster}
@@ -44,7 +43,8 @@ export default function SubscriptionCard({ show }: { show: ShowInfo }) {
           setShowModal(false);
         }}
         containerProps={{
-          paddingBottom: insets.bottom,
+          paddingBottom:
+            Platform.OS === "ios" ? insets.bottom : insets.bottom + 20,
         }}
       >
         <Box justify="center" align="center" gap={5}>
@@ -56,8 +56,8 @@ export default function SubscriptionCard({ show }: { show: ShowInfo }) {
               borderRadius: sWidth / 2,
             }}
           />
-          <ThemedText size={"lg"}>{show.title}</ThemedText>
-          <Box direction="row" opacity={0.5} gap={10}>
+          <ThemedText size={"lg"}>{cleanTitle(show.title)}</ThemedText>
+          <Box direction="row" opacity={0.8} gap={10}>
             <ThemedText size={"sm"}>Season {show.season}</ThemedText>
             <ThemedText size={"sm"}>⋅</ThemedText>
             <ThemedText size={"sm"}>Episode {show.episode}</ThemedText>
@@ -65,7 +65,7 @@ export default function SubscriptionCard({ show }: { show: ShowInfo }) {
           <ThemedButton
             type={"surface"}
             size="xs"
-            label={"UnSubscribe"}
+            label={"Unsubscribe"}
             mt={10}
             onPress={unSubscribe}
           />

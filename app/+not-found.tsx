@@ -1,11 +1,12 @@
 import Box from "@/components/reusables/Box";
+import Page from "@/components/reusables/Page";
 import ThemedText from "@/components/reusables/ThemedText";
 import { Link, Stack } from "expo-router";
 import { StyleSheet } from "react-native";
 
 export default function NotFoundScreen() {
   return (
-    <>
+    <Page>
       <Stack.Screen options={{ title: "Oops!" }} />
       <Box style={styles.container}>
         <ThemedText style={styles.title}>This screen doesn't exist.</ThemedText>
@@ -14,7 +15,7 @@ export default function NotFoundScreen() {
           <ThemedText style={styles.linkText}>Go to home screen!</ThemedText>
         </Link>
       </Box>
-    </>
+    </Page>
   );
 }
 

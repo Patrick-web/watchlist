@@ -2,29 +2,37 @@ export interface ShowInfo {
   url: string;
   poster: string;
   title: string;
-  season: string;
-  episode: string;
-  type: string;
+  season: number;
+  episode: number;
 }
 
 export function extractShows(html: string): ShowInfo[] {
-  const pattern =
-    /href="([^"]+)".*?src="([^"]+)"[^>]*>.*?title="([^"]+)".*?(SS \d+)<\/span>.*?<span>(EPS \d+)<\/span>.*?<span>(TV)<\/span>/gs;
-  const matches = html.matchAll(pattern);
+  const aTagRegex = /<a[^>]*>.*?<\/a>/gs;
+  const showDetailsRegex =
+    /href="([^"]+)".*src="([^"]+)".*<h3 class="film-name">(.*?)<\/h3>.*?(SS \d+).*(EPS \d+)/gs;
 
-  const shows: ShowInfo[] = [];
+  const resultsAsHtml = html.matchAll(aTagRegex);
+  let tvShowMatches: string[] = [];
 
-  for (const match of matches) {
-    const showInfo: ShowInfo = {
-      url: match[1],
-      poster: match[2],
-      title: match[3].replace("&amp;", "&"),
-      season: match[4].replace(/SS/i, "").trim(),
-      episode: match[5].replace(/EPS/i, "").trim(),
-      type: match[5],
-    };
-    shows.push(showInfo);
+  for (const match of resultsAsHtml) {
+    if (match[0].includes("/tv/")) {
+      tvShowMatches.push(match[0]);
+    }
   }
+  const shows: ShowInfo[] = [];
+  tvShowMatches.forEach((showHtml) => {
+    const matches = showHtml.matchAll(showDetailsRegex);
+    for (const match of matches) {
+      const showInfo: ShowInfo = {
+        url: match[1],
+        poster: match[2],
+        title: match[3],
+        season: parseInt(match[4].replace(/\D/g, "")),
+        episode: parseInt(match[5].replace(/\D/g, "")),
+      };
+      shows.push(showInfo);
+    }
+  });
 
   return shows;
 }
@@ -52,3 +60,7 @@ F_HEADERS.append(
   "Content-Type",
   "application/x-www-form-urlencoded; charset=UTF-8",
 );
+
+export function cleanTitle(title: string) {
+  return title.replace("&amp;", "&");
+}

@@ -13,9 +13,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="search"
           options={{
-            // presentation: "formSheet",
-            // sheetAllowedDetents: [0.8],
-            // sheetCornerRadius: 30,
+            presentation: "formSheet",
             headerShown: false,
           }}
         />
