@@ -26,10 +26,10 @@ export default function Search() {
   } = useSearchShows(debouncedQuery);
 
   return (
-    <Box height={"100%"} block pt={Platform.OS === "ios" ? 0 : 20}>
+    <Box height={"100%"} block pa={20}>
       <ThemedTextInput
         placeholder="Search Shows"
-        size={"xxxl"}
+        size={30}
         style={{ fontWeight: "bold" }}
         placeholderTextColor={theme.onSurface}
         onChangeText={(text) => {

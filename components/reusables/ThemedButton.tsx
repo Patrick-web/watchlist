@@ -5,8 +5,10 @@ import {
   Pressable,
   PressableProps,
   ViewStyle,
+  StyleSheet,
 } from "react-native";
 import {
+  FadeIn,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -55,6 +57,11 @@ const ThemedButton = (props: ThemedButtonProps) => {
 
   const handlePressOut = () => {
     if (!disabled && !loading) scaleValue.value = withSpring(1);
+  };
+
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onPress();
   };
 
   const iconColor = () => {
@@ -129,11 +136,17 @@ const ThemedButton = (props: ThemedButtonProps) => {
   }
 
   const ButtonIcon = ({ icon }: { icon: ThemedIconProps }) => (
-    <ThemedIcon
-      size={icon.size ? icon.size : size}
-      color={iconColor()}
-      {...icon}
-    />
+    <AnimatedBox
+      viewProps={{
+        entering: FadeIn,
+      }}
+    >
+      <ThemedIcon
+        size={icon.size ? icon.size : size}
+        color={iconColor()}
+        {...icon}
+      />
+    </AnimatedBox>
   );
 
   return (
@@ -143,7 +156,9 @@ const ThemedButton = (props: ThemedButtonProps) => {
       color={buttonColors()?.background}
       borderColor={buttonColors()?.border}
       borderWidth={
-        type.includes("outlined") || type.includes("surface") ? 1 : 0
+        type.includes("outlined") || type.includes("surface")
+          ? StyleSheet.hairlineWidth
+          : 0
       }
       align="center"
       justify="center"
@@ -170,11 +185,9 @@ const ThemedButton = (props: ThemedButtonProps) => {
           borderRadius: radius,
         }}
         onPressIn={handlePressIn}
+        onLongPress={handlePressIn}
         onPressOut={handlePressOut}
-        onPress={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          if (onPress) onPress();
-        }}
+        onPress={handlePress}
         disabled={disabled || loading}
         {...pressabelProps}
       >
@@ -251,77 +264,11 @@ export function SectionButton(props: ThemedButtonProps) {
   );
 }
 
-export function ThemedIconButton({
-  type = "text",
-  icon,
-  size = 40,
-  height,
-  width,
-  background,
-  radius = 60,
-  ...pressableProps
-}: IconButtonProps) {
-  const theme = useTheme();
-
-  const buttonColors = () => {
-    if (background) {
-      return { background, border: "transparent" };
-    }
-    if (type === "primary") {
-      return { background: theme.stroke, border: "transparent" };
-    }
-    if (type === "primary-outlined") {
-      return { background: "transparent", border: theme.stroke };
-    }
-    if (type === "secondary-outlined") {
-      return { background: "transparent", border: theme.text };
-    }
-    if (type === "secondary") {
-      return { background: theme.text, border: "transparent" };
-    }
-    return { background: "transparent", border: "transparent" };
-  };
-
-  const iconColor = () => {
-    if (icon?.color) return icon.color;
-    if (type === "primary") {
-      return "white";
-    }
-    if (type === "primary-outlined" || type === "secondary-outlined") {
-      return theme.text;
-    }
-    if (type === "secondary") {
-      return theme.background;
-    }
-  };
-
-  return (
-    <Pressable
-      {...pressableProps}
-      style={{
-        backgroundColor: buttonColors().background,
-        borderColor: buttonColors().border,
-        borderWidth: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        height: height ? height : size,
-        width: width ? width : size,
-        borderRadius: radius,
-      }}
-      android_ripple={{
-        borderless: true,
-      }}
-    >
-      <ThemedIcon {...icon} color={iconColor()} />
-    </Pressable>
-  );
-}
-
 export function ThemedToggleButton(props: ToggleButtonProps) {
   return (
     <ThemedButton
       type={props.active ? "primary-outlined" : "text"}
-      borderWidth={2}
+      borderWidth={StyleSheet.hairlineWidth}
       {...props}
     />
   );
@@ -364,7 +311,7 @@ export interface ThemedButtonProps extends BoxWrapper {
   label?: string | number;
   labelProps?: Omit<ThemedTextProps, "children">;
   loading?: boolean;
-  onPress?: () => void;
+  onPress: () => void;
   icon?: ButtonIconProps;
   iconComponent?: ReactNode;
   type?:

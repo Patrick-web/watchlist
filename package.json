@@ -57,7 +57,8 @@
     "react-native-webview": "13.12.2",
     "sonner-native": "^0.16.1",
     "valtio": "^2.1.2",
-    "zustand": "^5.0.1"
+    "zustand": "^5.0.1",
+    "expo-updates": "~0.26.10"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

@@ -15,6 +15,7 @@ export default function RootLayout() {
           options={{
             presentation: "formSheet",
             headerShown: false,
+            sheetCornerRadius:40
           }}
         />
         <Stack.Screen name="+not-found" />

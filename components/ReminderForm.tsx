@@ -1,17 +1,21 @@
-import { cleanTitle, ShowInfo } from "@/lib/scrape";
+import { cleanTitle } from "@/lib/scrape";
 import Box, { AnimatedBox } from "./reusables/Box";
 import ThemedButton from "./reusables/ThemedButton";
 import { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ThemedStepper from "./reusables/ThemedStepper";
-import ThemedText from "./reusables/ThemedText";
-import { showNotification } from "@/lib/refresh";
+import {
+  requestNotificationPermission,
+  scheduleNotification,
+} from "@/lib/refresh";
 import { toast } from "sonner-native";
 import ThemedIcon from "./reusables/ThemedIcon";
 import { SchedulableTriggerInputTypes } from "expo-notifications";
 import { SUCCESS_ALERT } from "@/constants/common.constants";
 import { FadeInUp } from "react-native-reanimated";
 import { ThemedDatePicker } from "./reusables/ThemedDatePicker";
+import { notificationAsync, NotificationFeedbackType } from "expo-haptics";
+import { NewEpisode } from "@/types";
+import { onEpisodeReminderSet } from "@/valitio.store";
 
 const hours = [
   "1:00",
@@ -60,10 +64,10 @@ function generateDateLabels(): Day[] {
 }
 
 export default function ReminderForm({
-  show,
+  episode,
   close,
 }: {
-  show: ShowInfo;
+  episode: NewEpisode;
   close: () => void;
 }) {
   const insets = useSafeAreaInsets();
@@ -75,6 +79,10 @@ export default function ReminderForm({
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedDay, setSelectedDay] = useState<Day | null>(null);
   const [customDate, setCustomDate] = useState<Date | null>(null);
+
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
 
   useEffect(() => {
     const $date = customDate ?? selectedDay?.date;
@@ -123,10 +131,10 @@ export default function ReminderForm({
     }
     const trigger = new Date(selectedDate);
     try {
-      await showNotification({
+      await scheduleNotification({
         content: {
-          title: `Watch ${cleanTitle(show.title)}`,
-          body: `Episode ${show.episode} is out already`,
+          title: `Watch ${cleanTitle(episode.show.title)}`,
+          body: `Episode ${episode.show.episode} is out already`,
           sound: "defualt",
         },
         trigger: {
@@ -143,6 +151,11 @@ export default function ReminderForm({
         ),
         ...SUCCESS_ALERT,
       });
+
+      notificationAsync(NotificationFeedbackType.Success);
+
+      onEpisodeReminderSet(episode, trigger);
+
       close();
     } catch (error) {
       console.error(error);

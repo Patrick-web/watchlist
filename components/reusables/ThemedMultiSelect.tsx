@@ -1,7 +1,7 @@
 import { useTheme } from "@/hooks/useTheme.hook";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useState } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import Box from "./Box";
 import ThemedBottomSheet from "./ThemedBottomSheet";
 import ThemedButton from "./ThemedButton";
@@ -150,7 +150,7 @@ export function ThemedMultiSelect(props: ThemedMultiSelectProps) {
                   type="text"
                   size="sm"
                   borderBottomColor={theme.lightBackground}
-                  borderBottomWidth={1}
+                  borderBottomWidth={StyleSheet.hairlineWidth}
                   borderWidth={0}
                   radius={0}
                   borderColor={theme.lightBackground}

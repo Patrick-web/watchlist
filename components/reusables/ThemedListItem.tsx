@@ -1,6 +1,6 @@
 import { useTheme } from "@/hooks/useTheme.hook";
 import { ReactNode } from "react";
-import { Platform } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import Box, { BoxProps } from "./Box";
 import ThemedText from "./ThemedText";
 
@@ -15,7 +15,6 @@ export default function ThemedListItem({
   ...props
 }: ThemedListItemProps) {
   const theme = useTheme();
-  const borderWidth = Platform.OS === "ios" ? 0.2 : 1;
 
   return (
     <Box
@@ -24,7 +23,7 @@ export default function ThemedListItem({
       px={15}
       gap={5}
       style={{
-        borderBottomWidth: noDivider ? 0 : borderWidth,
+        borderBottomWidth: StyleSheet.hairlineWidth,
         borderColor: theme.stroke,
       }}
       direction={varaint === "vertical" ? "column" : "row"}

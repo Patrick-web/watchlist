@@ -2,7 +2,7 @@ import React from "react";
 import Box from "./reusables/Box";
 import { Image } from "expo-image";
 import ThemedText from "./reusables/ThemedText";
-import { cleanTitle, ShowInfo } from "@/lib/scrape";
+import { cleanTitle } from "@/lib/scrape";
 import ThemedButton from "./reusables/ThemedButton";
 import { useSnapshot } from "valtio";
 import {
@@ -10,6 +10,7 @@ import {
   isSubscribed,
   PERSISTED_APP_STATE,
 } from "@/valitio.store";
+import { ShowInfo } from "@/types";
 
 export default function ShowCard({ show }: { show: ShowInfo }) {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
@@ -43,16 +44,16 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
       />
       <Box justify="center" align="flex-start" gap={5} height={"100%"} flex={1}>
         <ThemedText size={"lg"}>{cleanTitle(show.title)}</ThemedText>
-        <Box direction="row" opacity={0.5} gap={10}>
+        <Box direction="row" opacity={0.6} gap={10}>
           <ThemedText size={"sm"}>Season {show.season}</ThemedText>
           <ThemedText size={"sm"}>⋅</ThemedText>
           <ThemedText size={"sm"}>Episode {show.episode}</ThemedText>
         </Box>
         <ThemedButton
           type={isSubscribed(show) ? "primary" : "surface"}
-          size="xs"
+          size="sm"
           label={isSubscribed(show) ? "Subscribed" : "Subscribe"}
-          icon={{ name: isSubscribed(show) ? "check" : "plus" }}
+          icon={isSubscribed(show) ? { name: "check" } : undefined}
           mt={10}
           onPress={subscribe}
         />

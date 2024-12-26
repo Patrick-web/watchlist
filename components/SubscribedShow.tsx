@@ -2,17 +2,22 @@ import React, { useState } from "react";
 import Box from "./reusables/Box";
 import { Image } from "expo-image";
 import ThemedText from "./reusables/ThemedText";
-import { cleanTitle, ShowInfo } from "@/lib/scrape";
+import { cleanTitle } from "@/lib/scrape";
 import ThemedButton from "./reusables/ThemedButton";
 import ThemedBottomSheet from "./reusables/ThemedBottomSheet";
-import { sWidth } from "@/constants/dimensions.constant";
+import { POSTER_RATIO, sWidth } from "@/constants/dimensions.constant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Platform } from "react-native";
-import { removeSubscribedShow } from "@/valitio.store";
+import { unsubscribeShow } from "@/valitio.store";
+import Haptics from "expo-haptics";
+import { ShowInfo } from "@/types";
+
+const POSTER_WIDTH = 200;
 
 export default function SubscribedShow({ show }: { show: ShowInfo }) {
   function unSubscribe() {
-    removeSubscribedShow(show);
+    unsubscribeShow(show);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
   }
 
   const [showModal, setShowModal] = useState(false);
@@ -51,12 +56,14 @@ export default function SubscribedShow({ show }: { show: ShowInfo }) {
           <Image
             source={show.poster}
             style={{
-              width: 150,
-              height: 250,
+              width: POSTER_WIDTH,
+              height: POSTER_WIDTH * POSTER_RATIO,
               borderRadius: sWidth / 2,
             }}
           />
-          <ThemedText size={"lg"}>{cleanTitle(show.title)}</ThemedText>
+          <ThemedText size={"xxl"} fontWeight="bold">
+            {cleanTitle(show.title)}
+          </ThemedText>
           <Box direction="row" opacity={0.8} gap={10}>
             <ThemedText size={"sm"}>Season {show.season}</ThemedText>
             <ThemedText size={"sm"}>⋅</ThemedText>

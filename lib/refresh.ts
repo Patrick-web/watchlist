@@ -1,9 +1,12 @@
-import { addShowWithNewEpisode, PERSISTED_APP_STATE } from "@/valitio.store";
-import { cleanTitle, extractShows, F_HEADERS, ShowInfo } from "./scrape";
+import {
+  addNewEpisode,
+  onEpisodeNotificationShown,
+  PERSISTED_APP_STATE,
+} from "@/valitio.store";
+import { cleanTitle, extractShows, F_HEADERS } from "./scrape";
 import * as Notifications from "expo-notifications";
-import * as BackgroundFetch from "expo-background-fetch";
-import * as TaskManager from "expo-task-manager";
 import { AppState } from "react-native";
+import { ShowInfo } from "@/types";
 
 async function checkNewEpisode(currentShow: ShowInfo) {
   const APP_GROUND_STATE = AppState.currentState;
@@ -34,15 +37,17 @@ async function checkNewEpisode(currentShow: ShowInfo) {
     ) {
       console.log({ APP_GROUND_STATE });
       if (APP_GROUND_STATE === "background") {
-        showNotification({
+        scheduleNotification({
           content: {
             title: "🎬 New Episode Dropped",
-            body: `Episode ${updatedShow.episode} of ${updatedShow.title} is out`,
+            body: `Episode ${updatedShow.episode} of ${cleanTitle(updatedShow.title)} is out`,
+            sound: "Default",
           },
           trigger: null,
         });
+        onEpisodeNotificationShown(updatedShow);
       }
-      addShowWithNewEpisode(updatedShow);
+      addNewEpisode(updatedShow);
     }
   }
 }
@@ -60,7 +65,7 @@ export async function requestNotificationPermission() {
   }
 }
 
-export async function showNotification(
+export async function scheduleNotification(
   args: Notifications.NotificationRequestInput,
 ) {
   await requestNotificationPermission();
@@ -73,11 +78,3 @@ export async function findNewEpisodes() {
     await checkNewEpisode(show);
   }
 }
-
-const CHECK_EPISODES_TASK = "check-episodes";
-
-TaskManager.defineTask(CHECK_EPISODES_TASK, async () => {
-  findNewEpisodes();
-  // Be sure to return the successful result type!
-  return BackgroundFetch.BackgroundFetchResult.NewData;
-});

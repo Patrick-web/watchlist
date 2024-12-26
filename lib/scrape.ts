@@ -1,10 +1,4 @@
-export interface ShowInfo {
-  url: string;
-  poster: string;
-  title: string;
-  season: number;
-  episode: number;
-}
+import { ShowInfo } from "@/types";
 
 export function extractShows(html: string): ShowInfo[] {
   const aTagRegex = /<a[^>]*>.*?<\/a>/gs;

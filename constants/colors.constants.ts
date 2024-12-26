@@ -1,6 +1,5 @@
 export interface ColorOptions {
   primary: string;
-  primary2: string;
   lightBackground: string;
   card: string;
   text: string;
@@ -35,8 +34,7 @@ interface Theme {
 export const darkTheme: Theme = {
   dark: true,
   colors: {
-    primary: "#0F83FF",
-    primary2: "rgba(10, 87, 208,0.3)",
+    primary: "#9106FF",
     lightBackground: "#252525",
     card: "rgb(18, 18, 18)",
     text: "#FFFFFF",
@@ -47,7 +45,7 @@ export const darkTheme: Theme = {
     danger: "rgb(255, 69, 58)",
     warning: "#FF5722",
     translucent: "rgba(0,0,0,0.4)",
-    surface: "#2C2C2C",
+    surface: "rgba(44, 44, 44, 1)",
     underline: "rgba(255, 255, 255, 0.1))",
     surfaceLight: "rgba(255,255,255,0.05)",
     onSurface: "#6E6E6E",
@@ -67,15 +65,14 @@ export const darkTheme: Theme = {
 export const lightTheme: Theme = {
   dark: false,
   colors: {
-    primary: "#0F83FF",
-    primary2: "rgba(10, 87, 208,0.3)",
+    primary: "#9106FF",
     background: "#fff",
     underline: "#E8E8EA",
     lightBackground: "rgba(0,0,0,0.04)",
     card: "rgb(18, 18, 18)",
     text: "#343A40",
     lightText: "rgba(0,0,0,0.7)",
-    border: "rgba(0, 0, 0,0.1)",
+    border: "rgba(0, 0, 0,0.05)",
     notification: "rgb(255, 69, 58)",
     stroke: "rgba(0, 0, 0,0.2)",
     danger: "rgb(255, 69, 58)",
@@ -83,8 +80,8 @@ export const lightTheme: Theme = {
     translucent: "rgba(255,255,255,0.4)",
     surfaceLight: "rgba(0,0,0,0.05)",
     onSurface: "rgba(0,0,0,0.5)",
-    surface: "rgba(0,0,0,0.08)",
-    surface2: "rgba(0,0,0,0.01)",
+    surface: "#EBEBEB",
+    surface2: "#FCFCFC",
     surface3: "#2D2A2B",
     accent: "#E6F7FD",
     onAccent: "#36B2E0",

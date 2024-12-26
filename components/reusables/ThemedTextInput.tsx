@@ -13,7 +13,9 @@ import {
   Platform,
   TextInput,
   TextInputProps,
+  TextStyle,
   TouchableOpacity,
+  StyleSheet,
 } from "react-native";
 import { useTheme } from "../../hooks/useTheme.hook";
 import Box, { BoxProps } from "./Box";
@@ -61,7 +63,7 @@ export default function ThemedTextInput({
       <>
         <Box
           radius={14}
-          borderWidth={1}
+          borderWidth={StyleSheet.hairlineWidth}
           direction="row"
           align="stretch"
           justify="center"
@@ -407,7 +409,7 @@ export interface ThemedTextInputProps extends TextInputProps {
   label?: string;
   labelProps?: ThemedTextProps;
   dense?: boolean;
-  size?: InputSize;
+  size?: InputSize | TextStyle["fontSize"];
   textInputRef?: Ref<TextInput>;
   forBottomSheet?: boolean;
 }
@@ -454,7 +456,9 @@ interface InputStyles {
   fontSize: number;
 }
 
-const getTextStyles = (size: InputSize): InputStyles => {
+const getTextStyles = (
+  size: InputSize | TextStyle["fontSize"],
+): InputStyles => {
   let styles: InputStyles = {
     paddingVertical: 14,
     paddingHorizontal: 18,
@@ -526,7 +530,11 @@ const getTextStyles = (size: InputSize): InputStyles => {
       };
       break;
     default:
-      // Default values already set
+      styles = {
+        paddingVertical: 20,
+        paddingHorizontal: 20,
+        fontSize: typeof size === "number" ? size : 14,
+      };
       break;
   }
 

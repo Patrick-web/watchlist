@@ -84,7 +84,7 @@ const ThemedBottomSheet = forwardRef<BottomSheetModal, ThemedBottomSheetProps>(
         onDismiss={close}
         backdropComponent={noBackdrop ? undefined : renderBackdrop}
         style={{
-          borderRadius: 30,
+          borderRadius: containerProps?.radius || 40,
           overflow: "hidden",
         }}
         backgroundStyle={{
@@ -106,7 +106,7 @@ const ThemedBottomSheet = forwardRef<BottomSheetModal, ThemedBottomSheetProps>(
         {...sheetProps}
       >
         {(title || icon) && (
-          <Box align="center" gap={5}>
+          <Box align="center" gap={5} maxWidth={"80%"} mx={"auto"}>
             {icon && <ThemedIcon size={"xxl"} {...icon} />}
             <ThemedText fontWeight="bold" align="center" {...titleProps}>
               {title || ""}
