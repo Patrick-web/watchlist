@@ -299,7 +299,7 @@ function LeftAction({
 
     onEpisodeWatched(episode);
 
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Haptics?.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
     toast.success("Roger that 👍", {
       icon: (

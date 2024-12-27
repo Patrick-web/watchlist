@@ -17,7 +17,7 @@ const POSTER_WIDTH = 200;
 export default function SubscribedShow({ show }: { show: ShowInfo }) {
   function unSubscribe() {
     unsubscribeShow(show);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    Haptics?.notificationAsync(Haptics.NotificationFeedbackType.Warning);
   }
 
   const [showModal, setShowModal] = useState(false);

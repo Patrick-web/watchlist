@@ -9,7 +9,7 @@ import { AppState } from "react-native";
 import { ShowInfo } from "@/types";
 
 async function checkNewEpisode(currentShow: ShowInfo) {
-  const APP_GROUND_STATE = AppState.currentState;
+  const APP_OS_STATE = AppState.currentState;
 
   const data = new URLSearchParams();
 
@@ -35,18 +35,6 @@ async function checkNewEpisode(currentShow: ShowInfo) {
       updatedShow.season >= currentShow.season &&
       updatedShow.episode > currentShow.episode
     ) {
-      console.log({ APP_GROUND_STATE });
-      if (APP_GROUND_STATE === "background") {
-        scheduleNotification({
-          content: {
-            title: "🎬 New Episode Dropped",
-            body: `Episode ${updatedShow.episode} of ${cleanTitle(updatedShow.title)} is out`,
-            sound: "Default",
-          },
-          trigger: null,
-        });
-        onEpisodeNotificationShown(updatedShow);
-      }
       addNewEpisode(updatedShow);
     }
   }

@@ -1,6 +1,11 @@
 import { proxy, subscribe } from "valtio";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NewEpisode, ShowInfo } from "./types";
+import { scheduleNotification } from "./lib/refresh";
+import { cleanTitle } from "./lib/scrape";
+import { AppState } from "react-native";
+
+const APP_OS_STATE = AppState.currentState;
 
 interface PersistedAppStateType {
   subscribedShows: ShowInfo[];
@@ -47,7 +52,7 @@ export function addSubscribedShow(show: ShowInfo) {
   );
 
   if (!alreadyAdded) {
-    PERSISTED_APP_STATE.subscribedShows.push(show);
+    PERSISTED_APP_STATE.subscribedShows.unshift(show);
   } else {
     unsubscribeShow(show);
   }
@@ -84,7 +89,7 @@ export function onEpisodeWatched(target: NewEpisode) {
   deleteNewEpisode(target);
 }
 
-export function addNewEpisode(show: ShowInfo) {
+export async function addNewEpisode(show: ShowInfo) {
   console.log("Adding New Episode");
   const newEpisode: NewEpisode = {
     id: `${show.title}-${show.episode}`,
@@ -100,6 +105,16 @@ export function addNewEpisode(show: ShowInfo) {
 
   if (!alreadyAdded) {
     PERSISTED_APP_STATE.newEpisodes.push(newEpisode);
+    if (APP_OS_STATE === "background") {
+      await scheduleNotification({
+        content: {
+          title: "🎬 New Episode Dropped",
+          body: `Episode ${newEpisode.show.episode} of ${cleanTitle(newEpisode.show.title)} is out`,
+          sound: "Default",
+        },
+        trigger: null,
+      });
+    }
   }
 }
 

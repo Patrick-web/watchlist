@@ -133,14 +133,20 @@ export default function ReminderForm({
     try {
       await scheduleNotification({
         content: {
-          title: `Watch ${cleanTitle(episode.show.title)}`,
-          body: `Episode ${episode.show.episode} is out already`,
+          title: `Are you free now? `,
+          body: `Watch ${cleanTitle(episode.show.title)} Episode ${episode.show.episode}`,
           sound: "defualt",
         },
-        trigger: {
-          type: SchedulableTriggerInputTypes.DATE,
-          date: trigger,
-        },
+        trigger: __DEV__
+          ? {
+              type: SchedulableTriggerInputTypes.TIME_INTERVAL,
+              seconds: 10,
+              repeats: false,
+            }
+          : {
+              type: SchedulableTriggerInputTypes.DATE,
+              date: trigger,
+            },
       });
 
       toast.success("Reimder Set 🔔", {

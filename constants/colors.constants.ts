@@ -34,7 +34,7 @@ interface Theme {
 export const darkTheme: Theme = {
   dark: true,
   colors: {
-    primary: "#9106FF",
+    primary: "#FF0051",
     lightBackground: "#252525",
     card: "rgb(18, 18, 18)",
     text: "#FFFFFF",
@@ -65,7 +65,7 @@ export const darkTheme: Theme = {
 export const lightTheme: Theme = {
   dark: false,
   colors: {
-    primary: "#9106FF",
+    primary: "#FF0051",
     background: "#fff",
     underline: "#E8E8EA",
     lightBackground: "rgba(0,0,0,0.04)",
