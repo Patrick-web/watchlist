@@ -43,7 +43,7 @@ export default function Search() {
         }}
         leftSlot={
           <>
-            {Platform.OS !== "ios" && (
+            {Platform.OS !== "ios" && false && (
               <ThemedButton
                 icon={{ name: "arrow-left" }}
                 type="surface"

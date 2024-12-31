@@ -14,7 +14,7 @@ export default function EmptySubscriptions() {
       color={theme.surface}
       pa={20}
       radius={80}
-      ma={"auto"}
+      my={"auto"}
     >
       <Box align="center" gap={5}>
         <ThemedIcon name="video-vintage" source="MaterialCommunityIcons" />
@@ -25,11 +25,11 @@ export default function EmptySubscriptions() {
       <ThemedButton
         label={"Add Some"}
         icon={{
-          name: "search",
+          name: "plus",
           position: "append",
         }}
-        size="xs"
-        type="secondary"
+        type="primary"
+        size="sm"
         onPress={() => {
           router.push("/search");
         }}

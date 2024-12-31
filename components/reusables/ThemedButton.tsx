@@ -60,7 +60,7 @@ const ThemedButton = (props: ThemedButtonProps) => {
   };
 
   const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Haptics?.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onPress();
   };
 
@@ -162,8 +162,8 @@ const ThemedButton = (props: ThemedButtonProps) => {
       }
       align="center"
       justify="center"
-      {...outerWrapperProps}
       opacity={disabled ? 0.7 : 1}
+      {...outerWrapperProps}
     >
       <Pressable
         style={{

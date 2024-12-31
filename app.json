@@ -33,6 +33,15 @@
           "resizeMode": "contain",
           "backgroundColor": "#FF0051"
         }
+      ],
+      "react-native-bottom-tabs",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
       ]
     ],
     "experiments": {

@@ -31,51 +31,55 @@ export default function Page({
 
   if (scrollable) {
     return (
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
-        keyboardVerticalOffset={keyboardVerticalOffset}
-      >
-        <ScrollView
-          keyboardShouldPersistTaps="always"
-          contentContainerStyle={{
-            flexGrow: 1,
-          }}
-          style={{ flexGrow: 1 }}
-          {...scrollProps}
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={keyboardVerticalOffset}
         >
-          <Box
-            width={sWidth}
-            maxWidth={600}
-            mx="auto"
-            flex={1}
-            color={theme.background}
-            height={"100%"}
-            gap={10}
-            py={10}
-            px={15}
-            {...bodyProps}
+          <ScrollView
+            keyboardShouldPersistTaps="always"
+            contentContainerStyle={{
+              flexGrow: 1,
+            }}
+            style={{ flexGrow: 1 }}
+            {...scrollProps}
           >
-            {children}
-          </Box>
-        </ScrollView>
-      </KeyboardAvoidingView>
+            <Box
+              width={sWidth}
+              maxWidth={600}
+              mx="auto"
+              flex={1}
+              color={theme.background}
+              height={"100%"}
+              gap={10}
+              py={10}
+              px={15}
+              {...bodyProps}
+            >
+              {children}
+            </Box>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     );
   }
 
   return (
-    <Box
-      width={sWidth}
-      color={theme.background}
-      maxWidth={600}
-      mx="auto"
-      flex={1}
-      gap={10}
-      py={10}
-      px={20}
-      {...bodyProps}
-    >
-      {children}
-    </Box>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Box
+        width={sWidth}
+        color={theme.background}
+        maxWidth={600}
+        mx="auto"
+        flex={1}
+        gap={10}
+        py={10}
+        px={20}
+        {...bodyProps}
+      >
+        {children}
+      </Box>
+    </SafeAreaView>
   );
 }

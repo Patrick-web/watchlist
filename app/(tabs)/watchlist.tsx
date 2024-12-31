@@ -18,8 +18,8 @@ export default function Shows() {
   return (
     <Page>
       <Box>
-        <ThemedText size={"xxl"} fontWeight="bold">
-          WATCHLIST
+        <ThemedText size={"xxxl"} fontWeight="bold">
+          Shows
         </ThemedText>
       </Box>
       <Box flex={1}>
