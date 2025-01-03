@@ -1,19 +1,33 @@
-import { ShowInfo } from "@/types";
+import { MovieInfo, ShowInfo } from "@/types";
 
-export function extractShows(html: string): ShowInfo[] {
+export function extractSearchResults(html: string) {
+  console.log({ html });
+
   const aTagRegex = /<a[^>]*>.*?<\/a>/gs;
   const showDetailsRegex =
     /href="([^"]+)".*src="([^"]+)".*<h3 class="film-name">(.*?)<\/h3>.*?(SS \d+).*(EPS \d+)/gs;
+  const movieDetailsRegex =
+    /href="([^"]+)".*src="([^"]+)".*<h3 class="film-name">(.*?)<\/h3>.*?film-info.*?span>(\d{4}).*?span>(\d{2,3})/gs;
 
   const resultsAsHtml = html.matchAll(aTagRegex);
+
   let tvShowMatches: string[] = [];
+  let movieMatches: string[] = [];
 
   for (const match of resultsAsHtml) {
+    console.log({ match: match[0] });
     if (match[0].includes("/tv/")) {
       tvShowMatches.push(match[0]);
     }
+    if (match[0].includes("/movie/")) {
+      movieMatches.push(match[0]);
+    }
   }
+
+  console.log({ movieMatches: movieMatches.length });
+
   const shows: ShowInfo[] = [];
+
   tvShowMatches.forEach((showHtml) => {
     const matches = showHtml.matchAll(showDetailsRegex);
     for (const match of matches) {
@@ -28,7 +42,25 @@ export function extractShows(html: string): ShowInfo[] {
     }
   });
 
-  return shows;
+  const movies: MovieInfo[] = [];
+
+  movieMatches.forEach((showHtml) => {
+    const matches = showHtml.matchAll(movieDetailsRegex);
+    for (const match of matches) {
+      const movieInfo: MovieInfo = {
+        url: match[1],
+        poster: match[2],
+        title: match[3],
+        year: parseInt(match[4].replace(/\D/g, "")),
+        duration: parseInt(match[5].replace(/\D/g, "")),
+      };
+      movies.push(movieInfo);
+    }
+  });
+
+  console.log({ shows, movies });
+
+  return { shows, movies };
 }
 
 export const F_HEADERS = new Headers();

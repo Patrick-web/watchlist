@@ -5,7 +5,7 @@ import ThemedButton from "./reusables/ThemedButton";
 import ThemedIcon from "./reusables/ThemedIcon";
 import ThemedText from "./reusables/ThemedText";
 
-export default function EmptySubscriptions() {
+export default function EmptyWatchlist() {
   const theme = useTheme();
   return (
     <Box
@@ -18,12 +18,10 @@ export default function EmptySubscriptions() {
     >
       <Box align="center" gap={5}>
         <ThemedIcon name="video-vintage" source="MaterialCommunityIcons" />
-        <ThemedText fontWeight="light">
-          You haven't subscribed to any shows yet
-        </ThemedText>
+        <ThemedText fontWeight="light">Your watchlist is empty</ThemedText>
       </Box>
       <ThemedButton
-        label={"Add Some"}
+        label={"Add Stuff to Watch Later"}
         icon={{
           name: "plus",
           position: "append",
@@ -31,7 +29,12 @@ export default function EmptySubscriptions() {
         type="primary"
         size="sm"
         onPress={() => {
-          router.push("/search");
+          router.push({
+            pathname: "/search",
+            params: {
+              mode: "all",
+            },
+          });
         }}
       />
     </Box>

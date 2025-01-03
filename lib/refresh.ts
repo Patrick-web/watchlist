@@ -3,7 +3,7 @@ import {
   onEpisodeNotificationShown,
   PERSISTED_APP_STATE,
 } from "@/valitio.store";
-import { cleanTitle, extractShows, F_HEADERS } from "./scrape";
+import { cleanTitle, extractSearchResults, F_HEADERS } from "./scrape";
 import * as Notifications from "expo-notifications";
 import { AppState } from "react-native";
 import { ShowInfo } from "@/types";
@@ -25,7 +25,7 @@ async function checkNewEpisode(currentShow: ShowInfo) {
 
   const html = await resp.text();
 
-  const foundShows = extractShows(html);
+  const foundShows = extractSearchResults(html);
 
   const updatedShow = foundShows.find(
     (show) => show.title === currentShow.title,

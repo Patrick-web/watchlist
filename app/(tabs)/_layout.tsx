@@ -52,11 +52,30 @@ export default function TabLayout() {
               type="text"
               opacity={currentPath === "/" ? 1 : 0.6}
               icon={{
-                name: currentPath === "/" ? "albums" : "albums-outline",
+                name:
+                  currentPath === "/"
+                    ? "file-tray-full"
+                    : "file-tray-full-outline",
                 source: "Ionicons",
               }}
               onPress={() => {
                 router.push("/");
+              }}
+            />
+          </TabTrigger>
+          <TabTrigger name="shows" href="/shows">
+            <ThemedButton
+              px={10}
+              py={5}
+              size="lg"
+              type="text"
+              opacity={currentPath === "/shows" ? 1 : 0.6}
+              icon={{
+                name: currentPath === "/shows" ? "layers" : "layers-outline",
+                source: "Ionicons",
+              }}
+              onPress={() => {
+                router.push("/shows");
               }}
             />
           </TabTrigger>
@@ -68,7 +87,7 @@ export default function TabLayout() {
               type="text"
               opacity={currentPath === "/watchlist" ? 1 : 0.6}
               icon={{
-                name: currentPath === "/watchlist" ? "film" : "film-outline",
+                name: currentPath === "/" ? "albums" : "albums-outline",
                 source: "Ionicons",
               }}
               onPress={() => {

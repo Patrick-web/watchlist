@@ -42,6 +42,12 @@ export default function Shows() {
             isActive={true}
             onToggle={(value) => {}}
           />
+          <ThemedSettingSwitch
+            title="Haptics"
+            subtitle="Enable Haptic feedback for app actions"
+            isActive={true}
+            onToggle={(value) => {}}
+          />
         </Box>
       </Box>
     </Page>

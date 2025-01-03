@@ -14,7 +14,7 @@ import { SUCCESS_ALERT } from "@/constants/common.constants";
 import { FadeInUp } from "react-native-reanimated";
 import { ThemedDatePicker } from "./reusables/ThemedDatePicker";
 import { notificationAsync, NotificationFeedbackType } from "expo-haptics";
-import { NewEpisode } from "@/types";
+import { MovieInfo, NewEpisode, ShowInfo } from "@/types";
 import { onEpisodeReminderSet } from "@/valitio.store";
 
 const hours = [
@@ -63,13 +63,17 @@ function generateDateLabels(): Day[] {
   ];
 }
 
+type ReminderFormProps =
+  | { movie: MovieInfo; episode?: never; show?: never; close: () => void }
+  | { movie?: never; episode: NewEpisode; show?: never; close: () => void }
+  | { movie?: never; episode?: never; show: ShowInfo; close: () => void };
+
 export default function ReminderForm({
   episode,
+  movie,
+  show,
   close,
-}: {
-  episode: NewEpisode;
-  close: () => void;
-}) {
+}: ReminderFormProps) {
   const insets = useSafeAreaInsets();
 
   const days = generateDateLabels();
@@ -130,11 +134,23 @@ export default function ReminderForm({
       return;
     }
     const trigger = new Date(selectedDate);
+
+    // dynamic message based on what is passed in i.e movie, episode or show
+    const message = () => {
+      if (movie) {
+        return `Watch ${cleanTitle(movie.title)}`;
+      } else if (episode) {
+        return `Watch ${cleanTitle(episode.show.title)} Episode ${episode.show.episode}`;
+      } else if (show) {
+        return `Watch ${cleanTitle(show.title)}`;
+      }
+    };
+
     try {
       await scheduleNotification({
         content: {
           title: `Are you free now? `,
-          body: `Watch ${cleanTitle(episode.show.title)} Episode ${episode.show.episode}`,
+          body: message(),
           sound: "defualt",
         },
         trigger: __DEV__
@@ -160,7 +176,7 @@ export default function ReminderForm({
 
       notificationAsync(NotificationFeedbackType.Success);
 
-      onEpisodeReminderSet(episode, trigger);
+      // onEpisodeReminderSet(episode, trigger);
 
       close();
     } catch (error) {

@@ -1,20 +1,38 @@
-import { proxy, subscribe } from "valtio";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { NewEpisode, ShowInfo } from "./types";
+import { AppState } from "react-native";
+import { proxy, subscribe } from "valtio";
 import { scheduleNotification } from "./lib/refresh";
 import { cleanTitle } from "./lib/scrape";
-import { AppState } from "react-native";
+import { MovieInfo, NewEpisode, ShowInfo } from "./types";
 
 const APP_OS_STATE = AppState.currentState;
 
 interface PersistedAppStateType {
   subscribedShows: ShowInfo[];
   newEpisodes: NewEpisode[];
+  watchList: {
+    shows: ShowInfo[];
+    movies: MovieInfo[];
+  };
+  history: {
+    watchedEpisodes: NewEpisode[];
+    watchedMovies: MovieInfo[];
+    watchedShows: ShowInfo[];
+  };
 }
 
 export const PERSISTED_APP_STATE = proxy<PersistedAppStateType>({
   subscribedShows: [],
   newEpisodes: [],
+  watchList: {
+    shows: [],
+    movies: [],
+  },
+  history: {
+    watchedEpisodes: [],
+    watchedMovies: [],
+    watchedShows: [],
+  },
 });
 
 export const persistData = async () => {
@@ -45,6 +63,8 @@ export function setupValtio() {
 
   return unsubscribe;
 }
+
+// subscribed shows
 
 export function addSubscribedShow(show: ShowInfo) {
   const alreadyAdded = PERSISTED_APP_STATE.subscribedShows.find(
@@ -87,6 +107,8 @@ export function onEpisodeWatched(target: NewEpisode) {
     target.show.episode;
 
   deleteNewEpisode(target);
+
+  PERSISTED_APP_STATE.history.watchedEpisodes.push(target);
 }
 
 export async function addNewEpisode(show: ShowInfo) {
@@ -109,7 +131,9 @@ export async function addNewEpisode(show: ShowInfo) {
       await scheduleNotification({
         content: {
           title: "🎬 New Episode Dropped",
-          body: `Episode ${newEpisode.show.episode} of ${cleanTitle(newEpisode.show.title)} is out`,
+          body: `Episode ${newEpisode.show.episode} of ${cleanTitle(
+            newEpisode.show.title,
+          )} is out`,
           sound: "Default",
         },
         trigger: null,
@@ -141,4 +165,56 @@ export function onEpisodeNotificationShown(show: ShowInfo) {
   );
 
   PERSISTED_APP_STATE.newEpisodes[index].notifiedUser = true;
+}
+
+// toWatch
+
+export function addShowToWatchList(show: ShowInfo) {
+  PERSISTED_APP_STATE.watchList.shows.push(show);
+}
+
+export function addMovieToWatchList(movie: MovieInfo) {
+  const alreadyAdded = PERSISTED_APP_STATE.watchList.movies.find(
+    ($movie) => $movie.title === movie.title,
+  );
+
+  if (!alreadyAdded) {
+    PERSISTED_APP_STATE.watchList.movies.push(movie);
+  }
+}
+
+export function removeShowFromWatchList(show: ShowInfo) {
+  PERSISTED_APP_STATE.watchList.shows =
+    PERSISTED_APP_STATE.watchList.shows.filter(
+      (item) => item.title !== show.title,
+    );
+}
+
+export function removeMovieFromWatchList(movie: MovieInfo) {
+  PERSISTED_APP_STATE.watchList.movies =
+    PERSISTED_APP_STATE.watchList.movies.filter(
+      (item) => item.title !== movie.title,
+    );
+}
+
+export function isShowInWatchList(show: ShowInfo) {
+  return PERSISTED_APP_STATE.watchList.shows.find(
+    (item) => item.title === show.title,
+  );
+}
+
+export function isMovieInWatchList(movie: MovieInfo) {
+  return PERSISTED_APP_STATE.watchList.movies.find(
+    (item) => item.title === movie.title,
+  );
+}
+
+export function onShowWatched(show: ShowInfo) {
+  PERSISTED_APP_STATE.history.watchedShows.push(show);
+  removeShowFromWatchList(show);
+}
+
+export function onMovieWatched(movie: MovieInfo) {
+  PERSISTED_APP_STATE.history.watchedMovies.push(movie);
+  removeMovieFromWatchList(movie);
 }

@@ -1,7 +1,7 @@
-import { extractShows, F_HEADERS } from "@/lib/scrape";
+import { extractSearchResults, F_HEADERS } from "@/lib/scrape";
 import { useQuery } from "@tanstack/react-query";
 
-const useSearchShows = (query: string) => {
+const useSearch = (query: string) => {
   return useQuery({
     queryKey: ["search", query],
     queryFn: async () => {
@@ -13,11 +13,11 @@ const useSearchShows = (query: string) => {
         headers: F_HEADERS,
       });
       const html = await resp.text();
-      return extractShows(html);
+      return extractSearchResults(html);
     },
     enabled: !!query,
-    initialData: [],
+    initialData: { shows: [], movies: [] },
   });
 };
 
-export default useSearchShows;
+export default useSearch;

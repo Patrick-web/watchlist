@@ -1,8 +1,8 @@
 import { SUCCESS_ALERT } from "@/constants/common.constants";
 import { POSTER_RATIO, sWidth } from "@/constants/dimensions.constant";
 import { useTheme } from "@/hooks/useTheme.hook";
-import { ShowInfo } from "@/types";
-import { onShowWatched } from "@/valitio.store";
+import { MovieInfo } from "@/types";
+import { onMovieWatched } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import React, { useRef, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -21,11 +21,13 @@ import ThemedBottomSheet from "./reusables/ThemedBottomSheet";
 import ThemedButton from "./reusables/ThemedButton";
 import ThemedIcon from "./reusables/ThemedIcon";
 import ThemedText from "./reusables/ThemedText";
-import Show from "./Show";
+import Movie from "./Movie";
 
 const ACTION_WIDTH = sWidth - 40;
+const POSTER_WIDTH = 100;
+const POSTER_HEIGHT = POSTER_RATIO * POSTER_WIDTH;
 
-export default function ShowCard({ show }: { show: ShowInfo }) {
+export default function MovieCard({ movie }: { movie: MovieInfo }) {
   const theme = useTheme();
   const [showActions, setShowActions] = useState(false);
   const [showReminderForm, setShowReminderForm] = useState(false);
@@ -37,9 +39,11 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
 
     setShowWatchedConfirmation(false);
 
-    onShowWatched(show);
+    onMovieWatched(movie);
 
     Haptics?.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+    setShowActions(false);
 
     toast.success("Roger that 👍", {
       icon: (
@@ -62,10 +66,10 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
         friction={1}
         rightThreshold={40}
         renderRightActions={(prog, drag, swipeable) =>
-          RightAction({ drag, swipeable, show })
+          RightAction({ drag, swipeable, movie })
         }
         renderLeftActions={(prog, drag, swipeable) =>
-          LeftAction({ drag, swipeable, show })
+          LeftAction({ drag, swipeable, movie })
         }
         onSwipeableWillOpen={(direction) => {
           console.log({ direction });
@@ -80,7 +84,7 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
         overshootRight
       >
         <ThemedButton onPress={() => setShowActions(true)} type="text">
-          <Show show={show} />
+          <Movie movie={movie} />
         </ThemedButton>
       </ReanimatedSwipeable>
       <ThemedBottomSheet
@@ -88,7 +92,7 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
         close={() => setShowActions(false)}
         containerProps={{ px: 20, gap: 20, radius: 60 }}
       >
-        <Show show={show} />
+        <Movie movie={movie} />
         <Box color={"border"} block height={StyleSheet.hairlineWidth} />
         <Box gap={10}>
           <ThemedButton
@@ -131,10 +135,10 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
         containerProps={{ px: 0, pt: 20, gap: 20, radius: 60 }}
       >
         <Box gap={20} px={20}>
-          <Show show={show} />
+          <Movie movie={movie} />
           <Box color={"border"} block height={StyleSheet.hairlineWidth} />
         </Box>
-        <ReminderForm show={show} close={() => setShowReminderForm(false)} />
+        <ReminderForm movie={movie} close={() => setShowReminderForm(false)} />
       </ThemedBottomSheet>
       <ThemedBottomSheet
         title="You already watched"
@@ -153,7 +157,7 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
           gap: 20,
         }}
       >
-        <Show show={show} />
+        <Movie movie={movie} />
         <Box direction="row" gap={20}>
           <ThemedButton
             label={"Not Yet"}
@@ -173,11 +177,11 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
 
 function RightAction({
   drag,
-  show,
+  movie,
   swipeable,
 }: {
   drag: SharedValue<number>;
-  show: ShowInfo;
+  movie: MovieInfo;
   swipeable: SwipeableMethods;
 }) {
   const styleAnimation = useAnimatedStyle(() => {
@@ -225,7 +229,7 @@ function RightAction({
           pt: 10,
         }}
       >
-        <ReminderForm show={show} close={() => setShowReminderForm(false)} />
+        <ReminderForm movie={movie} close={() => setShowReminderForm(false)} />
       </ThemedBottomSheet>
     </Reanimated.View>
   );
@@ -233,11 +237,11 @@ function RightAction({
 
 function LeftAction({
   drag,
-  show,
+  movie,
   swipeable,
 }: {
   drag: SharedValue<number>;
-  show: ShowInfo;
+  movie: MovieInfo;
   swipeable: SwipeableMethods;
 }) {
   const styleAnimation = useAnimatedStyle(() => {

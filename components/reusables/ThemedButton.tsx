@@ -14,7 +14,7 @@ import {
   withSpring,
 } from "react-native-reanimated";
 import { useTheme } from "../../hooks/useTheme.hook";
-import Box, { AnimatedBox, BoxProps } from "./Box";
+import Box, { AnimatedBox, AnimatedBoxProps, BoxProps } from "./Box";
 import ThemedIcon, { ThemedIconProps } from "./ThemedIcon";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
 import * as Haptics from "expo-haptics";
@@ -305,7 +305,7 @@ export function ThemedListButton(
   );
 }
 
-type BoxWrapper = Omit<BoxProps, "children">;
+type BoxWrapper = Omit<AnimatedBoxProps, "children">;
 export interface ThemedButtonProps extends BoxWrapper {
   color?: string;
   label?: string | number;

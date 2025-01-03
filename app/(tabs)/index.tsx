@@ -41,7 +41,7 @@ export default function HomeScreen() {
     <Page>
       <Box pb={10} direction="row" justify="space-between" align="center">
         <ThemedText size={"xxxl"} fontWeight="bold">
-          NEW EPISODES
+          New Episodes
         </ThemedText>
         <ThemedButton
           label={"Search"}
@@ -52,7 +52,12 @@ export default function HomeScreen() {
           }}
           flex={Platform.OS === "ios" ? 0.6 : 0.7}
           onPress={() => {
-            router.push("/search");
+            router.push({
+              pathname: "/search",
+              params: {
+                mode: "all",
+              },
+            });
           }}
         />
       </Box>
