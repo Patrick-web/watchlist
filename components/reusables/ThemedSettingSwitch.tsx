@@ -7,7 +7,9 @@ export default function ThemedSettingSwitch(props: ThemedSettingSwitchProps) {
     <Box direction="row" justify="space-between" block align="center">
       <Box gap={5}>
         <ThemedText>{props.title}</ThemedText>
-        <ThemedText opacity={0.7}>{props.subtitle}</ThemedText>
+        <ThemedText opacity={0.7} size={"sm"} fontWeight="light">
+          {props.subtitle}
+        </ThemedText>
       </Box>
       <Switch onValueChange={props.onToggle} value={props.isActive} />
     </Box>

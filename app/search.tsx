@@ -138,16 +138,11 @@ export default function Search() {
           ]}
           style={{
             position: "absolute",
-            bottom: 0,
+            bottom: insets.bottom,
             paddingTop: 20,
             paddingBottom: 20,
             width: "100%",
             height: 80,
-            transform: [
-              {
-                translateY: -10,
-              },
-            ],
             flexDirection: "row",
             justifyContent: "center",
             gap: 20,

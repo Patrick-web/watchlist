@@ -20,6 +20,7 @@ import EmptyWatchlist from "@/components/EmptyWatchlist";
 import ShowCard from "@/components/ShowCard";
 import MovieCard from "@/components/MovieCard";
 import { sWidth } from "@/constants/dimensions.constant";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Watchlist() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
@@ -28,6 +29,8 @@ export default function Watchlist() {
   const themeMode = useThemeMode();
 
   const [view, setView] = useState<"shows" | "movies">("shows");
+
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (
@@ -102,16 +105,12 @@ export default function Watchlist() {
         ]}
         style={{
           position: "absolute",
-          bottom: 10,
+          bottom:
+            Platform.OS === "android" ? insets.bottom + 60 : insets.bottom,
           paddingTop: 20,
           paddingBottom: 20,
           width: "100%",
           height: 80,
-          transform: [
-            {
-              translateY: -10,
-            },
-          ],
           flexDirection: "row",
           justifyContent: "center",
           gap: 20,
