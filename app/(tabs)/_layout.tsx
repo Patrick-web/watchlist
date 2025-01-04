@@ -1,10 +1,21 @@
-import ThemedButton from "@/components/reusables/ThemedButton";
+import BaseButton from "@/components/reusables/BaseButton";
+import ThemedButton, {
+  ThemedButtonProps,
+} from "@/components/reusables/ThemedButton";
+import ThemedIcon, { ThemedIconProps } from "@/components/reusables/ThemedIcon";
+import ThemedText from "@/components/reusables/ThemedText";
 import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, usePathname } from "expo-router";
-import { TabList, Tabs, TabSlot, TabTrigger } from "expo-router/ui";
+import {
+  TabList,
+  Tabs,
+  TabSlot,
+  TabTrigger,
+  TriggerProps,
+} from "expo-router/ui";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Pressable, View } from "react-native";
 
 export default function TabLayout() {
   const theme = useTheme();
@@ -44,76 +55,66 @@ export default function TabLayout() {
             gap: 20,
           }}
         >
-          <TabTrigger name="index" href="/">
-            <ThemedButton
-              px={10}
-              py={5}
-              size="lg"
-              type="text"
-              opacity={currentPath === "/" ? 1 : 0.6}
-              icon={{
-                name:
-                  currentPath === "/"
-                    ? "file-tray-full"
-                    : "file-tray-full-outline",
-                source: "Ionicons",
-              }}
-              onPress={() => {
-                router.push("/");
-              }}
+          <TabTrigger name="index" href="/" asChild>
+            <TabButton
+              focusedIcon="file-tray-full"
+              defaultIcon="file-tray-full-outline"
             />
           </TabTrigger>
-          <TabTrigger name="shows" href="/shows">
-            <ThemedButton
-              px={10}
-              py={5}
-              size="lg"
-              type="text"
-              opacity={currentPath === "/shows" ? 1 : 0.6}
-              icon={{
-                name: currentPath === "/shows" ? "layers" : "layers-outline",
-                source: "Ionicons",
-              }}
-              onPress={() => {
-                router.push("/shows");
-              }}
-            />
+          <TabTrigger name="shows" href="/shows" asChild>
+            <TabButton focusedIcon="layers" defaultIcon="layers-outline" />
           </TabTrigger>
-          <TabTrigger name="watchlist" href="/watchlist">
-            <ThemedButton
-              px={10}
-              py={5}
-              size="lg"
-              type="text"
-              opacity={currentPath === "/watchlist" ? 1 : 0.6}
-              icon={{
-                name: currentPath === "/" ? "albums" : "albums-outline",
-                source: "Ionicons",
-              }}
-              onPress={() => {
-                router.push("/watchlist");
-              }}
-            />
+          <TabTrigger name="watchlist" href="/watchlist" asChild>
+            <TabButton focusedIcon="albums" defaultIcon="albums-outline" />
           </TabTrigger>
-          <TabTrigger name="settings" href="/settings">
-            <ThemedButton
-              px={10}
-              py={5}
-              size="lg"
-              type="text"
-              opacity={currentPath === "/settings" ? 1 : 0.6}
-              icon={{
-                name:
-                  currentPath === "/settings" ? "settings" : "settings-outline",
-                source: "Ionicons",
-              }}
-              onPress={() => {
-                router.push("/settings");
-              }}
-            />
+          <TabTrigger name="settings" href="/settings" asChild>
+            <TabButton focusedIcon="settings" defaultIcon="settings-outline" />
           </TabTrigger>
         </LinearGradient>
       </TabList>
     </Tabs>
   );
 }
+
+type TabButtonProps = Partial<TriggerProps> & {
+  defaultIcon: ThemedIconProps["name"];
+  focusedIcon: ThemedIconProps["name"];
+};
+
+// const TabButton = React.forwardRef<View, TabButtonProps>((props, ref) => {
+//   return (
+//     <BaseButton
+//       px={10}
+//       py={5}
+//       size="lg"
+//       type="primary"
+//       opacity={props.isFocused ? 1 : 0.6}
+//       icon={{
+//         name: props.isFocused ? props.focusedIcon : props.defaultIcon,
+//         source: "Ionicons",
+//       }}
+//       ref={ref}
+//       {...props}
+//     />
+//   );
+// });
+
+const TabButton = React.forwardRef<View, TabButtonProps>((props, ref) => {
+  return (
+    <Pressable
+      ref={ref}
+      {...props}
+      style={{
+        padding: 10,
+        opacity: props.isFocused ? 1 : 0.6,
+      }}
+    >
+      {props.isFocused && (
+        <ThemedIcon name={props.focusedIcon} source="Ionicons" size={"lg"} />
+      )}
+      {!props.isFocused && (
+        <ThemedIcon name={props.defaultIcon} source="Ionicons" size={"lg"} />
+      )}
+    </Pressable>
+  );
+});

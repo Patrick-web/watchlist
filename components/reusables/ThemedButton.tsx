@@ -6,6 +6,7 @@ import {
   PressableProps,
   ViewStyle,
   StyleSheet,
+  View,
 } from "react-native";
 import {
   FadeIn,
@@ -14,10 +15,17 @@ import {
   withSpring,
 } from "react-native-reanimated";
 import { useTheme } from "../../hooks/useTheme.hook";
-import Box, { AnimatedBox, AnimatedBoxProps, BoxProps } from "./Box";
+import Box, {
+  AnimatedBox,
+  AnimatedBoxProps,
+  BoxProps,
+  generateStylesObject,
+  ShortStyles,
+} from "./Box";
 import ThemedIcon, { ThemedIconProps } from "./ThemedIcon";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
 import * as Haptics from "expo-haptics";
+import { ColorOptions } from "@/constants/colors.constants";
 
 const ThemedButton = (props: ThemedButtonProps) => {
   const {
@@ -34,6 +42,7 @@ const ThemedButton = (props: ThemedButtonProps) => {
     size = "md",
     iconComponent,
     pressabelProps,
+    ref,
     children,
     ...outerWrapperProps
   } = props;
@@ -61,7 +70,7 @@ const ThemedButton = (props: ThemedButtonProps) => {
 
   const handlePress = () => {
     Haptics?.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onPress();
+    onPress && onPress();
   };
 
   const iconColor = () => {
@@ -189,6 +198,7 @@ const ThemedButton = (props: ThemedButtonProps) => {
         onPressOut={handlePressOut}
         onPress={handlePress}
         disabled={disabled || loading}
+        ref={ref}
         {...pressabelProps}
       >
         {children ? (
@@ -264,6 +274,22 @@ export function SectionButton(props: ThemedButtonProps) {
   );
 }
 
+type BaseButtonProps = ShortStyles &
+  PressableProps & {
+    loading?: boolean;
+    label?: string | number;
+    labelProps?: Omit<ThemedTextProps, "children">;
+    icon?: ButtonIconProps;
+    type?:
+      | "text"
+      | "secondary"
+      | "surface"
+      | "primary"
+      | "primary-outlined"
+      | "secondary-outlined";
+    size?: ButtonSize;
+  };
+
 export function ThemedToggleButton(props: ToggleButtonProps) {
   return (
     <ThemedButton
@@ -311,7 +337,7 @@ export interface ThemedButtonProps extends BoxWrapper {
   label?: string | number;
   labelProps?: Omit<ThemedTextProps, "children">;
   loading?: boolean;
-  onPress: () => void;
+  onPress?: () => void;
   icon?: ButtonIconProps;
   iconComponent?: ReactNode;
   type?:
@@ -328,6 +354,7 @@ export interface ThemedButtonProps extends BoxWrapper {
   children?: JSX.Element | JSX.Element[];
   rightChild?: JSX.Element;
   pressabelProps?: PressableProps;
+  ref?: any;
 }
 
 interface ButtonIconProps extends ThemedIconProps {

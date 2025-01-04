@@ -4,6 +4,7 @@ import ThemedButton from "@/components/reusables/ThemedButton";
 import ThemedIcon from "@/components/reusables/ThemedIcon";
 import ThemedText from "@/components/reusables/ThemedText";
 import SubscribedShow from "@/components/SubscribedShow";
+import { sWidth } from "@/constants/dimensions.constant";
 import { useTheme } from "@/hooks/useTheme.hook";
 import { PERSISTED_APP_STATE } from "@/valitio.store";
 import { router } from "expo-router";
@@ -19,7 +20,7 @@ export default function Shows() {
   return (
     <Page>
       <Box pb={10} direction="row" justify="space-between" align="center">
-        <ThemedText size={"xxxl"} fontWeight="bold">
+        <ThemedText size={"xl"} fontWeight="bold">
           Subscribed Shows
         </ThemedText>
         <ThemedButton
@@ -30,6 +31,8 @@ export default function Shows() {
             source: "Ionicons",
             position: "append",
           }}
+          width={140}
+          size="sm"
           flex={Platform.OS === "ios" ? 0.7 : 0.7}
           onPress={() => {
             router.push({

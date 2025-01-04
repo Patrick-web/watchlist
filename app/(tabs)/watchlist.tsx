@@ -19,6 +19,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import EmptyWatchlist from "@/components/EmptyWatchlist";
 import ShowCard from "@/components/ShowCard";
 import MovieCard from "@/components/MovieCard";
+import { sWidth } from "@/constants/dimensions.constant";
 
 export default function Watchlist() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
@@ -40,7 +41,7 @@ export default function Watchlist() {
   return (
     <Page>
       <Box pb={10} direction="row" justify="space-between" align="center">
-        <ThemedText size={"xxxl"} fontWeight="bold">
+        <ThemedText size={"xl"} fontWeight="bold">
           Want To Watch
         </ThemedText>
         <ThemedButton
@@ -51,7 +52,8 @@ export default function Watchlist() {
             source: "Ionicons",
             position: "append",
           }}
-          flex={Platform.OS === "ios" ? 0.7 : 0.7}
+          size="sm"
+          width={140}
           onPress={() => {
             router.push({
               pathname: "/search",

@@ -21,7 +21,7 @@ export default function Shows() {
   return (
     <Page>
       <Box mb={20}>
-        <ThemedText size={"xxxl"} fontWeight="bold">
+        <ThemedText size={"xl"} fontWeight="bold">
           SETTINGS
         </ThemedText>
       </Box>

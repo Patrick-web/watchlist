@@ -81,7 +81,9 @@ export function AnimatedBox({
     </Animated.View>
   );
 }
-function generateStylesObject(shortStyles: ShortStyles | any): ViewStyle {
+export function generateStylesObject(
+  shortStyles: ShortStyles | any,
+): ViewStyle {
   const styles: ViewStyle = {};
   const styleMappings: { [key: string]: keyof ViewStyle } = {
     direction: "flexDirection",
@@ -138,7 +140,7 @@ export interface BoxProps extends ShortStyles {
   absoluteFill?: boolean;
 }
 
-interface ShortStyles extends Omit<ViewStyle, "direction"> {
+export interface ShortStyles extends Omit<ViewStyle, "direction"> {
   direction?: ViewStyle["flexDirection"];
   colGap?: FlexStyle["gap"];
   rowGap?: FlexStyle["gap"];

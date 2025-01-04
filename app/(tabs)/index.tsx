@@ -19,6 +19,7 @@ import ThemedIcon from "@/components/reusables/ThemedIcon";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import { Route } from "expo-router/build/Route";
 import { router } from "expo-router";
+import { sWidth } from "@/constants/dimensions.constant";
 
 export default function HomeScreen() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
@@ -40,7 +41,7 @@ export default function HomeScreen() {
   return (
     <Page>
       <Box pb={10} direction="row" justify="space-between" align="center">
-        <ThemedText size={"xxxl"} fontWeight="bold">
+        <ThemedText size={"xl"} fontWeight="bold">
           New Episodes
         </ThemedText>
         <ThemedButton
@@ -50,7 +51,8 @@ export default function HomeScreen() {
             name: "search",
             position: "append",
           }}
-          flex={Platform.OS === "ios" ? 0.6 : 0.7}
+          width={140}
+          size="sm"
           onPress={() => {
             router.push({
               pathname: "/search",
