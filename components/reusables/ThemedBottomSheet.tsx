@@ -125,7 +125,12 @@ const ThemedBottomSheet = forwardRef<BottomSheetModal, ThemedBottomSheetProps>(
                 {children}
               </BottomSheetScrollView>
             ) : (
-              <BottomSheetBox gap={10} flexGrow={1} {...containerProps}>
+              <BottomSheetBox
+                gap={10}
+                flexGrow={1}
+                pb={insets.bottom + 60}
+                {...containerProps}
+              >
                 {children}
                 <Box height={insets.bottom} />
               </BottomSheetBox>

@@ -32,14 +32,14 @@ export default function Watchlist() {
 
   const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    if (
-      APP_STATE.watchList.movies.length > 0 &&
-      APP_STATE.watchList.shows.length === 0
-    ) {
-      setView("movies");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (
+  //     APP_STATE.watchList.movies.length > 0 &&
+  //     APP_STATE.watchList.shows.length === 0
+  //   ) {
+  //     setView("movies");
+  //   }
+  // }, []);
 
   return (
     <Page>
@@ -68,18 +68,42 @@ export default function Watchlist() {
         />
       </Box>
 
+      <Box direction="row" pa={5} radius={20} color={theme.surface} mx={"auto"}>
+        <ThemedButton
+          label={"Shows"}
+          onPress={() => setView("shows")}
+          viewProps={{ layout: LinearTransition }}
+          size="xxs"
+          type={view === "shows" ? "secondary" : "surface"}
+        />
+        <ThemedButton
+          label={"Movies"}
+          onPress={() => {
+            setView("movies");
+          }}
+          viewProps={{ layout: LinearTransition }}
+          size="xxs"
+          type={view === "movies" ? "secondary" : "surface"}
+        />
+      </Box>
+
       <Box flex={1}>
         {view === "shows" && (
           <Reanimated.FlatList
             data={APP_STATE.watchList.shows}
             keyExtractor={(item) => item.url}
             style={{ flex: 1 }}
-            ListEmptyComponent={<EmptyWatchlist />}
+            ListEmptyComponent={
+              <EmptyWatchlist title="No shows in your watchlist" />
+            }
             renderItem={({ item }) => <ShowCard show={item} />}
             itemLayoutAnimation={LinearTransition}
             ItemSeparatorComponent={() => <Box height={40} />}
             entering={FadeInLeft.springify().stiffness(200).damping(80)}
             exiting={FadeOutLeft.springify().stiffness(200).damping(80)}
+            contentContainerStyle={{
+              flex: 1,
+            }}
           />
         )}
         {view === "movies" && (
@@ -87,7 +111,12 @@ export default function Watchlist() {
             data={APP_STATE.watchList.movies}
             keyExtractor={(item) => item.url}
             style={{ flex: 1 }}
-            ListEmptyComponent={<EmptyWatchlist />}
+            ListEmptyComponent={
+              <EmptyWatchlist title="No movies in your watchlist" />
+            }
+            contentContainerStyle={{
+              flex: 1,
+            }}
             renderItem={({ item }) => <MovieCard movie={item} />}
             itemLayoutAnimation={LinearTransition}
             ItemSeparatorComponent={() => <Box height={40} />}
@@ -96,51 +125,6 @@ export default function Watchlist() {
           />
         )}
       </Box>
-
-      <LinearGradient
-        colors={[
-          themeMode === "dark" ? "rgba(32,32,32,0)" : "rgba(255,255,255,0)",
-          theme.background,
-          theme.background,
-        ]}
-        style={{
-          position: "absolute",
-          bottom:
-            Platform.OS === "android" ? insets.bottom + 60 : insets.bottom,
-          paddingTop: 20,
-          paddingBottom: 20,
-          width: "100%",
-          height: 80,
-          flexDirection: "row",
-          justifyContent: "center",
-          gap: 20,
-        }}
-      >
-        <Box
-          direction="row"
-          pa={5}
-          radius={20}
-          color={theme.surface}
-          mx={"auto"}
-        >
-          <ThemedButton
-            label={"Shows"}
-            onPress={() => setView("shows")}
-            viewProps={{ layout: LinearTransition }}
-            size="xxs"
-            type={view === "shows" ? "secondary" : "surface"}
-          />
-          <ThemedButton
-            label={"Movies"}
-            onPress={() => {
-              setView("movies");
-            }}
-            viewProps={{ layout: LinearTransition }}
-            size="xxs"
-            type={view === "movies" ? "secondary" : "surface"}
-          />
-        </Box>
-      </LinearGradient>
     </Page>
   );
 }

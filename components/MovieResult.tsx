@@ -30,20 +30,29 @@ export default function MovieResult({ movie }: { movie: MovieInfo }) {
 
   return (
     <Movie movie={movie}>
-      <ThemedButton
-        onPress={addToWatchList}
-        type={isMovieInWatchList(movie) ? "primary" : "surface"}
-        size="sm"
-        label={isMovieInWatchList(movie) ? undefined : "Watch Later"}
-        icon={
-          isMovieInWatchList(movie)
-            ? { name: "clock-check", source: "MaterialCommunityIcons" }
-            : undefined
-        }
-        disabled={isMovieInWatchList(movie) ? true : false}
-        opacity={1}
-        mt={10}
-      />
+      <Box block align="flex-start">
+        <ThemedButton
+          onPress={addToWatchList}
+          type={isMovieInWatchList(movie) ? "text" : "surface"}
+          size="xs"
+          label={isMovieInWatchList(movie) ? "Watching Later" : "Watch Later"}
+          labelProps={{
+            color: isMovieInWatchList(movie) ? theme.primary : theme.onSurface,
+          }}
+          icon={
+            isMovieInWatchList(movie)
+              ? {
+                  name: "checkmark-circle",
+                  source: "Ionicons",
+                  color: theme.primary,
+                }
+              : undefined
+          }
+          disabled={isMovieInWatchList(movie) ? true : false}
+          opacity={1}
+          mt={10}
+        />
+      </Box>
     </Movie>
   );
 }

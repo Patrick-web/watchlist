@@ -16,7 +16,7 @@ export default function EmptyNewEpisodes() {
       radius={60}
       ma={"auto"}
     >
-      <ThemedIcon name="filmstrip-off" source="MaterialCommunityIcons" />
+      <ThemedIcon name="wind" source="Fontisto" />
       <ThemedText fontWeight="light">No new episodes yet</ThemedText>
     </Box>
   );

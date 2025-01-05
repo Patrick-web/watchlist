@@ -17,7 +17,7 @@ export default function EmptySubscriptions() {
       my={"auto"}
     >
       <Box align="center" gap={5}>
-        <ThemedIcon name="video-vintage" source="MaterialCommunityIcons" />
+        <ThemedIcon name="wind" source="Fontisto" />
         <ThemedText fontWeight="light">
           You haven't subscribed to any shows yet
         </ThemedText>

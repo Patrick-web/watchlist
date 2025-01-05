@@ -24,6 +24,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { changeCase } from "@/utils/text.utils";
 import { LinearGradient } from "expo-linear-gradient";
 import EmptySearchResults from "@/components/EmptySearchResults";
+import Page from "@/components/reusables/Page";
+import BaseButton from "@/components/reusables/BaseButton";
 
 export default function Search() {
   const params = useLocalSearchParams<{ mode: "movies" | "shows" | "all" }>();
@@ -49,105 +51,43 @@ export default function Search() {
   }, [data]);
 
   return (
-    <>
-      <Box height={sHeight - yInsets} block pa={20}>
-        <ThemedTextInput
-          placeholder={
-            params.mode != "all"
-              ? `Search ${changeCase(params.mode, "sentence")}`
-              : "Search Shows & Movies"
-          }
-          size={30}
-          style={{ fontWeight: "bold" }}
-          placeholderTextColor={theme.onSurface}
-          onChangeText={(text) => {
-            setQuery(text.toLowerCase());
-          }}
-          autoFocus
-          wrapper={{
-            borderWidth: 0,
-            backgroundColor: "transparent",
-            flexGrow: 1,
-          }}
-          leftSlot={
-            <>
-              {Platform.OS !== "ios" && false && (
-                <ThemedButton
-                  icon={{ name: "arrow-left" }}
-                  type="surface"
-                  size="xs"
-                  mr={10}
-                  onPress={() => {
-                    router.back();
-                  }}
-                />
-              )}
-            </>
-          }
-        />
-        {(isLoading || isFetching) && <ThemedActivityIndicator />}
-        {error && (
-          <ThemedErrorCard title="Something went wrong" error={error.message} />
-        )}
-        <Box>
-          {view === "shows" && (
-            <AnimatedBox
-              viewProps={{
-                entering: FadeInLeft.springify().stiffness(200).damping(80),
-                exiting: FadeOutLeft.springify().stiffness(200).damping(80),
-              }}
-              height={"95%"}
-            >
-              <LegendList
-                data={data.shows}
-                keyExtractor={(item) => item.url}
-                estimatedItemSize={10}
-                ItemSeparatorComponent={() => <Box height={20} />}
-                renderItem={({ item }) => <ShowResult show={item} />}
-                ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
+    <Page>
+      <ThemedTextInput
+        placeholder={
+          params.mode != "all"
+            ? `Search ${changeCase(params.mode, "sentence")}`
+            : "Search Shows & Movies"
+        }
+        size={"xxl"}
+        style={{ fontWeight: "bold" }}
+        placeholderTextColor={theme.onSurface}
+        onChangeText={(text) => {
+          setQuery(text.toLowerCase());
+        }}
+        autoFocus
+        wrapper={{
+          borderWidth: 0,
+          backgroundColor: "transparent",
+          flexGrow: 1,
+        }}
+        leftSlot={
+          <>
+            {Platform.OS !== "ios" && (
+              <ThemedButton
+                icon={{ name: "arrow-left" }}
+                type="text"
+                size="xs"
+                mr={10}
+                onPress={() => {
+                  router.back();
+                }}
               />
-            </AnimatedBox>
-          )}
-          {view === "movies" && (
-            <AnimatedBox
-              viewProps={{
-                entering: FadeInRight.springify().stiffness(200).damping(80),
-                exiting: FadeOutRight.springify().stiffness(200).damping(80),
-              }}
-              height={"95%"}
-            >
-              <LegendList
-                data={data.movies}
-                keyExtractor={(item) => item.url}
-                estimatedItemSize={10}
-                ItemSeparatorComponent={() => <Box height={20} />}
-                renderItem={({ item }) => <MovieResult movie={item} />}
-                ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
-              />
-            </AnimatedBox>
-          )}
-        </Box>
-      </Box>
-
-      {params.mode === "all" && (
-        <LinearGradient
-          colors={[
-            themeMode === "dark" ? "rgba(32,32,32,0)" : "rgba(255,255,255,0)",
-            theme.background,
-            theme.background,
-          ]}
-          style={{
-            position: "absolute",
-            bottom: insets.bottom,
-            paddingTop: 20,
-            paddingBottom: 20,
-            width: "100%",
-            height: 80,
-            flexDirection: "row",
-            justifyContent: "center",
-            gap: 20,
-          }}
-        >
+            )}
+          </>
+        }
+      />
+      {params.mode === "all" &&
+        (data.movies.length > 0 || data.shows.length > 0) && (
           <Box
             direction="row"
             pa={5}
@@ -177,8 +117,49 @@ export default function Search() {
               type={view === "movies" ? "secondary" : "surface"}
             />
           </Box>
-        </LinearGradient>
+        )}
+      {(isLoading || isFetching) && <ThemedActivityIndicator />}
+      {error && (
+        <ThemedErrorCard title="Something went wrong" error={error.message} />
       )}
-    </>
+      <Box>
+        {view === "shows" && (
+          <AnimatedBox
+            viewProps={{
+              entering: FadeInLeft.springify().stiffness(200).damping(80),
+              exiting: FadeOutLeft.springify().stiffness(200).damping(80),
+            }}
+            height={"95%"}
+          >
+            <LegendList
+              data={data.shows}
+              keyExtractor={(item) => item.url}
+              estimatedItemSize={10}
+              ItemSeparatorComponent={() => <Box height={20} />}
+              renderItem={({ item }) => <ShowResult show={item} />}
+              ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
+            />
+          </AnimatedBox>
+        )}
+        {view === "movies" && (
+          <AnimatedBox
+            viewProps={{
+              entering: FadeInRight.springify().stiffness(200).damping(80),
+              exiting: FadeOutRight.springify().stiffness(200).damping(80),
+            }}
+            height={"95%"}
+          >
+            <LegendList
+              data={data.movies}
+              keyExtractor={(item) => item.url}
+              estimatedItemSize={10}
+              ItemSeparatorComponent={() => <Box height={20} />}
+              renderItem={({ item }) => <MovieResult movie={item} />}
+              ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
+            />
+          </AnimatedBox>
+        )}
+      </Box>
+    </Page>
   );
 }

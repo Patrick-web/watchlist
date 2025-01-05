@@ -5,7 +5,7 @@ import ThemedButton from "./reusables/ThemedButton";
 import ThemedIcon from "./reusables/ThemedIcon";
 import ThemedText from "./reusables/ThemedText";
 
-export default function EmptyWatchlist() {
+export default function EmptyWatchlist({ title }: { title: string }) {
   const theme = useTheme();
   return (
     <Box
@@ -17,11 +17,11 @@ export default function EmptyWatchlist() {
       my={"auto"}
     >
       <Box align="center" gap={5}>
-        <ThemedIcon name="video-vintage" source="MaterialCommunityIcons" />
-        <ThemedText fontWeight="light">Your watchlist is empty</ThemedText>
+        <ThemedIcon name="wind" source="Fontisto" />
+        <ThemedText fontWeight="light">{title}</ThemedText>
       </Box>
       <ThemedButton
-        label={"Add Stuff to Watch Later"}
+        label={"Add Some"}
         icon={{
           name: "plus",
           position: "append",

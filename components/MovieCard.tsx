@@ -39,11 +39,11 @@ export default function MovieCard({ movie }: { movie: MovieInfo }) {
 
     setShowWatchedConfirmation(false);
 
+    setShowActions(false);
+
     onMovieWatched(movie);
 
     Haptics?.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-    setShowActions(false);
 
     toast.success("Roger that 👍", {
       icon: (

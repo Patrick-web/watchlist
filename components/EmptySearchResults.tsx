@@ -14,7 +14,7 @@ export default function EmptySearchResults() {
       radius={80}
       my={"auto"}
     >
-      <ThemedIcon name="search" source="Ionicons" />
+      <ThemedIcon name="wind" source="Fontisto" />
       <ThemedText size="sm">No results found</ThemedText>
     </Box>
   );

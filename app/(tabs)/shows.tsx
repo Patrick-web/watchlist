@@ -1,3 +1,4 @@
+import EmptySubscriptions from "@/components/EmptySubscriptions";
 import Box from "@/components/reusables/Box";
 import Page from "@/components/reusables/Page";
 import ThemedButton from "@/components/reusables/ThemedButton";
@@ -61,39 +62,7 @@ export default function Shows() {
             flex: APP_STATE.subscribedShows.length > 0 ? 0 : 1,
           }}
           contentInset={{ bottom: 80 }}
-          ListEmptyComponent={
-            <Box
-              align="center"
-              gap={10}
-              color={theme.surface}
-              pa={20}
-              radius={80}
-              block
-              ma={"auto"}
-            >
-              <Box align="center" gap={5}>
-                <ThemedIcon
-                  name="video-vintage"
-                  source="MaterialCommunityIcons"
-                />
-                <ThemedText fontWeight="light">
-                  You are not watching any shows
-                </ThemedText>
-              </Box>
-              <ThemedButton
-                label={"Add Some"}
-                icon={{
-                  name: "search",
-                  position: "append",
-                }}
-                size="xs"
-                type="secondary"
-                onPress={() => {
-                  router.push("/search");
-                }}
-              />
-            </Box>
-          }
+          ListEmptyComponent={<EmptySubscriptions />}
         />
       </Box>
     </Page>
