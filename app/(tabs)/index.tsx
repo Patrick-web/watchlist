@@ -1,10 +1,14 @@
 import NewEpisodeCard from "@/components/NewEpisodeCard";
-import Box from "@/components/reusables/Box";
+import Box, { AnimatedBox } from "@/components/reusables/Box";
 import Page from "@/components/reusables/Page";
 import ThemedText from "@/components/reusables/ThemedText";
 import { Platform, RefreshControl } from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import Reanimated, { LinearTransition } from "react-native-reanimated";
+import Reanimated, {
+  FadeInUp,
+  FadeOutUp,
+  LinearTransition,
+} from "react-native-reanimated";
 import EmptySubscriptions from "@/components/EmptySubscriptions";
 import EmptyNewEpisodes from "@/components/EmptyNewEpisodes";
 import { useEffect } from "react";
@@ -41,9 +45,23 @@ export default function HomeScreen() {
   return (
     <Page>
       <Box pb={10} direction="row" justify="space-between" align="center">
-        <ThemedText size={"xl"} fontWeight="bold">
-          New Episodes
-        </ThemedText>
+        <Box>
+          <ThemedText size={"xl"} fontWeight="bold">
+            New Episodes
+          </ThemedText>
+          {(isFetching || isLoading) && (
+            <AnimatedBox
+              viewProps={{
+                entering: FadeInUp,
+                exiting: FadeOutUp,
+              }}
+            >
+              <ThemedText size="xs" fontWeight="light" color="onSurface">
+                Checking for new episodes...
+              </ThemedText>
+            </AnimatedBox>
+          )}
+        </Box>
         <ThemedButton
           label={"Search"}
           type="surface"
@@ -64,12 +82,12 @@ export default function HomeScreen() {
         />
       </Box>
       <Reanimated.FlatList
-        refreshControl={
-          <RefreshControl
-            refreshing={isFetching || isLoading}
-            onRefresh={() => refetch()}
-          />
-        }
+        // refreshControl={
+        //   <RefreshControl
+        //     refreshing={isFetching || isLoading}
+        //     onRefresh={() => refetch()}
+        //   />
+        // }
         contentContainerStyle={{
           flex: APP_STATE.newEpisodes.length > 0 ? 0 : 1,
         }}

@@ -68,22 +68,32 @@ export default function Watchlist() {
         />
       </Box>
 
-      <Box direction="row" pa={5} radius={20} color={theme.surface} mx={"auto"}>
+      <Box
+        direction="row"
+        pa={5}
+        radius={20}
+        color={theme.lightBackground}
+        mx={"auto"}
+      >
         <ThemedButton
           label={"Shows"}
           onPress={() => setView("shows")}
-          viewProps={{ layout: LinearTransition }}
           size="xxs"
-          type={view === "shows" ? "secondary" : "surface"}
+          type={"text"}
+          labelProps={{
+            color: view === "shows" ? theme.text : theme.onSurface,
+          }}
         />
         <ThemedButton
           label={"Movies"}
           onPress={() => {
             setView("movies");
           }}
-          viewProps={{ layout: LinearTransition }}
           size="xxs"
-          type={view === "movies" ? "secondary" : "surface"}
+          type={"text"}
+          labelProps={{
+            color: view === "movies" ? theme.text : theme.onSurface,
+          }}
         />
       </Box>
 

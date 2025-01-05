@@ -48,10 +48,13 @@ export default function Search() {
     if (data && data.movies.length > 0 && data.shows.length === 0) {
       setView("movies");
     }
+    if (data && data.shows.length > 0 && data.data.length === 0) {
+      setView("shows");
+    }
   }, [data]);
 
   return (
-    <Page>
+    <Page px={0}>
       <ThemedTextInput
         placeholder={
           params.mode != "all"
@@ -122,7 +125,7 @@ export default function Search() {
       {error && (
         <ThemedErrorCard title="Something went wrong" error={error.message} />
       )}
-      <Box>
+      <Box px={20}>
         {view === "shows" && (
           <AnimatedBox
             viewProps={{
