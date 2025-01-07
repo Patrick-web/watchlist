@@ -19,6 +19,7 @@ import {
   LinearTransition,
 } from "react-native-reanimated";
 import { LegendList } from "@legendapp/list";
+import Reanimated from "react-native-reanimated";
 import { sHeight } from "@/constants/dimensions.constant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { changeCase } from "@/utils/text.utils";
@@ -48,7 +49,7 @@ export default function Search() {
     if (data && data.movies.length > 0 && data.shows.length === 0) {
       setView("movies");
     }
-    if (data && data.shows.length > 0 && data.data.length === 0) {
+    if (data && data.shows.length > 0 && data.movies.length === 0) {
       setView("shows");
     }
   }, [data]);
@@ -134,12 +135,11 @@ export default function Search() {
             }}
             height={"95%"}
           >
-            <LegendList
+            <Reanimated.FlatList
               data={data.shows}
               keyExtractor={(item) => item.url}
-              estimatedItemSize={10}
-              ItemSeparatorComponent={() => <Box height={20} />}
               renderItem={({ item }) => <ShowResult show={item} />}
+              ItemSeparatorComponent={() => <Box height={20} />}
               ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
             />
           </AnimatedBox>
@@ -152,12 +152,11 @@ export default function Search() {
             }}
             height={"95%"}
           >
-            <LegendList
+            <Reanimated.FlatList
               data={data.movies}
               keyExtractor={(item) => item.url}
-              estimatedItemSize={10}
-              ItemSeparatorComponent={() => <Box height={20} />}
               renderItem={({ item }) => <MovieResult movie={item} />}
+              ItemSeparatorComponent={() => <Box height={20} />}
               ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
             />
           </AnimatedBox>

@@ -6,25 +6,34 @@ import {
   SafeAreaContext,
   SafeAreaProvider,
 } from "react-native-safe-area-context";
+import { ReactScan } from "react-scan/native";
 
 export const queryClient = new QueryClient();
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <AppProviders>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="search"
-            options={{
-              presentation: "modal",
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </AppProviders>
-    </SafeAreaProvider>
+    <ReactScan
+      options={{
+        enabled: true,
+        log: true,
+        animationWhenFlashing: false,
+      }}
+    >
+      <SafeAreaProvider>
+        <AppProviders>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="search"
+              options={{
+                presentation: "modal",
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </AppProviders>
+      </SafeAreaProvider>
+    </ReactScan>
   );
 }

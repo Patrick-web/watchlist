@@ -57,7 +57,7 @@ export default function HomeScreen() {
               }}
             >
               <ThemedText size="xs" fontWeight="light" color="onSurface">
-                Checking for new episodes...
+                Finding for new episodes...
               </ThemedText>
             </AnimatedBox>
           )}
