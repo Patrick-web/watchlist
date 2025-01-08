@@ -9,7 +9,7 @@ import useDebounce from "@/hooks/useDebounce.hook";
 import useSearch from "@/hooks/useSearchShows.hook";
 import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import {
   FadeInLeft,
@@ -27,6 +27,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import EmptySearchResults from "@/components/EmptySearchResults";
 import Page from "@/components/reusables/Page";
 import BaseButton from "@/components/reusables/BaseButton";
+import { MovieInfo, ShowInfo } from "@/types";
 
 export default function Search() {
   const params = useLocalSearchParams<{ mode: "movies" | "shows" | "all" }>();
@@ -44,15 +45,6 @@ export default function Search() {
 
   const insets = useSafeAreaInsets();
   const yInsets = insets.bottom + insets.top;
-
-  useEffect(() => {
-    if (data && data.movies.length > 0 && data.shows.length === 0) {
-      setView("movies");
-    }
-    if (data && data.shows.length > 0 && data.movies.length === 0) {
-      setView("shows");
-    }
-  }, [data]);
 
   return (
     <Page px={0}>
@@ -78,10 +70,10 @@ export default function Search() {
           <>
             {Platform.OS !== "ios" && (
               <ThemedButton
-                icon={{ name: "arrow-left" }}
+                icon={{ name: "arrow-back", source: "Ionicons" }}
                 type="text"
                 size="xs"
-                mr={10}
+                px={10}
                 onPress={() => {
                   router.back();
                 }}
@@ -90,78 +82,114 @@ export default function Search() {
           </>
         }
       />
-      {params.mode === "all" &&
-        (data.movies.length > 0 || data.shows.length > 0) && (
-          <Box
-            direction="row"
-            pa={5}
-            radius={20}
-            color={theme.surface}
-            mx={"auto"}
-            flexDirection={
-              data && data.movies.length > 0 && data.shows.length === 0
-                ? "row-reverse"
-                : "row"
-            }
-          >
-            <ThemedButton
-              label={"Shows"}
-              onPress={() => setView("shows")}
-              viewProps={{ layout: LinearTransition }}
-              size="xxs"
-              type={view === "shows" ? "secondary" : "surface"}
-            />
-            <ThemedButton
-              label={"Movies"}
-              onPress={() => {
-                setView("movies");
-              }}
-              viewProps={{ layout: LinearTransition }}
-              size="xxs"
-              type={view === "movies" ? "secondary" : "surface"}
-            />
-          </Box>
-        )}
-      {(isLoading || isFetching) && <ThemedActivityIndicator />}
-      {error && (
-        <ThemedErrorCard title="Something went wrong" error={error.message} />
-      )}
-      <Box px={20}>
-        {view === "shows" && (
-          <AnimatedBox
-            viewProps={{
-              entering: FadeInLeft.springify().stiffness(200).damping(80),
-              exiting: FadeOutLeft.springify().stiffness(200).damping(80),
-            }}
-            height={"95%"}
-          >
-            <Reanimated.FlatList
-              data={data.shows}
-              keyExtractor={(item) => item.url}
-              renderItem={({ item }) => <ShowResult show={item} />}
-              ItemSeparatorComponent={() => <Box height={20} />}
-              ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
-            />
-          </AnimatedBox>
-        )}
-        {view === "movies" && (
-          <AnimatedBox
-            viewProps={{
-              entering: FadeInRight.springify().stiffness(200).damping(80),
-              exiting: FadeOutRight.springify().stiffness(200).damping(80),
-            }}
-            height={"95%"}
-          >
-            <Reanimated.FlatList
-              data={data.movies}
-              keyExtractor={(item) => item.url}
-              renderItem={({ item }) => <MovieResult movie={item} />}
-              ItemSeparatorComponent={() => <Box height={20} />}
-              ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
-            />
-          </AnimatedBox>
-        )}
-      </Box>
+      <SearchResults
+        data={data}
+        isFetching={isFetching}
+        isLoading={isLoading}
+        isFetched={isFetched}
+        error={error}
+      />
     </Page>
   );
 }
+
+const SearchResults = React.memo(
+  ({
+    data,
+    isFetching,
+    isLoading,
+    isFetched,
+    error,
+  }: {
+    data: {
+      shows: ShowInfo[];
+      movies: MovieInfo[];
+    };
+    isFetching: boolean;
+    isLoading: boolean;
+    isFetched: boolean;
+    error: any;
+  }) => {
+    const [view, setView] = useState<"shows" | "movies">("shows");
+    const params = useLocalSearchParams<{ mode: "movies" | "shows" | "all" }>();
+
+    const theme = useTheme();
+
+    return (
+      <>
+        {params.mode === "all" &&
+          (data.movies.length > 0 || data.shows.length > 0) && (
+            <Box
+              direction="row"
+              pa={5}
+              radius={20}
+              color={theme.surface}
+              mx={"auto"}
+              flexDirection={
+                data && data.movies.length > 0 && data.shows.length === 0
+                  ? "row-reverse"
+                  : "row"
+              }
+            >
+              <ThemedButton
+                label={"Shows"}
+                onPress={() => setView("shows")}
+                viewProps={{ layout: LinearTransition }}
+                size="xxs"
+                type={view === "shows" ? "secondary" : "surface"}
+              />
+              <ThemedButton
+                label={"Movies"}
+                onPress={() => {
+                  setView("movies");
+                }}
+                viewProps={{ layout: LinearTransition }}
+                size="xxs"
+                type={view === "movies" ? "secondary" : "surface"}
+              />
+            </Box>
+          )}
+        {(isLoading || isFetching) && <ThemedActivityIndicator />}
+        {error && (
+          <ThemedErrorCard title="Something went wrong" error={error.message} />
+        )}
+        <Box px={20}>
+          {view === "shows" && (
+            <AnimatedBox
+              viewProps={{
+                entering: FadeInLeft.springify().stiffness(200).damping(80),
+                exiting: FadeOutLeft.springify().stiffness(200).damping(80),
+              }}
+              height={"95%"}
+            >
+              <Reanimated.FlatList
+                data={data.shows}
+                keyExtractor={(item) => item.url}
+                renderItem={({ item }) => <ShowResult show={item} />}
+                ItemSeparatorComponent={() => <Box height={20} />}
+                ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
+              />
+            </AnimatedBox>
+          )}
+          {view === "movies" && (
+            <AnimatedBox
+              viewProps={{
+                entering: FadeInRight.springify().stiffness(200).damping(80),
+                exiting: FadeOutRight.springify().stiffness(200).damping(80),
+              }}
+              height={"95%"}
+            >
+              <Reanimated.FlatList
+                data={data.movies}
+                keyExtractor={(item) => item.url}
+                renderItem={({ item }) => <MovieResult movie={item} />}
+                ItemSeparatorComponent={() => <Box height={20} />}
+                ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
+              />
+            </AnimatedBox>
+          )}
+        </Box>
+      </>
+    );
+  },
+);
