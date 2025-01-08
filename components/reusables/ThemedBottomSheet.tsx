@@ -128,11 +128,10 @@ const ThemedBottomSheet = forwardRef<BottomSheetModal, ThemedBottomSheetProps>(
               <BottomSheetBox
                 gap={10}
                 flexGrow={1}
-                pb={insets.bottom + 60}
+                pb={insets.bottom}
                 {...containerProps}
               >
                 {children}
-                <Box height={insets.bottom} />
               </BottomSheetBox>
             )}
           </>

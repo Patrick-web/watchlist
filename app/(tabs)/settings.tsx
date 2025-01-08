@@ -9,6 +9,7 @@ import { useState } from "react";
 import * as Updates from "expo-updates";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSnapshot } from "valtio";
+import AppHeader from "@/components/AppHeader";
 
 export default function Settings() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
@@ -33,11 +34,7 @@ export default function Settings() {
   }
   return (
     <Page>
-      <Box mb={20}>
-        <ThemedText size={"xl"} fontWeight="bold">
-          SETTINGS
-        </ThemedText>
-      </Box>
+      <AppHeader title="Settings" />
       <Box flex={0.9} justify="space-between">
         <Box gap={20}>
           <ThemedSettingSwitch

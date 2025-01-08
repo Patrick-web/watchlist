@@ -1,11 +1,11 @@
+import AppHeader from "@/components/AppHeader";
+import Empty from "@/components/Empty";
 import EmptySubscriptions from "@/components/EmptySubscriptions";
 import Box from "@/components/reusables/Box";
 import Page from "@/components/reusables/Page";
 import ThemedButton from "@/components/reusables/ThemedButton";
-import ThemedIcon from "@/components/reusables/ThemedIcon";
 import ThemedText from "@/components/reusables/ThemedText";
 import SubscribedShow from "@/components/SubscribedShow";
-import { sWidth } from "@/constants/dimensions.constant";
 import { useTheme } from "@/hooks/useTheme.hook";
 import { PERSISTED_APP_STATE } from "@/valitio.store";
 import { router } from "expo-router";
@@ -20,10 +20,7 @@ export default function Shows() {
   const theme = useTheme();
   return (
     <Page>
-      <Box pb={10} direction="row" justify="space-between" align="center">
-        <ThemedText size={"xl"} fontWeight="bold">
-          Subscribed Shows
-        </ThemedText>
+      <AppHeader title="Subscribed Shows">
         <ThemedButton
           label={"Add"}
           type="surface"
@@ -44,7 +41,7 @@ export default function Shows() {
             });
           }}
         />
-      </Box>
+      </AppHeader>
       <Box flex={1}>
         <Reanimated.FlatList
           data={APP_STATE.subscribedShows}
@@ -62,7 +59,22 @@ export default function Shows() {
             flex: APP_STATE.subscribedShows.length > 0 ? 0 : 1,
           }}
           contentInset={{ bottom: 80 }}
-          ListEmptyComponent={<EmptySubscriptions />}
+          ListEmptyComponent={
+            <Empty message="You haven't subscribed to any shows yet">
+              <ThemedButton
+                label={"Add Some"}
+                icon={{
+                  name: "plus",
+                  position: "append",
+                }}
+                type="primary"
+                size="sm"
+                onPress={() => {
+                  router.push("/search");
+                }}
+              />
+            </Empty>
+          }
         />
       </Box>
     </Page>

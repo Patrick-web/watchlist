@@ -1,7 +1,5 @@
 import Box from "@/components/reusables/Box";
 import Page from "@/components/reusables/Page";
-import ThemedText from "@/components/reusables/ThemedText";
-import { Platform } from "react-native";
 import Reanimated, {
   FadeInLeft,
   FadeInRight,
@@ -9,18 +7,18 @@ import Reanimated, {
   FadeOutRight,
   LinearTransition,
 } from "react-native-reanimated";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PERSISTED_APP_STATE } from "@/valitio.store";
 import { useSnapshot } from "valtio";
 import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import { router } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
-import EmptyWatchlist from "@/components/EmptyWatchlist";
 import ShowCard from "@/components/ShowCard";
 import MovieCard from "@/components/MovieCard";
-import { sWidth } from "@/constants/dimensions.constant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Empty from "@/components/Empty";
+import ThemedText from "@/components/reusables/ThemedText";
+import AppHeader from "@/components/AppHeader";
 
 export default function Watchlist() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
@@ -32,21 +30,9 @@ export default function Watchlist() {
 
   const insets = useSafeAreaInsets();
 
-  // useEffect(() => {
-  //   if (
-  //     APP_STATE.watchList.movies.length > 0 &&
-  //     APP_STATE.watchList.shows.length === 0
-  //   ) {
-  //     setView("movies");
-  //   }
-  // }, []);
-
   return (
     <Page>
-      <Box pb={10} direction="row" justify="space-between" align="center">
-        <ThemedText size={"xl"} fontWeight="bold">
-          Want To Watch
-        </ThemedText>
+      <AppHeader title="Want To Watch">
         <ThemedButton
           label={"Add"}
           type="surface"
@@ -66,7 +52,7 @@ export default function Watchlist() {
             });
           }}
         />
-      </Box>
+      </AppHeader>
 
       <Box
         direction="row"
@@ -104,7 +90,22 @@ export default function Watchlist() {
             keyExtractor={(item) => item.url}
             style={{ flex: 1 }}
             ListEmptyComponent={
-              <EmptyWatchlist title="No shows in your watchlist" />
+              <Empty message="No shows in your watchlist">
+                <ThemedButton
+                  label={"Add Some"}
+                  type="primary"
+                  size="sm"
+                  width={"80%"}
+                  onPress={() => {
+                    router.push({
+                      pathname: "/search",
+                      params: {
+                        mode: "all",
+                      },
+                    });
+                  }}
+                />
+              </Empty>
             }
             renderItem={({ item }) => <ShowCard show={item} />}
             itemLayoutAnimation={LinearTransition}
@@ -122,7 +123,22 @@ export default function Watchlist() {
             keyExtractor={(item) => item.url}
             style={{ flex: 1 }}
             ListEmptyComponent={
-              <EmptyWatchlist title="No movies in your watchlist" />
+              <Empty message="No movies in your watchlist">
+                <ThemedButton
+                  label={"Add Some"}
+                  type="primary"
+                  size="sm"
+                  width={"80%"}
+                  onPress={() => {
+                    router.push({
+                      pathname: "/search",
+                      params: {
+                        mode: "all",
+                      },
+                    });
+                  }}
+                />
+              </Empty>
             }
             contentContainerStyle={{
               flex: 1,

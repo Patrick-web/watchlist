@@ -14,7 +14,7 @@ export default function RootLayout() {
   return (
     <ReactScan
       options={{
-        enabled: true,
+        enabled: false,
         log: true,
         animationWhenFlashing: false,
       }}

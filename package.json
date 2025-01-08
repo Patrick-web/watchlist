@@ -7,6 +7,8 @@
     "prebuild": "npx expo prebuild",
     "prebuild-clean": "npx expo prebuild --clean",
     "android": "npx expo run:android",
+    "preview-android": "npx eas build --platform android --profile preview",
+    "preview-ios": "npx eas build --platform ios --profile preview",
     "ios": "npx expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",

@@ -24,6 +24,7 @@ import ThemedButton from "@/components/reusables/ThemedButton";
 import { Route } from "expo-router/build/Route";
 import { router } from "expo-router";
 import { sWidth } from "@/constants/dimensions.constant";
+import Empty from "@/components/Empty";
 
 export default function HomeScreen() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
@@ -100,9 +101,27 @@ export default function HomeScreen() {
         ItemSeparatorComponent={() => <Box height={40} />}
         ListEmptyComponent={() =>
           APP_STATE.subscribedShows.length === 0 ? (
-            <EmptySubscriptions />
+            <Empty message="You haven't subscribed to any shows yet">
+              <ThemedButton
+                label={"Add Some"}
+                icon={{
+                  name: "plus",
+                  position: "append",
+                }}
+                type="primary"
+                size="sm"
+                onPress={() => {
+                  router.push({
+                    pathname: "/search",
+                    params: {
+                      mode: "all",
+                    },
+                  });
+                }}
+              />
+            </Empty>
           ) : APP_STATE.newEpisodes.length === 0 ? (
-            <EmptyNewEpisodes />
+            <Empty message="No new episodes yet" />
           ) : (
             <></>
           )

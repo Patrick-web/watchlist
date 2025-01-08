@@ -28,6 +28,7 @@ import EmptySearchResults from "@/components/EmptySearchResults";
 import Page from "@/components/reusables/Page";
 import BaseButton from "@/components/reusables/BaseButton";
 import { MovieInfo, ShowInfo } from "@/types";
+import Empty from "@/components/Empty";
 
 export default function Search() {
   const params = useLocalSearchParams<{ mode: "movies" | "shows" | "all" }>();
@@ -55,6 +56,7 @@ export default function Search() {
             : "Search Shows & Movies"
         }
         size={"xxl"}
+        value={query}
         style={{ fontWeight: "bold" }}
         placeholderTextColor={theme.onSurface}
         onChangeText={(text) => {
@@ -76,6 +78,22 @@ export default function Search() {
                 px={10}
                 onPress={() => {
                   router.back();
+                }}
+              />
+            )}
+          </>
+        }
+        // right slot that clears the search query
+        rightSlot={
+          <>
+            {query.length > 0 && (
+              <ThemedButton
+                icon={{ name: "close", source: "Ionicons" }}
+                type="text"
+                size="xs"
+                px={10}
+                onPress={() => {
+                  setQuery("");
                 }}
               />
             )}
@@ -153,40 +171,32 @@ const SearchResults = React.memo(
         {error && (
           <ThemedErrorCard title="Something went wrong" error={error.message} />
         )}
-        <Box px={20}>
+        <Box px={20} flex={1}>
           {view === "shows" && (
-            <AnimatedBox
-              viewProps={{
-                entering: FadeInLeft.springify().stiffness(200).damping(80),
-                exiting: FadeOutLeft.springify().stiffness(200).damping(80),
-              }}
-              height={"95%"}
-            >
-              <Reanimated.FlatList
-                data={data.shows}
-                keyExtractor={(item) => item.url}
-                renderItem={({ item }) => <ShowResult show={item} />}
-                ItemSeparatorComponent={() => <Box height={20} />}
-                ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
-              />
-            </AnimatedBox>
+            <Reanimated.FlatList
+              data={data.shows}
+              keyExtractor={(item) => item.url}
+              renderItem={({ item }) => <ShowResult show={item} />}
+              ItemSeparatorComponent={() => <Box height={20} />}
+              ListEmptyComponent={
+                isFetched ? <Empty message="No shows found" /> : <></>
+              }
+              entering={FadeInLeft.springify().stiffness(200).damping(80)}
+              exiting={FadeOutLeft.springify().stiffness(200).damping(80)}
+            />
           )}
           {view === "movies" && (
-            <AnimatedBox
-              viewProps={{
-                entering: FadeInRight.springify().stiffness(200).damping(80),
-                exiting: FadeOutRight.springify().stiffness(200).damping(80),
-              }}
-              height={"95%"}
-            >
-              <Reanimated.FlatList
-                data={data.movies}
-                keyExtractor={(item) => item.url}
-                renderItem={({ item }) => <MovieResult movie={item} />}
-                ItemSeparatorComponent={() => <Box height={20} />}
-                ListEmptyComponent={isFetched ? <EmptySearchResults /> : <></>}
-              />
-            </AnimatedBox>
+            <Reanimated.FlatList
+              data={data.movies}
+              keyExtractor={(item) => item.url}
+              renderItem={({ item }) => <MovieResult movie={item} />}
+              ItemSeparatorComponent={() => <Box height={20} />}
+              ListEmptyComponent={
+                isFetched ? <Empty message="No movies found" /> : <></>
+              }
+              entering={FadeInRight.springify().stiffness(200).damping(80)}
+              exiting={FadeOutRight.springify().stiffness(200).damping(80)}
+            />
           )}
         </Box>
       </>
