@@ -1,6 +1,5 @@
 import AppHeader from "@/components/AppHeader";
 import Empty from "@/components/Empty";
-import EmptySubscriptions from "@/components/EmptySubscriptions";
 import Box from "@/components/reusables/Box";
 import Page from "@/components/reusables/Page";
 import ThemedButton from "@/components/reusables/ThemedButton";
@@ -29,9 +28,8 @@ export default function Shows() {
             source: "Ionicons",
             position: "append",
           }}
-          width={140}
+          width={100}
           size="sm"
-          flex={Platform.OS === "ios" ? 0.7 : 0.7}
           onPress={() => {
             router.push({
               pathname: "/search",
@@ -58,7 +56,6 @@ export default function Shows() {
           contentContainerStyle={{
             flex: APP_STATE.subscribedShows.length > 0 ? 0 : 1,
           }}
-          contentInset={{ bottom: 80 }}
           ListEmptyComponent={
             <Empty message="You haven't subscribed to any shows yet">
               <ThemedButton
@@ -75,6 +72,7 @@ export default function Shows() {
               />
             </Empty>
           }
+          contentInset={{ bottom: insets.bottom }}
         />
       </Box>
     </Page>

@@ -128,7 +128,7 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
           name: "alarm-bell",
           source: "MaterialCommunityIcons",
         }}
-        containerProps={{ px: 0, pt: 20, gap: 20, radius: 60 }}
+        containerProps={{ pb: 80, gap: 20 }}
       >
         <Box gap={20} px={20}>
           <Show show={show} />
@@ -149,6 +149,7 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
         }}
         containerProps={{
           pa: 20,
+          pb: 80,
           radius: 60,
           gap: 20,
         }}

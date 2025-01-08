@@ -1,5 +1,5 @@
 import MovieResult from "@/components/MovieResult";
-import Box, { AnimatedBox } from "@/components/reusables/Box";
+import Box from "@/components/reusables/Box";
 import ThemedActivityIndicator from "@/components/reusables/ThemedActivityIndicator";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import ThemedErrorCard from "@/components/reusables/ThemedErrorCard";
@@ -9,7 +9,7 @@ import useDebounce from "@/hooks/useDebounce.hook";
 import useSearch from "@/hooks/useSearchShows.hook";
 import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Platform } from "react-native";
 import {
   FadeInLeft,
@@ -18,17 +18,13 @@ import {
   FadeOutRight,
   LinearTransition,
 } from "react-native-reanimated";
-import { LegendList } from "@legendapp/list";
 import Reanimated from "react-native-reanimated";
-import { sHeight } from "@/constants/dimensions.constant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { changeCase } from "@/utils/text.utils";
-import { LinearGradient } from "expo-linear-gradient";
-import EmptySearchResults from "@/components/EmptySearchResults";
 import Page from "@/components/reusables/Page";
-import BaseButton from "@/components/reusables/BaseButton";
 import { MovieInfo, ShowInfo } from "@/types";
 import Empty from "@/components/Empty";
+import { sHeight } from "@/constants/dimensions.constant";
 
 export default function Search() {
   const params = useLocalSearchParams<{ mode: "movies" | "shows" | "all" }>();
@@ -48,7 +44,7 @@ export default function Search() {
   const yInsets = insets.bottom + insets.top;
 
   return (
-    <Page px={0}>
+    <Page px={0} height={sHeight - yInsets}>
       <ThemedTextInput
         placeholder={
           params.mode != "all"
@@ -132,7 +128,7 @@ const SearchResults = React.memo(
     const params = useLocalSearchParams<{ mode: "movies" | "shows" | "all" }>();
 
     const theme = useTheme();
-
+    const insets = useSafeAreaInsets();
     return (
       <>
         {params.mode === "all" &&
@@ -183,6 +179,10 @@ const SearchResults = React.memo(
               }
               entering={FadeInLeft.springify().stiffness(200).damping(80)}
               exiting={FadeOutLeft.springify().stiffness(200).damping(80)}
+              contentContainerStyle={{
+                flex: data.shows.length > 0 ? 0 : 1,
+              }}
+              contentInset={{ bottom: insets.bottom }}
             />
           )}
           {view === "movies" && (
@@ -196,6 +196,10 @@ const SearchResults = React.memo(
               }
               entering={FadeInRight.springify().stiffness(200).damping(80)}
               exiting={FadeOutRight.springify().stiffness(200).damping(80)}
+              contentContainerStyle={{
+                flex: data.shows.length > 0 ? 0 : 1,
+              }}
+              contentInset={{ bottom: insets.bottom }}
             />
           )}
         </Box>

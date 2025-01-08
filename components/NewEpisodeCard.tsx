@@ -167,7 +167,7 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
           name: "alarm-bell",
           source: "MaterialCommunityIcons",
         }}
-        containerProps={{ px: 0, pt: 20, gap: 20, radius: 60 }}
+        containerProps={{ px: 0, pt: 20, pb: 80, gap: 20, radius: 60 }}
       >
         <Box gap={20} px={20}>
           <Episode episode={episode} />
@@ -191,6 +191,7 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
         }}
         containerProps={{
           pa: 20,
+          pb: 80,
           radius: 60,
           gap: 20,
         }}

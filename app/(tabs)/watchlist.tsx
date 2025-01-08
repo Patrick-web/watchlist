@@ -42,7 +42,7 @@ export default function Watchlist() {
             position: "append",
           }}
           size="sm"
-          width={140}
+          width={100}
           onPress={() => {
             router.push({
               pathname: "/search",
@@ -68,6 +68,7 @@ export default function Watchlist() {
           type={"text"}
           labelProps={{
             color: view === "shows" ? theme.text : theme.onSurface,
+            fontWeight: view === "shows" ? "bold" : "normal",
           }}
         />
         <ThemedButton
@@ -79,6 +80,7 @@ export default function Watchlist() {
           type={"text"}
           labelProps={{
             color: view === "movies" ? theme.text : theme.onSurface,
+            fontWeight: view === "movies" ? "bold" : "normal",
           }}
         />
       </Box>
@@ -88,7 +90,6 @@ export default function Watchlist() {
           <Reanimated.FlatList
             data={APP_STATE.watchList.shows}
             keyExtractor={(item) => item.url}
-            style={{ flex: 1 }}
             ListEmptyComponent={
               <Empty message="No shows in your watchlist">
                 <ThemedButton
@@ -113,15 +114,16 @@ export default function Watchlist() {
             entering={FadeInLeft.springify().stiffness(200).damping(80)}
             exiting={FadeOutLeft.springify().stiffness(200).damping(80)}
             contentContainerStyle={{
-              flex: 1,
+              flex: APP_STATE.watchList.shows.length > 0 ? 0 : 1,
             }}
+            contentInset={{ bottom: insets.bottom }}
           />
         )}
         {view === "movies" && (
           <Reanimated.FlatList
             data={APP_STATE.watchList.movies}
             keyExtractor={(item) => item.url}
-            style={{ flex: 1 }}
+            style={{ height: "70%", flex: 0.6 }}
             ListEmptyComponent={
               <Empty message="No movies in your watchlist">
                 <ThemedButton
@@ -141,13 +143,14 @@ export default function Watchlist() {
               </Empty>
             }
             contentContainerStyle={{
-              flex: 1,
+              flex: APP_STATE.watchList.movies.length > 0 ? 0 : 1,
             }}
             renderItem={({ item }) => <MovieCard movie={item} />}
             itemLayoutAnimation={LinearTransition}
             ItemSeparatorComponent={() => <Box height={40} />}
             entering={FadeInRight.springify().stiffness(200).damping(80)}
             exiting={FadeOutRight.springify().stiffness(200).damping(80)}
+            contentInset={{ bottom: insets.bottom }}
           />
         )}
       </Box>

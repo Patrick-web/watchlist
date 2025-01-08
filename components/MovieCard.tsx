@@ -132,7 +132,7 @@ export default function MovieCard({ movie }: { movie: MovieInfo }) {
           name: "alarm-bell",
           source: "MaterialCommunityIcons",
         }}
-        containerProps={{ px: 0, pt: 20, gap: 20, radius: 60 }}
+        containerProps={{ px: 0, pt: 20, gap: 20, radius: 60, pb: 80 }}
       >
         <Box gap={20} px={20}>
           <Movie movie={movie} />
@@ -152,23 +152,25 @@ export default function MovieCard({ movie }: { movie: MovieInfo }) {
           source: "MaterialCommunityIcons",
         }}
         containerProps={{
-          pa: 20,
           radius: 60,
-          gap: 20,
+          px: 20,
+          pb: 80,
         }}
       >
-        <Movie movie={movie} />
-        <Box direction="row" gap={20}>
-          <ThemedButton
-            label={"Not Yet"}
-            type="surface"
-            onPress={() => {
-              setShowWatchedConfirmation(false);
-              swipeRef.current?.close();
-            }}
-            flex={1}
-          />
-          <ThemedButton label={"Yes"} flex={1} onPress={onWatched} />
+        <Box gap={20}>
+          <Movie movie={movie} />
+          <Box direction="row" gap={20}>
+            <ThemedButton
+              label={"Not Yet"}
+              type="surface"
+              onPress={() => {
+                setShowWatchedConfirmation(false);
+                swipeRef.current?.close();
+              }}
+              flex={1}
+            />
+            <ThemedButton label={"Yes"} flex={1} onPress={onWatched} />
+          </Box>
         </Box>
       </ThemedBottomSheet>
     </>

@@ -15,6 +15,7 @@ import useBack from "@/hooks/useBack.hook";
 import { useTheme } from "@/hooks/useTheme.hook";
 import { BottomSheetScrollViewProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetScrollable/types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Platform } from "react-native";
 
 const renderBackdrop = (props: BottomSheetBackdropProps) => (
   <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />
@@ -128,7 +129,7 @@ const ThemedBottomSheet = forwardRef<BottomSheetModal, ThemedBottomSheetProps>(
               <BottomSheetBox
                 gap={10}
                 flexGrow={1}
-                pb={insets.bottom}
+                pb={Platform.OS === "ios" ? insets.bottom : insets.bottom + 20}
                 {...containerProps}
               >
                 {children}

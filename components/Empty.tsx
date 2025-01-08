@@ -21,7 +21,7 @@ export default function Empty({ message, children }: EmptyProps) {
       my={"auto"}
     >
       <Box align="center" gap={5}>
-        <ThemedIcon name="wind" source="Fontisto" size={"xxxl"} />
+        <ThemedIcon name="wind" source="Fontisto" />
         <ThemedText fontWeight="light">{message}</ThemedText>
       </Box>
       {children}

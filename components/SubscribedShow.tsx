@@ -47,10 +47,6 @@ export default function SubscribedShow({ show }: { show: ShowInfo }) {
         close={() => {
           setShowModal(false);
         }}
-        containerProps={{
-          paddingBottom:
-            Platform.OS === "ios" ? insets.bottom : insets.bottom + 20,
-        }}
       >
         <Box justify="center" align="center" gap={5}>
           <Image

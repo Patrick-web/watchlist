@@ -121,7 +121,7 @@ const ThemedButton = (props: ThemedButtonProps) => {
       return { background: "transparent", border: theme.primary };
     }
     if (type === "surface") {
-      return { background: theme.surface, border: theme.border };
+      return { background: theme.surface, border: "transparent" };
     }
     if (type === "secondary-outlined") {
       return { background: "transparent", border: theme.text };

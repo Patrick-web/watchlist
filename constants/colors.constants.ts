@@ -72,7 +72,7 @@ export const lightTheme: Theme = {
     card: "rgb(18, 18, 18)",
     text: "#343A40",
     lightText: "rgba(0,0,0,0.7)",
-    border: "rgba(0, 0, 0,0.05)",
+    border: "rgba(0, 0, 0,0.2)",
     notification: "rgb(255, 69, 58)",
     stroke: "rgba(0, 0, 0,0.2)",
     danger: "rgb(255, 69, 58)",
