@@ -1,23 +1,23 @@
 {
   "expo": {
-    "name": "Watchlist",
-    "slug": "Watchlist",
+    "name": "Sync",
+    "slug": "Sync",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "watchlist",
+    "scheme": "sync",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "xyz.justpatrick.watchlist"
+      "bundleIdentifier": "xyz.justpatrick.sync"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FF0051"
       },
-      "package": "xyz.justpatrick.watchlist"
+      "package": "xyz.justpatrick.sync"
     },
     "web": {
       "bundler": "metro",
@@ -48,15 +48,19 @@
       "typedRoutes": true
     },
     "extra": {
+      "router": {
+        "origin": false
+      },
       "eas": {
-        "projectId": "a043474c-236c-47db-9e0c-d9163d40ab01"
+        "projectId": "c616e5ba-f5e6-4e16-9f12-2c748a4b378f"
       }
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
+    "owner": "pntx",
     "updates": {
-      "url": "https://u.expo.dev/a043474c-236c-47db-9e0c-d9163d40ab01"
+      "url": "https://u.expo.dev/c616e5ba-f5e6-4e16-9f12-2c748a4b378f"
     }
   }
 }

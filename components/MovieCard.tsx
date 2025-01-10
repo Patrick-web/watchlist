@@ -22,6 +22,7 @@ import ThemedButton from "./reusables/ThemedButton";
 import ThemedIcon from "./reusables/ThemedIcon";
 import ThemedText from "./reusables/ThemedText";
 import Movie from "./Movie";
+import SwipeAction from "./SwipeAction";
 
 const ACTION_WIDTH = sWidth - 40;
 const POSTER_WIDTH = 100;
@@ -65,14 +66,29 @@ export default function MovieCard({ movie }: { movie: MovieInfo }) {
         ref={swipeRef}
         friction={1}
         rightThreshold={40}
-        renderRightActions={(prog, drag, swipeable) =>
-          RightAction({ drag, swipeable, movie })
-        }
-        renderLeftActions={(prog, drag, swipeable) =>
-          LeftAction({ drag, swipeable, movie })
-        }
+        renderRightActions={(prog, drag, swipeable) => (
+          <SwipeAction
+            drag={drag}
+            direction="right"
+            label="Remind Me"
+            icon={{
+              name: "alarm-bell",
+              source: "MaterialCommunityIcons",
+            }}
+          />
+        )}
+        renderLeftActions={(prog, drag, swipeable) => (
+          <SwipeAction
+            drag={drag}
+            direction="left"
+            label="Watched"
+            icon={{
+              name: "movie-check",
+              source: "MaterialCommunityIcons",
+            }}
+          />
+        )}
         onSwipeableWillOpen={(direction) => {
-          console.log({ direction });
           if (direction === "right") {
             setShowReminderForm(true);
           }
@@ -106,6 +122,7 @@ export default function MovieCard({ movie }: { movie: MovieInfo }) {
             size="sm"
             py={10}
             onPress={() => {
+              setShowActions(false);
               setShowWatchedConfirmation(true);
             }}
           />
@@ -116,30 +133,24 @@ export default function MovieCard({ movie }: { movie: MovieInfo }) {
             direction="column"
             size="sm"
             py={10}
-            onPress={() => setShowReminderForm(true)}
+            onPress={() => {
+              setShowActions(false);
+              setShowReminderForm(true);
+            }}
           />
         </Box>
       </ThemedBottomSheet>
 
-      <ThemedBottomSheet
-        title="Remind me to watch"
+      <ReminderForm
+        movie={movie}
+        close={() => setShowReminderForm(false)}
         visible={showReminderForm}
-        close={() => {
-          setShowReminderForm(false);
-          swipeRef.current?.close();
-        }}
-        icon={{
-          name: "alarm-bell",
-          source: "MaterialCommunityIcons",
-        }}
-        containerProps={{ px: 0, pt: 20, gap: 20, radius: 60, pb: 80 }}
       >
         <Box gap={20} px={20}>
           <Movie movie={movie} />
           <Box color={"border"} block height={StyleSheet.hairlineWidth} />
         </Box>
-        <ReminderForm movie={movie} close={() => setShowReminderForm(false)} />
-      </ThemedBottomSheet>
+      </ReminderForm>
       <ThemedBottomSheet
         title="You already watched"
         visible={showWatchedConfirmation}
@@ -174,107 +185,5 @@ export default function MovieCard({ movie }: { movie: MovieInfo }) {
         </Box>
       </ThemedBottomSheet>
     </>
-  );
-}
-
-function RightAction({
-  drag,
-  movie,
-  swipeable,
-}: {
-  drag: SharedValue<number>;
-  movie: MovieInfo;
-  swipeable: SwipeableMethods;
-}) {
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: drag.value + ACTION_WIDTH }],
-    };
-  });
-
-  const [showReminderForm, setShowReminderForm] = useState(false);
-  const insets = useSafeAreaInsets();
-  const theme = useTheme();
-  return (
-    <Reanimated.View
-      style={[
-        styleAnimation,
-        {
-          width: ACTION_WIDTH,
-          justifyContent: "center",
-          backgroundColor: theme.text,
-          alignItems: "center",
-          gap: 5,
-        },
-      ]}
-    >
-      <ThemedIcon
-        name="alarm-bell"
-        color={"background"}
-        source="MaterialCommunityIcons"
-      />
-      <ThemedText fontWeight="bold" textAlign="center" color={"background"}>
-        Remind Me
-      </ThemedText>
-      <ThemedBottomSheet
-        title="Remind Me"
-        visible={showReminderForm}
-        close={() => {
-          setShowReminderForm(false);
-          swipeable.close();
-        }}
-        icon={{
-          name: "alarm-bell",
-          source: "MaterialCommunityIcons",
-        }}
-        containerProps={{
-          pt: 10,
-        }}
-      >
-        <ReminderForm movie={movie} close={() => setShowReminderForm(false)} />
-      </ThemedBottomSheet>
-    </Reanimated.View>
-  );
-}
-
-function LeftAction({
-  drag,
-  movie,
-  swipeable,
-}: {
-  drag: SharedValue<number>;
-  movie: MovieInfo;
-  swipeable: SwipeableMethods;
-}) {
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: drag.value - ACTION_WIDTH }],
-    };
-  });
-
-  const theme = useTheme();
-
-  return (
-    <Reanimated.View
-      style={[
-        styleAnimation,
-        {
-          width: ACTION_WIDTH,
-          justifyContent: "center",
-          backgroundColor: theme.text,
-          alignItems: "center",
-          gap: 5,
-        },
-      ]}
-    >
-      <ThemedIcon
-        name="movie-check"
-        color={"background"}
-        source="MaterialCommunityIcons"
-      />
-      <ThemedText fontWeight="bold" textAlign="center" color={"background"}>
-        Watched
-      </ThemedText>
-    </Reanimated.View>
   );
 }

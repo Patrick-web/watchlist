@@ -25,9 +25,9 @@ async function checkNewEpisode(currentShow: ShowInfo) {
 
   const html = await resp.text();
 
-  const foundShows = extractSearchResults(html);
+  const results = extractSearchResults(html);
 
-  const updatedShow = foundShows.find(
+  const updatedShow = results.shows.find(
     (show) => show.title === currentShow.title,
   );
   if (updatedShow) {
@@ -62,6 +62,7 @@ export async function scheduleNotification(
 
 export async function findNewEpisodes() {
   console.log("finding New Episodes...");
+  console.log({ shows: PERSISTED_APP_STATE.subscribedShows });
   for (const show of PERSISTED_APP_STATE.subscribedShows) {
     await checkNewEpisode(show);
   }

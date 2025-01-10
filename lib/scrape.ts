@@ -1,8 +1,6 @@
 import { MovieInfo, ShowInfo } from "@/types";
 
 export function extractSearchResults(html: string) {
-  console.log({ html });
-
   const aTagRegex = /<a[^>]*>.*?<\/a>/gs;
   const showDetailsRegex =
     /href="([^"]+)".*src="([^"]+)".*<h3 class="film-name">(.*?)<\/h3>.*?(SS \d+).*(EPS \d+)/gs;
@@ -15,7 +13,6 @@ export function extractSearchResults(html: string) {
   let movieMatches: string[] = [];
 
   for (const match of resultsAsHtml) {
-    console.log({ match: match[0] });
     if (match[0].includes("/tv/")) {
       tvShowMatches.push(match[0]);
     }
@@ -23,8 +20,6 @@ export function extractSearchResults(html: string) {
       movieMatches.push(match[0]);
     }
   }
-
-  console.log({ movieMatches: movieMatches.length });
 
   const shows: ShowInfo[] = [];
 
@@ -57,8 +52,6 @@ export function extractSearchResults(html: string) {
       movies.push(movieInfo);
     }
   });
-
-  console.log({ shows, movies });
 
   return { shows, movies };
 }

@@ -68,7 +68,6 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
           LeftAction({ drag, swipeable, show })
         }
         onSwipeableWillOpen={(direction) => {
-          console.log({ direction });
           if (direction === "right") {
             setShowReminderForm(true);
           }
@@ -117,25 +116,19 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
         </Box>
       </ThemedBottomSheet>
 
-      <ThemedBottomSheet
-        title="Remind me to watch"
+      <ReminderForm
+        show={show}
         visible={showReminderForm}
         close={() => {
           setShowReminderForm(false);
           swipeRef.current?.close();
         }}
-        icon={{
-          name: "alarm-bell",
-          source: "MaterialCommunityIcons",
-        }}
-        containerProps={{ pb: 80, gap: 20 }}
       >
         <Box gap={20} px={20}>
           <Show show={show} />
           <Box color={"border"} block height={StyleSheet.hairlineWidth} />
         </Box>
-        <ReminderForm show={show} close={() => setShowReminderForm(false)} />
-      </ThemedBottomSheet>
+      </ReminderForm>
       <ThemedBottomSheet
         title="You already watched"
         visible={showWatchedConfirmation}
@@ -211,23 +204,6 @@ function RightAction({
       <ThemedText fontWeight="bold" textAlign="center" color={"background"}>
         Remind Me
       </ThemedText>
-      <ThemedBottomSheet
-        title="Remind Me"
-        visible={showReminderForm}
-        close={() => {
-          setShowReminderForm(false);
-          swipeable.close();
-        }}
-        icon={{
-          name: "alarm-bell",
-          source: "MaterialCommunityIcons",
-        }}
-        containerProps={{
-          pt: 10,
-        }}
-      >
-        <ReminderForm show={show} close={() => setShowReminderForm(false)} />
-      </ThemedBottomSheet>
     </Reanimated.View>
   );
 }

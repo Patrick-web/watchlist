@@ -36,7 +36,6 @@ export function ThemedDatePicker({
               mode={"date"}
               display={"default"}
               onChange={(event, selectedDate) => {
-                console.log("Selected Date", selectedDate);
                 if (selectedDate) {
                   setDate(selectedDate);
                 }
@@ -61,7 +60,6 @@ export function ThemedDatePicker({
             mode={"date"}
             display={"inline"}
             onChange={(event, selectedDate) => {
-              console.log("Selected Date", selectedDate);
               if (selectedDate) {
                 setDate(selectedDate);
               }

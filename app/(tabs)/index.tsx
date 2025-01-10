@@ -2,33 +2,24 @@ import NewEpisodeCard from "@/components/NewEpisodeCard";
 import Box, { AnimatedBox } from "@/components/reusables/Box";
 import Page from "@/components/reusables/Page";
 import ThemedText from "@/components/reusables/ThemedText";
-import { Platform, RefreshControl } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import Reanimated, {
   FadeInUp,
   FadeOutUp,
   LinearTransition,
 } from "react-native-reanimated";
-import EmptySubscriptions from "@/components/EmptySubscriptions";
-import EmptyNewEpisodes from "@/components/EmptyNewEpisodes";
 import { useEffect } from "react";
 import { PERSISTED_APP_STATE } from "@/valitio.store";
 import { useSnapshot } from "valtio";
 import { findNewEpisodes } from "@/lib/refresh";
 import { registerBackgroundFetchAsync } from "@/lib/backgroundTasks";
-import { SafeAreaView } from "react-native-safe-area-context";
-import ThemedTextInput from "@/components/reusables/ThemedTextInput";
 import { useTheme } from "@/hooks/useTheme.hook";
-import ThemedIcon from "@/components/reusables/ThemedIcon";
 import ThemedButton from "@/components/reusables/ThemedButton";
-import { Route } from "expo-router/build/Route";
 import { router } from "expo-router";
-import { sWidth } from "@/constants/dimensions.constant";
 import Empty from "@/components/Empty";
 
 export default function HomeScreen() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
-
   const { refetch, isLoading, isFetching } = useQuery({
     queryKey: ["refresh", new Date().getDay()],
     queryFn: async () => {
@@ -36,11 +27,13 @@ export default function HomeScreen() {
       return true;
     },
     enabled: APP_STATE.subscribedShows.length > 0 ? true : false,
+    retry: false,
   });
 
   const theme = useTheme();
 
   useEffect(() => {
+    // decreaseEpisode();
     registerBackgroundFetchAsync();
   }, []);
   return (
@@ -104,10 +97,7 @@ export default function HomeScreen() {
             <Empty message="You haven't subscribed to any shows yet">
               <ThemedButton
                 label={"Add Some"}
-                icon={{
-                  name: "plus",
-                  position: "append",
-                }}
+                width={"80%"}
                 type="primary"
                 size="sm"
                 onPress={() => {

@@ -12,7 +12,7 @@ import { unsubscribeShow } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import { ShowInfo } from "@/types";
 
-const POSTER_WIDTH = 200;
+const POSTER_WIDTH = sWidth / 2 - 40;
 
 export default function SubscribedShow({ show }: { show: ShowInfo }) {
   function unSubscribe() {
@@ -36,8 +36,8 @@ export default function SubscribedShow({ show }: { show: ShowInfo }) {
         <Image
           source={show.poster}
           style={{
-            width: sWidth / 2 - 30,
-            height: 250,
+            width: POSTER_WIDTH,
+            height: POSTER_WIDTH * POSTER_RATIO,
             borderRadius: sWidth / 2,
           }}
         />

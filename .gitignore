@@ -39,3 +39,8 @@ app-example
 
 android
 ios
+
+# ignore build files
+*.apk
+*.aab
+*ipa

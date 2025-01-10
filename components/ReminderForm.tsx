@@ -1,7 +1,7 @@
 import { cleanTitle } from "@/lib/scrape";
 import Box, { AnimatedBox } from "./reusables/Box";
 import ThemedButton from "./reusables/ThemedButton";
-import { useEffect, useState } from "react";
+import { Children, ReactNode, useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   requestNotificationPermission,
@@ -16,6 +16,7 @@ import { ThemedDatePicker } from "./reusables/ThemedDatePicker";
 import { notificationAsync, NotificationFeedbackType } from "expo-haptics";
 import { MovieInfo, NewEpisode, ShowInfo } from "@/types";
 import { onEpisodeReminderSet } from "@/valitio.store";
+import ThemedBottomSheet from "./reusables/ThemedBottomSheet";
 
 const hours = [
   "1:00",
@@ -64,15 +65,38 @@ function generateDateLabels(): Day[] {
 }
 
 type ReminderFormProps =
-  | { movie: MovieInfo; episode?: never; show?: never; close: () => void }
-  | { movie?: never; episode: NewEpisode; show?: never; close: () => void }
-  | { movie?: never; episode?: never; show: ShowInfo; close: () => void };
+  | {
+      movie: MovieInfo;
+      episode?: never;
+      show?: never;
+      close: () => void;
+      visible: boolean;
+      children?: ReactNode;
+    }
+  | {
+      movie?: never;
+      episode: NewEpisode;
+      show?: never;
+      close: () => void;
+      visible: boolean;
+      children?: ReactNode;
+    }
+  | {
+      movie?: never;
+      episode?: never;
+      show: ShowInfo;
+      close: () => void;
+      visible: boolean;
+      children?: ReactNode;
+    };
 
 export default function ReminderForm({
   episode,
   movie,
   show,
   close,
+  visible,
+  children,
 }: ReminderFormProps) {
   const insets = useSafeAreaInsets();
 
@@ -196,133 +220,147 @@ export default function ReminderForm({
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   return (
-    <Box block px={15} gap={20}>
-      <Box
-        direction="row"
-        block
-        justify="space-between"
-        align="stretch"
-        wrap="wrap"
-        rowGap={15}
-      >
-        {days.map((day) => (
+    <ThemedBottomSheet
+      title="Remind me to watch"
+      visible={visible}
+      close={close}
+      icon={{
+        name: "alarm-bell",
+        source: "MaterialCommunityIcons",
+      }}
+      containerProps={{ pb: 80, gap: 20, radius: 60 }}
+    >
+      {children}
+      <Box block px={15} gap={20}>
+        <Box
+          direction="row"
+          block
+          justify="space-between"
+          align="stretch"
+          wrap="wrap"
+          rowGap={15}
+        >
+          {days.map((day) => (
+            <Box
+              width={
+                selectedDay?.label === day.label
+                  ? "100%"
+                  : selectedDay || customDate
+                    ? "0%"
+                    : "48%"
+              }
+              overflow="hidden"
+              key={day.label}
+            >
+              <ThemedButton
+                label={day.label}
+                width={"100%"}
+                height={80}
+                type={
+                  selectedDay?.label === day.label ? "secondary" : "surface"
+                }
+                labelProps={{
+                  fontWeight:
+                    selectedDay?.label === day.label ? "bold" : "normal",
+
+                  size: selectedDay?.label === day.label ? "xl" : "md",
+                }}
+                onPress={() => {
+                  if (selectedDay?.label === day.label) {
+                    setSelectedDay(null);
+                  } else {
+                    setSelectedDay(day);
+                  }
+                }}
+              />
+            </Box>
+          ))}
+
           <Box
-            width={
-              selectedDay?.label === day.label
-                ? "100%"
-                : selectedDay || customDate
-                  ? "0%"
-                  : "48%"
-            }
+            width={customDate ? "100%" : selectedDay ? "0%" : "100%"}
             overflow="hidden"
-            key={day.label}
           >
             <ThemedButton
-              label={day.label}
+              icon={customDate ? undefined : { name: "calendar" }}
+              label={
+                customDate
+                  ? selectedDate?.toLocaleDateString("en-US", {
+                      day: "numeric",
+                      month: "short",
+                      weekday: "long",
+                    })
+                  : "Let me pick"
+              }
               width={"100%"}
               height={80}
-              type={selectedDay?.label === day.label ? "secondary" : "surface"}
-              labelProps={{
-                fontWeight:
-                  selectedDay?.label === day.label ? "bold" : "normal",
-
-                size: selectedDay?.label === day.label ? "xl" : "md",
-              }}
+              direction="column"
+              justify="center"
+              type={customDate ? "secondary" : "surface"}
               onPress={() => {
-                if (selectedDay?.label === day.label) {
-                  setSelectedDay(null);
-                } else {
-                  setSelectedDay(day);
-                }
+                setShowDatePicker(true);
+              }}
+              pressabelProps={{
+                onLongPress: () => {
+                  setCustomDate(null);
+                },
               }}
             />
+            <ThemedDatePicker
+              showPicker={showDatePicker}
+              onClosePicker={() => {
+                setShowDatePicker(false);
+              }}
+              onPickDate={(date) => {
+                setCustomDate(date);
+              }}
+              minDate={new Date()}
+            />
           </Box>
-        ))}
-
-        <Box
-          width={customDate ? "100%" : selectedDay ? "0%" : "100%"}
-          overflow="hidden"
-        >
-          <ThemedButton
-            icon={customDate ? undefined : { name: "calendar" }}
-            label={
-              customDate
-                ? selectedDate?.toLocaleDateString("en-US", {
-                    day: "numeric",
-                    month: "short",
-                    weekday: "long",
-                  })
-                : "Let me pick"
-            }
-            width={"100%"}
-            height={80}
-            direction="column"
-            justify="center"
-            type={customDate ? "secondary" : "surface"}
-            onPress={() => {
-              setShowDatePicker(true);
-            }}
-            pressabelProps={{
-              onLongPress: () => {
-                setCustomDate(null);
-              },
-            }}
-          />
-          <ThemedDatePicker
-            showPicker={showDatePicker}
-            onClosePicker={() => {
-              setShowDatePicker(false);
-            }}
-            onPickDate={(date) => {
-              setCustomDate(date);
-            }}
-            minDate={new Date()}
-          />
         </Box>
+        {selectedDate && (
+          <Box direction="row-reverse" align="center" gap={20}>
+            <Box height={"100%"} gap={10} py={20}>
+              {timeOfDays.map((td) => (
+                <ThemedButton
+                  label={td}
+                  flex={1}
+                  type={td === timeOfDay ? "secondary" : "surface"}
+                  onPress={() => {
+                    setTime({ period: td });
+                  }}
+                  size="xs"
+                  key={td}
+                />
+              ))}
+            </Box>
+            <Box
+              direction="row"
+              wrap="wrap"
+              justify="space-between"
+              flex={1}
+              rowGap={10}
+            >
+              {hours.map((hour) => (
+                <ThemedButton
+                  type={selectedHour === hour ? "secondary" : "surface"}
+                  label={hour}
+                  width={"30%"}
+                  size="sm"
+                  key={hour}
+                  onPress={() => {
+                    setTime({ hour });
+                  }}
+                />
+              ))}
+            </Box>
+          </Box>
+        )}
+        {selectedDate && selectedHour && (
+          <AnimatedBox block viewProps={{ entering: FadeInUp }}>
+            <ThemedButton label={"Done"} onPress={createReminder} />
+          </AnimatedBox>
+        )}
       </Box>
-      {selectedDate && (
-        <Box direction="row-reverse" align="center" gap={20}>
-          <Box height={"100%"} gap={10} py={20}>
-            {timeOfDays.map((td) => (
-              <ThemedButton
-                label={td}
-                flex={1}
-                type={td === timeOfDay ? "secondary" : "surface"}
-                onPress={() => {
-                  setTime({ period: td });
-                }}
-                size="xs"
-                key={td}
-              />
-            ))}
-          </Box>
-          <Box
-            direction="row"
-            wrap="wrap"
-            justify="space-between"
-            flex={1}
-            rowGap={10}
-          >
-            {hours.map((hour) => (
-              <ThemedButton
-                type={selectedHour === hour ? "secondary" : "surface"}
-                label={hour}
-                width={"30%"}
-                size="sm"
-                key={hour}
-                onPress={() => {
-                  setTime({ hour });
-                }}
-              />
-            ))}
-          </Box>
-        </Box>
-      )}
-      {selectedDate && selectedHour && (
-        <AnimatedBox block viewProps={{ entering: FadeInUp }}>
-          <ThemedButton label={"Done"} onPress={createReminder} />
-        </AnimatedBox>
-      )}
-    </Box>
+    </ThemedBottomSheet>
   );
 }

@@ -24,6 +24,7 @@ import Haptics from "expo-haptics";
 import { NewEpisode } from "@/types";
 import { POSTER_RATIO, sWidth } from "@/constants/dimensions.constant";
 import { StyleSheet } from "react-native";
+import SwipeAction from "./SwipeAction";
 
 const ACTION_WIDTH = sWidth - 40;
 const POSTER_WIDTH = 100;
@@ -100,14 +101,29 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
         ref={swipeRef}
         friction={1}
         rightThreshold={40}
-        renderRightActions={(prog, drag, swipeable) =>
-          RightAction({ drag, swipeable, episode })
-        }
-        renderLeftActions={(prog, drag, swipeable) =>
-          LeftAction({ drag, swipeable, episode })
-        }
+        renderRightActions={(prog, drag, swipeable) => (
+          <SwipeAction
+            drag={drag}
+            direction="right"
+            label="Remind Me"
+            icon={{
+              name: "alarm-bell",
+              source: "MaterialCommunityIcons",
+            }}
+          />
+        )}
+        renderLeftActions={(prog, drag, swipeable) => (
+          <SwipeAction
+            drag={drag}
+            direction="left"
+            label="Watched"
+            icon={{
+              name: "movie-check",
+              source: "MaterialCommunityIcons",
+            }}
+          />
+        )}
         onSwipeableWillOpen={(direction) => {
-          console.log({ direction });
           if (direction === "right") {
             setShowReminderForm(true);
           }
@@ -141,6 +157,7 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
             size="sm"
             py={10}
             onPress={() => {
+              setShowActions(false);
               setShowWatchedConfirmation(true);
             }}
           />
@@ -151,33 +168,27 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
             direction="column"
             size="sm"
             py={10}
-            onPress={() => setShowReminderForm(true)}
+            onPress={() => {
+              setShowActions(false);
+              setShowReminderForm(true);
+            }}
           />
         </Box>
       </ThemedBottomSheet>
 
-      <ThemedBottomSheet
-        title="Remind me to watch"
+      <ReminderForm
+        episode={episode}
         visible={showReminderForm}
         close={() => {
           setShowReminderForm(false);
           swipeRef.current?.close();
         }}
-        icon={{
-          name: "alarm-bell",
-          source: "MaterialCommunityIcons",
-        }}
-        containerProps={{ px: 0, pt: 20, pb: 80, gap: 20, radius: 60 }}
       >
         <Box gap={20} px={20}>
           <Episode episode={episode} />
           <Box color={"border"} block height={StyleSheet.hairlineWidth} />
         </Box>
-        <ReminderForm
-          episode={episode}
-          close={() => setShowReminderForm(false)}
-        />
-      </ThemedBottomSheet>
+      </ReminderForm>
       <ThemedBottomSheet
         title="You already watched"
         visible={showWatchedConfirmation}
@@ -211,128 +222,5 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
         </Box>
       </ThemedBottomSheet>
     </>
-  );
-}
-
-function RightAction({
-  drag,
-  episode,
-  swipeable,
-}: {
-  drag: SharedValue<number>;
-  episode: NewEpisode;
-  swipeable: SwipeableMethods;
-}) {
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: drag.value + ACTION_WIDTH }],
-    };
-  });
-
-  const [showReminderForm, setShowReminderForm] = useState(false);
-  const insets = useSafeAreaInsets();
-  const theme = useTheme();
-  return (
-    <Reanimated.View
-      style={[
-        styleAnimation,
-        {
-          width: ACTION_WIDTH,
-          justifyContent: "center",
-          backgroundColor: theme.text,
-          alignItems: "center",
-          gap: 5,
-        },
-      ]}
-    >
-      <ThemedIcon
-        name="alarm-bell"
-        color={"background"}
-        source="MaterialCommunityIcons"
-      />
-      <ThemedText fontWeight="bold" textAlign="center" color={"background"}>
-        Remind Me
-      </ThemedText>
-      <ThemedBottomSheet
-        title="Remind Me"
-        visible={showReminderForm}
-        close={() => {
-          setShowReminderForm(false);
-          swipeable.close();
-        }}
-        icon={{
-          name: "alarm-bell",
-          source: "MaterialCommunityIcons",
-        }}
-        containerProps={{
-          pt: 10,
-        }}
-      >
-        <ReminderForm
-          episode={episode}
-          close={() => setShowReminderForm(false)}
-        />
-      </ThemedBottomSheet>
-    </Reanimated.View>
-  );
-}
-
-function LeftAction({
-  drag,
-  episode,
-  swipeable,
-}: {
-  drag: SharedValue<number>;
-  episode: NewEpisode;
-  swipeable: SwipeableMethods;
-}) {
-  const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: drag.value - ACTION_WIDTH }],
-    };
-  });
-
-  const theme = useTheme();
-
-  function onWatched() {
-    swipeable.close();
-
-    onEpisodeWatched(episode);
-
-    Haptics?.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-    toast.success("Roger that 👍", {
-      icon: (
-        <Box block align="center">
-          <ThemedIcon name="check-circle" color="success" />
-        </Box>
-      ),
-      ...SUCCESS_ALERT,
-    });
-  }
-
-  return (
-    <Reanimated.View
-      style={[
-        styleAnimation,
-        {
-          width: ACTION_WIDTH,
-          justifyContent: "center",
-          backgroundColor: theme.text,
-          alignItems: "center",
-          gap: 5,
-        },
-      ]}
-    >
-      <ThemedIcon
-        name="movie-check"
-        color={"background"}
-        source="MaterialCommunityIcons"
-      />
-      <ThemedText fontWeight="bold" textAlign="center" color={"background"}>
-        Watched
-      </ThemedText>
-    </Reanimated.View>
   );
 }

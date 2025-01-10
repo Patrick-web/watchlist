@@ -20,47 +20,48 @@ import {
 import { useTheme } from "../../hooks/useTheme.hook";
 import Box, { BoxProps } from "./Box";
 import Spacer from "./Spacer";
-import ThemedButton, {
-  ThemedButtonProps,
-  ThemedIconButton,
-} from "./ThemedButton";
+import ThemedButton, { ThemedButtonProps } from "./ThemedButton";
 import ThemedIcon from "./ThemedIcon";
 import ThemedModal from "./ThemedModal";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
 
-export default function ThemedTextInput({
-  wrapper,
-  errorMessage,
-  errors,
-  leftSlot,
-  leftSlotProps,
-  rightSlot,
-  rightSlotProps,
-  dense,
-  label,
-  labelProps,
-  size = "md",
-  textInputRef,
-  forBottomSheet = false,
-  ...input
-}: ThemedTextInputProps) {
-  const theme = useTheme();
+// Forward ref to ThemedTextInput
+const ThemedTextInput = forwardRef(
+  (
+    {
+      wrapper,
+      errorMessage,
+      errors,
+      leftSlot,
+      leftSlotProps,
+      rightSlot,
+      rightSlotProps,
+      dense,
+      label,
+      labelProps,
+      size = "md",
+      forBottomSheet = false,
+      ...input
+    }: ThemedTextInputProps,
+    ref: any,
+  ) => {
+    const theme = useTheme();
+    const sizeStyles = getTextStyles(size);
 
-  const sizeStyles = getTextStyles(size);
+    const TextInputComponent = forBottomSheet
+      ? BottomSheetTextInput
+      : TextInput;
 
-  const TextInputComponent = forBottomSheet ? BottomSheetTextInput : TextInput;
-
-  return (
-    <Box>
-      {label && (
-        <>
-          <ThemedText size={"sm"} {...labelProps}>
-            {label}
-          </ThemedText>
-          <Spacer height={5} />
-        </>
-      )}
-      <>
+    return (
+      <Box>
+        {label && (
+          <>
+            <ThemedText size={"sm"} {...labelProps}>
+              {label}
+            </ThemedText>
+            <Spacer height={5} />
+          </>
+        )}
         <Box
           radius={14}
           borderWidth={StyleSheet.hairlineWidth}
@@ -83,7 +84,7 @@ export default function ThemedTextInput({
           )}
 
           <TextInputComponent
-            ref={textInputRef as any}
+            ref={ref} // Forward the ref to the TextInputComponent
             placeholderTextColor={theme.text}
             {...input}
             style={[
@@ -103,6 +104,7 @@ export default function ThemedTextInput({
               input.style,
             ]}
           />
+
           {rightSlot && (
             <Box align="center" justify="center" {...rightSlotProps}>
               {rightSlot}
@@ -124,10 +126,13 @@ export default function ThemedTextInput({
             ))}
           </Box>
         )}
-      </>
-    </Box>
-  );
-}
+      </Box>
+    );
+  },
+);
+
+// Export the component with ref forwarding
+export default ThemedTextInput;
 
 export function ThemedEmailInput(props: ThemedTextInputProps) {
   return (
@@ -192,7 +197,7 @@ export function ThemedSearchInput(props: ThemedSearchInputProps) {
       rightSlot={
         <>
           {value ? (
-            <ThemedIconButton
+            <ThemedButton
               icon={{ name: "x" }}
               onPress={() => {
                 setValue("");
@@ -246,7 +251,7 @@ export function ThemedSelectInput<T extends Obj[]>(
           {...props}
           wrapper={{ viewProps: { pointerEvents: "none" }, ...props.wrapper }}
           rightSlot={
-            <ThemedIconButton
+            <ThemedButton
               icon={{ name: "chevron-down" }}
               onPress={() => setShowOptionPicker(true)}
             />

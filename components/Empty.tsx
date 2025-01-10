@@ -22,7 +22,9 @@ export default function Empty({ message, children }: EmptyProps) {
     >
       <Box align="center" gap={5}>
         <ThemedIcon name="wind" source="Fontisto" />
-        <ThemedText fontWeight="light">{message}</ThemedText>
+        <ThemedText fontWeight="light" size={"sm"} align="center">
+          {message}
+        </ThemedText>
       </Box>
       {children}
     </Box>

@@ -43,6 +43,8 @@ export default function Search() {
   const insets = useSafeAreaInsets();
   const yInsets = insets.bottom + insets.top;
 
+  const inputRef = React.useRef<any>();
+
   return (
     <Page px={0} height={sHeight - yInsets}>
       <ThemedTextInput
@@ -52,12 +54,12 @@ export default function Search() {
             : "Search Shows & Movies"
         }
         size={"xxl"}
-        value={query}
         style={{ fontWeight: "bold" }}
         placeholderTextColor={theme.onSurface}
         onChangeText={(text) => {
           setQuery(text.toLowerCase());
         }}
+        ref={inputRef}
         autoFocus
         wrapper={{
           borderWidth: 0,
@@ -89,7 +91,7 @@ export default function Search() {
                 size="xs"
                 px={10}
                 onPress={() => {
-                  setQuery("");
+                  inputRef.current?.clear();
                 }}
               />
             )}

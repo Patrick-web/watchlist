@@ -60,14 +60,16 @@ export default function Shows() {
             <Empty message="You haven't subscribed to any shows yet">
               <ThemedButton
                 label={"Add Some"}
-                icon={{
-                  name: "plus",
-                  position: "append",
-                }}
                 type="primary"
                 size="sm"
+                width={"80%"}
                 onPress={() => {
-                  router.push("/search");
+                  router.push({
+                    pathname: "/search",
+                    params: {
+                      mode: "shows",
+                    },
+                  });
                 }}
               />
             </Empty>
