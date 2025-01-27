@@ -36,7 +36,7 @@ const ThemedSheet = forwardRef<BottomSheet, ThemedSheetProps>(
       children,
       ...sheetProps
     },
-    ref,
+    ref
   ) => {
     const bottomSheetRef = useRef<BottomSheetModal>(null);
     const theme = useTheme();
@@ -66,7 +66,7 @@ const ThemedSheet = forwardRef<BottomSheet, ThemedSheetProps>(
           </Box>
         </BottomSheetFooter>
       ),
-      [footer, theme.background],
+      [footer, theme.background]
     );
 
     return (
@@ -75,7 +75,7 @@ const ThemedSheet = forwardRef<BottomSheet, ThemedSheetProps>(
           <BottomSheet
             ref={bottomSheetRef}
             enablePanDownToClose={canClose}
-            onClose={close}
+            onClose={close ?? sheetProps.onClose}
             backdropComponent={noBackdrop ? undefined : renderBackdrop}
             style={{
               borderRadius: 60,
@@ -123,7 +123,7 @@ const ThemedSheet = forwardRef<BottomSheet, ThemedSheetProps>(
         )}
       </>
     );
-  },
+  }
 );
 
 export default ThemedSheet;

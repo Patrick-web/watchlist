@@ -20,6 +20,11 @@ interface PersistedAppStateType {
     watchedMovies: MovieInfo[];
     watchedShows: ShowInfo[];
   };
+  settings: {
+    newEpisodeNotification: boolean;
+    reminderNotification: boolean;
+    hapticFeedback: boolean;
+  };
 }
 
 export const PERSISTED_APP_STATE = proxy<PersistedAppStateType>({
@@ -33,6 +38,11 @@ export const PERSISTED_APP_STATE = proxy<PersistedAppStateType>({
     watchedEpisodes: [],
     watchedMovies: [],
     watchedShows: [],
+  },
+  settings: {
+    newEpisodeNotification: true,
+    reminderNotification: true,
+    hapticFeedback: true,
   },
 });
 
@@ -64,7 +74,7 @@ export function setupValtio() {
 
 export function addSubscribedShow(show: ShowInfo) {
   const alreadyAdded = PERSISTED_APP_STATE.subscribedShows.find(
-    ($show) => $show.title === show.title,
+    ($show) => $show.url === show.url
   );
 
   if (!alreadyAdded) {
@@ -77,7 +87,7 @@ export function addSubscribedShow(show: ShowInfo) {
 export function unsubscribeShow(show: ShowInfo) {
   PERSISTED_APP_STATE.subscribedShows =
     PERSISTED_APP_STATE.subscribedShows.filter(
-      ($show) => $show.title !== show.title,
+      ($show) => $show.title !== show.title
     );
 
   PERSISTED_APP_STATE.newEpisodes.map((episode) => {
@@ -89,14 +99,14 @@ export function unsubscribeShow(show: ShowInfo) {
 
 export const isSubscribed = (searchShow: ShowInfo) =>
   PERSISTED_APP_STATE.subscribedShows.find(
-    (show) => show.title === searchShow.title,
+    (show) => show.url === searchShow.url
   )
     ? true
     : false;
 
 export function onEpisodeWatched(target: NewEpisode) {
   const indexOfShow = PERSISTED_APP_STATE.subscribedShows.findIndex(
-    (show) => show.title === target.show.title,
+    (show) => show.title === target.show.title
   );
 
   PERSISTED_APP_STATE.subscribedShows[indexOfShow].episode =
@@ -115,17 +125,20 @@ export async function addNewEpisode(show: ShowInfo) {
     reminder: null,
   };
   const alreadyAdded = PERSISTED_APP_STATE.newEpisodes.find(
-    (episode) => episode.show.title === newEpisode.show.title,
+    (episode) => episode.show.title === newEpisode.show.title
   );
 
   if (!alreadyAdded) {
     PERSISTED_APP_STATE.newEpisodes.push(newEpisode);
-    if (APP_OS_STATE === "background") {
+    if (
+      APP_OS_STATE === "background" &&
+      PERSISTED_APP_STATE.settings.newEpisodeNotification
+    ) {
       await scheduleNotification({
         content: {
           title: "🎬 New Episode Dropped",
           body: `Episode ${newEpisode.show.episode} of ${cleanTitle(
-            newEpisode.show.title,
+            newEpisode.show.title
           )} is out`,
           sound: "Default",
         },
@@ -137,16 +150,16 @@ export async function addNewEpisode(show: ShowInfo) {
 
 export function deleteNewEpisode(target: NewEpisode) {
   PERSISTED_APP_STATE.newEpisodes = PERSISTED_APP_STATE.newEpisodes.filter(
-    (episode) => episode.id !== target.id,
+    (episode) => episode.id !== target.id
   );
 }
 
 export function onEpisodeReminderSet(
   target: NewEpisode,
-  reminder: NewEpisode["reminder"],
+  reminder: NewEpisode["reminder"]
 ) {
   const index = PERSISTED_APP_STATE.newEpisodes.findIndex(
-    (episode) => episode.id === target.id,
+    (episode) => episode.id === target.id
   );
 
   PERSISTED_APP_STATE.newEpisodes[index].reminder = reminder;
@@ -154,7 +167,7 @@ export function onEpisodeReminderSet(
 
 export function onEpisodeNotificationShown(show: ShowInfo) {
   const index = PERSISTED_APP_STATE.newEpisodes.findIndex(
-    (episode) => episode.show.title === show.title,
+    (episode) => episode.show.url === show.url
   );
 
   PERSISTED_APP_STATE.newEpisodes[index].notifiedUser = true;
@@ -168,7 +181,7 @@ export function addShowToWatchList(show: ShowInfo) {
 
 export function addMovieToWatchList(movie: MovieInfo) {
   const alreadyAdded = PERSISTED_APP_STATE.watchList.movies.find(
-    ($movie) => $movie.title === movie.title,
+    ($movie) => $movie.title === movie.title
   );
 
   if (!alreadyAdded) {
@@ -178,27 +191,25 @@ export function addMovieToWatchList(movie: MovieInfo) {
 
 export function removeShowFromWatchList(show: ShowInfo) {
   PERSISTED_APP_STATE.watchList.shows =
-    PERSISTED_APP_STATE.watchList.shows.filter(
-      (item) => item.title !== show.title,
-    );
+    PERSISTED_APP_STATE.watchList.shows.filter((item) => item.url !== show.url);
 }
 
 export function removeMovieFromWatchList(movie: MovieInfo) {
   PERSISTED_APP_STATE.watchList.movies =
     PERSISTED_APP_STATE.watchList.movies.filter(
-      (item) => item.title !== movie.title,
+      (item) => item.url !== movie.url
     );
 }
 
 export function isShowInWatchList(show: ShowInfo) {
   return PERSISTED_APP_STATE.watchList.shows.find(
-    (item) => item.title === show.title,
+    (item) => item.url === show.url
   );
 }
 
 export function isMovieInWatchList(movie: MovieInfo) {
   return PERSISTED_APP_STATE.watchList.movies.find(
-    (item) => item.title === movie.title,
+    (item) => item.url === movie.url
   );
 }
 
@@ -220,12 +231,19 @@ export function decreaseEpisode() {
         ...show,
         episode: show.episode !== 1 ? show.episode - 1 : show.episode,
       };
-    },
+    }
   );
 }
 
+export function setSetting(
+  setting: keyof PersistedAppStateType["settings"],
+  value: boolean
+) {
+  PERSISTED_APP_STATE.settings[setting] = value;
+}
+
 export async function scheduleNotification(
-  args: Notifications.NotificationRequestInput,
+  args: Notifications.NotificationRequestInput
 ) {
   await requestNotificationPermission();
   Notifications.scheduleNotificationAsync(args);

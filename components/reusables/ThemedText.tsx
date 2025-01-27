@@ -1,68 +1,50 @@
-import React, { ReactNode } from "react";
+import React, { forwardRef, ReactNode } from "react";
 import { Text, TextProps, TextStyle } from "react-native";
-
 import { ColorOptions } from "@/constants/colors.constants";
 import { changeCase } from "@/utils/text.utils";
 import { useTheme } from "../../hooks/useTheme.hook";
 
-const ThemedText = ({
-  textProps,
-  style,
-  children,
-  size = "md",
-  darkModeColor,
-  fontFamily,
-  fontWeight,
-  color,
-  case: textCase,
-  ...styleProps
-}: ThemedTextProps) => {
-  const theme = useTheme();
+const ThemedText = forwardRef(
+  (
+    {
+      textProps,
+      style,
+      children,
+      size = "md",
+      darkModeColor,
+      fontFamily,
+      fontWeight,
+      color,
+      case: textCase,
+      ...styleProps
+    }: ThemedTextProps,
+    ref: any,
+  ) => {
+    const theme = useTheme();
 
-  const textSize = () => {
-    if (typeof size === "string") {
-      const foundSize = textSizes.find((options) => options.size === size);
-      if (!foundSize)
-        return textSizes.find((options) => options.size === "md")!.value;
-      return foundSize.value;
-    } else {
-      return size;
-    }
-  };
+    const textColor = getTextColor(theme, color, darkModeColor);
+    const textSize = getTextSize(size);
+    const $fontFamily = getFontFamily(fontFamily, fontWeight);
 
-  const textColor = () => {
-    if (color) {
-      // check if color is included in the theme.colors and return its value if it is
-      if (theme[color as keyof ColorOptions]) {
-        return theme[color as keyof ColorOptions];
-      }
-      return color;
-    }
-    if (darkModeColor) {
-      return darkModeColor;
-    }
-    return theme.text;
-  };
-
-  return (
-    <Text
-      style={[
-        {
-          color: textColor(),
-          fontSize: textSize(),
-          fontFamily: fontWeight
-            ? mapFontweightToFontFamily(fontWeight)
-            : fontFamily,
-          ...generateStylesObject(styleProps),
-        },
-        style,
-      ]}
-      {...textProps}
-    >
-      {textCase ? changeCase(children as string, textCase) : children}
-    </Text>
-  );
-};
+    return (
+      <Text
+        style={[
+          {
+            color: textColor,
+            fontSize: textSize,
+            fontFamily: $fontFamily,
+            ...generateStylesObject(styleProps),
+          },
+          style,
+        ]}
+        {...textProps}
+        ref={ref}
+      >
+        {textCase ? changeCase(children as string, textCase) : children}
+      </Text>
+    );
+  },
+);
 
 export default ThemedText;
 
@@ -127,6 +109,44 @@ function generateStylesObject(shortStyles: ShortStyles | any): TextStyle {
   return styles;
 }
 
+function getTextSize(size: TextSize | number = "md") {
+  if (typeof size === "string") {
+    const foundSize = textSizes.find((options) => options.size === size);
+    if (!foundSize)
+      return textSizes.find((options) => options.size === "md")!.value;
+    return foundSize.value;
+  } else {
+    return size;
+  }
+}
+
+function getTextColor(
+  theme: ColorOptions,
+  color?: ThemedTextProps["color"],
+  darkModeColor?: ThemedTextProps["color"],
+) {
+  if (color) {
+    // check if color is included in the theme.colors and return its value if it is
+    if (theme[color as keyof ColorOptions]) {
+      return theme[color as keyof ColorOptions];
+    }
+    return color;
+  }
+  if (darkModeColor) {
+    return darkModeColor;
+  }
+  return theme.text;
+}
+
+const getFontFamily = (
+  fontFamily: string | undefined,
+  fontWeight: FontWeight | undefined,
+) => {
+  if (fontWeight) {
+    return mapFontweightToFontFamily(fontWeight);
+  }
+  return fontFamily;
+};
 const textSizes = [
   { size: "xxxs", value: 8 },
   { size: "xxs", value: 10 },

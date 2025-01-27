@@ -143,7 +143,10 @@ export default function MovieCard({ movie }: { movie: MovieInfo }) {
 
       <ReminderForm
         movie={movie}
-        close={() => setShowReminderForm(false)}
+        close={() => {
+          swipeRef.current?.close();
+          setShowReminderForm(false);
+        }}
         visible={showReminderForm}
       >
         <Box gap={20} px={20}>

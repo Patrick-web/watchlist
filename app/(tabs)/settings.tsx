@@ -4,7 +4,7 @@ import ThemedButton from "@/components/reusables/ThemedButton";
 import ThemedSettingSwitch from "@/components/reusables/ThemedSettingSwitch";
 import ThemedText from "@/components/reusables/ThemedText";
 import { useTheme } from "@/hooks/useTheme.hook";
-import { PERSISTED_APP_STATE } from "@/valitio.store";
+import { PERSISTED_APP_STATE, setSetting } from "@/valitio.store";
 import { useState } from "react";
 import * as Updates from "expo-updates";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -40,20 +40,18 @@ export default function Settings() {
           <ThemedSettingSwitch
             title="New Episodes"
             subtitle="Notify me on new episode releases"
-            isActive={false}
-            onToggle={(value) => {}}
+            isActive={APP_STATE.settings.newEpisodeNotification}
+            onToggle={(value) => {
+              setSetting("newEpisodeNotification", value);
+            }}
           />
           <ThemedSettingSwitch
             title="Reminders"
             subtitle="Enable reminders you have created"
-            isActive={true}
-            onToggle={(value) => {}}
-          />
-          <ThemedSettingSwitch
-            title="Haptics"
-            subtitle="Enable Haptic feedback for app actions"
-            isActive={true}
-            onToggle={(value) => {}}
+            isActive={APP_STATE.settings.reminderNotification}
+            onToggle={(value) => {
+              setSetting("reminderNotification", value);
+            }}
           />
         </Box>
         <ThemedButton

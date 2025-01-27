@@ -15,8 +15,13 @@ import { FadeInUp } from "react-native-reanimated";
 import { ThemedDatePicker } from "./reusables/ThemedDatePicker";
 import { notificationAsync, NotificationFeedbackType } from "expo-haptics";
 import { MovieInfo, NewEpisode, ShowInfo } from "@/types";
-import { onEpisodeReminderSet } from "@/valitio.store";
+import {
+  onEpisodeReminderSet,
+  PERSISTED_APP_STATE,
+  setSetting,
+} from "@/valitio.store";
 import ThemedBottomSheet from "./reusables/ThemedBottomSheet";
+import { useSnapshot } from "valtio";
 
 const hours = [
   "1:00",
@@ -98,7 +103,7 @@ export default function ReminderForm({
   visible,
   children,
 }: ReminderFormProps) {
-  const insets = useSafeAreaInsets();
+  const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
 
   const days = generateDateLabels();
 
@@ -144,6 +149,35 @@ export default function ReminderForm({
     });
   }
 
+  function checkReminderNotification() {
+    if (APP_STATE.settings.reminderNotification === false) {
+      toast.warning("Reminder notifications are disabled", {
+        richColors: true,
+        icon: (
+          <Box block align="center" mb={10}>
+            <ThemedIcon name="alert-circle" color="error" />
+          </Box>
+        ),
+        action: (
+          <ThemedButton
+            label="Enable them"
+            size="xs"
+            type="primary"
+            mt={10}
+            onPress={() => {
+              setSetting("reminderNotification", true);
+              createReminder();
+            }}
+          />
+        ),
+        duration: 3000,
+        ...SUCCESS_ALERT,
+      });
+      return;
+    }
+    createReminder();
+  }
+
   async function createReminder() {
     if (!selectedDate) {
       toast.error("Oops, could not create reminder", {
@@ -153,7 +187,7 @@ export default function ReminderForm({
             <ThemedIcon name="alert-circle" color="error" />
           </Box>
         ),
-        unstyled: true,
+        ...SUCCESS_ALERT,
       });
       return;
     }
@@ -164,7 +198,9 @@ export default function ReminderForm({
       if (movie) {
         return `Watch ${cleanTitle(movie.title)}`;
       } else if (episode) {
-        return `Watch ${cleanTitle(episode.show.title)} Episode ${episode.show.episode}`;
+        return `Watch ${cleanTitle(episode.show.title)} Episode ${
+          episode.show.episode
+        }`;
       } else if (show) {
         return `Watch ${cleanTitle(show.title)}`;
       }
@@ -246,8 +282,8 @@ export default function ReminderForm({
                 selectedDay?.label === day.label
                   ? "100%"
                   : selectedDay || customDate
-                    ? "0%"
-                    : "48%"
+                  ? "0%"
+                  : "48%"
               }
               overflow="hidden"
               key={day.label}
@@ -357,7 +393,7 @@ export default function ReminderForm({
         )}
         {selectedDate && selectedHour && (
           <AnimatedBox block viewProps={{ entering: FadeInUp }}>
-            <ThemedButton label={"Done"} onPress={createReminder} />
+            <ThemedButton label={"Done"} onPress={checkReminderNotification} />
           </AnimatedBox>
         )}
       </Box>

@@ -1,13 +1,10 @@
 import SettingsStore from "@/stores/settings.store";
 import { useColorScheme } from "react-native";
 import Colors from "../constants/colors.constants";
-import Color from "color";
-
-export const ColorManipulate = Color;
 
 export function useThemeColor(
   colorName: keyof typeof Colors.light & keyof typeof Colors.dark,
-  props?: { light?: string; dark?: string },
+  props?: { light?: string; dark?: string }
 ) {
   let themeToSet: "dark" | "light" = "light";
 
@@ -60,4 +57,3 @@ export function useThemeMode() {
     return userTheme;
   }
 }
-

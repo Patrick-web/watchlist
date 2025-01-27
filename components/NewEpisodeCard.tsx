@@ -11,7 +11,7 @@ import ReanimatedSwipeable, {
   SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
 import ThemedButton from "./reusables/ThemedButton";
-import { useTheme } from "@/hooks/useTheme.hook";
+import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import { toast } from "sonner-native";
 import ThemedIcon from "./reusables/ThemedIcon";
 import { onEpisodeWatched, PERSISTED_APP_STATE } from "@/valitio.store";
@@ -25,6 +25,7 @@ import { NewEpisode } from "@/types";
 import { POSTER_RATIO, sWidth } from "@/constants/dimensions.constant";
 import { StyleSheet } from "react-native";
 import SwipeAction from "./SwipeAction";
+import ThemedTrueSheet from "./reusables/TrueSheet";
 
 const ACTION_WIDTH = sWidth - 40;
 const POSTER_WIDTH = 100;
@@ -39,7 +40,6 @@ export function Episode({ episode }: { episode: NewEpisode }) {
       justify="space-between"
       width="100%"
       height={POSTER_HEIGHT}
-      color={theme.background}
     >
       <Image
         source={episode.show.poster}
@@ -91,6 +91,8 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
     });
   }
 
+  const themeMode = useThemeMode();
+
   return (
     <>
       <ReanimatedSwipeable
@@ -141,7 +143,12 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
       <ThemedBottomSheet
         visible={showActions}
         close={() => setShowActions(false)}
-        containerProps={{ px: 20, gap: 20, radius: 60 }}
+        containerProps={{
+          px: 20,
+          pb: 80,
+          radius: 60,
+          gap: 20,
+        }}
       >
         <Episode episode={episode} />
         <Box color={"border"} block height={StyleSheet.hairlineWidth} />

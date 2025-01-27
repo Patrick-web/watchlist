@@ -11,6 +11,9 @@ import { Platform } from "react-native";
 import { unsubscribeShow } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import { ShowInfo } from "@/types";
+import { TrueSheet } from "@lodev09/react-native-true-sheet";
+import ThemedTrueSheet from "./reusables/TrueSheet";
+import { useThemeMode } from "@/hooks/useTheme.hook";
 
 const POSTER_WIDTH = sWidth / 2 - 40;
 
@@ -23,6 +26,8 @@ export default function SubscribedShow({ show }: { show: ShowInfo }) {
   const [showModal, setShowModal] = useState(false);
 
   const insets = useSafeAreaInsets();
+
+  const themeMode = useThemeMode();
 
   return (
     <>
@@ -38,17 +43,21 @@ export default function SubscribedShow({ show }: { show: ShowInfo }) {
           style={{
             width: POSTER_WIDTH,
             height: POSTER_WIDTH * POSTER_RATIO,
+            maxWidth: 200,
+            maxHeight: 200 * POSTER_RATIO,
             borderRadius: sWidth / 2,
           }}
         />
       </ThemedButton>
-      <ThemedBottomSheet
+      <ThemedTrueSheet
         visible={showModal}
-        close={() => {
+        onDismiss={() => {
           setShowModal(false);
         }}
+        cornerRadius={0}
+        blurTint={themeMode}
       >
-        <Box justify="center" align="center" gap={5}>
+        <Box justify="center" align="center" gap={5} py={20}>
           <Image
             source={show.poster}
             style={{
@@ -73,7 +82,7 @@ export default function SubscribedShow({ show }: { show: ShowInfo }) {
             onPress={unSubscribe}
           />
         </Box>
-      </ThemedBottomSheet>
+      </ThemedTrueSheet>
     </>
   );
 }

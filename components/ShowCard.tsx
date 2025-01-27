@@ -22,6 +22,7 @@ import ThemedButton from "./reusables/ThemedButton";
 import ThemedIcon from "./reusables/ThemedIcon";
 import ThemedText from "./reusables/ThemedText";
 import Show from "./Show";
+import SwipeAction from "./SwipeAction";
 
 const ACTION_WIDTH = sWidth - 40;
 
@@ -61,12 +62,22 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
         ref={swipeRef}
         friction={1}
         rightThreshold={40}
-        renderRightActions={(prog, drag, swipeable) =>
-          RightAction({ drag, swipeable, show })
-        }
-        renderLeftActions={(prog, drag, swipeable) =>
-          LeftAction({ drag, swipeable, show })
-        }
+        renderRightActions={(prog, drag, swipeable) => (
+          <SwipeAction
+            drag={drag}
+            direction="right"
+            label="Remind Me"
+            icon={{ name: "alarm-bell", source: "MaterialCommunityIcons" }}
+          />
+        )}
+        renderLeftActions={(prog, drag, swipeable) => (
+          <SwipeAction
+            drag={drag}
+            direction="left"
+            label="Watched"
+            icon={{ name: "movie-check", source: "MaterialCommunityIcons" }}
+          />
+        )}
         onSwipeableWillOpen={(direction) => {
           if (direction === "right") {
             setShowReminderForm(true);
@@ -162,90 +173,5 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
         </Box>
       </ThemedBottomSheet>
     </>
-  );
-}
-
-function RightAction({
-  drag,
-  show,
-  swipeable,
-}: {
-  drag: SharedValue<number>;
-  show: ShowInfo;
-  swipeable: SwipeableMethods;
-}) {
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: drag.value + ACTION_WIDTH }],
-    };
-  });
-
-  const [showReminderForm, setShowReminderForm] = useState(false);
-  const insets = useSafeAreaInsets();
-  const theme = useTheme();
-  return (
-    <Reanimated.View
-      style={[
-        styleAnimation,
-        {
-          width: ACTION_WIDTH,
-          justifyContent: "center",
-          backgroundColor: theme.text,
-          alignItems: "center",
-          gap: 5,
-        },
-      ]}
-    >
-      <ThemedIcon
-        name="alarm-bell"
-        color={"background"}
-        source="MaterialCommunityIcons"
-      />
-      <ThemedText fontWeight="bold" textAlign="center" color={"background"}>
-        Remind Me
-      </ThemedText>
-    </Reanimated.View>
-  );
-}
-
-function LeftAction({
-  drag,
-  show,
-  swipeable,
-}: {
-  drag: SharedValue<number>;
-  show: ShowInfo;
-  swipeable: SwipeableMethods;
-}) {
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: drag.value - ACTION_WIDTH }],
-    };
-  });
-
-  const theme = useTheme();
-
-  return (
-    <Reanimated.View
-      style={[
-        styleAnimation,
-        {
-          width: ACTION_WIDTH,
-          justifyContent: "center",
-          backgroundColor: theme.text,
-          alignItems: "center",
-          gap: 5,
-        },
-      ]}
-    >
-      <ThemedIcon
-        name="movie-check"
-        color={"background"}
-        source="MaterialCommunityIcons"
-      />
-      <ThemedText fontWeight="bold" textAlign="center" color={"background"}>
-        Watched
-      </ThemedText>
-    </Reanimated.View>
   );
 }
