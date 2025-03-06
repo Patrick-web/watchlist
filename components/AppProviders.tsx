@@ -11,6 +11,9 @@ import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
 import { setupValtio } from "@/valitio.store";
 import { useFonts } from "expo-font";
+import { vexo } from "vexo-analytics";
+
+vexo("4c3a9c16-8dc8-4784-a9fa-62912fa6168c");
 
 SplashScreen.preventAutoHideAsync();
 

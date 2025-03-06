@@ -22,6 +22,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "patrickwaweruofficial@gmail.com",
+        "ascAppId": "1615994949",
+        "appleTeamId": "A743J8GTN3"
+      }
+    }
   }
 }
