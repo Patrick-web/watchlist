@@ -1,7 +1,3 @@
-import BaseButton from "@/components/reusables/BaseButton";
-import ThemedButton, {
-  ThemedButtonProps,
-} from "@/components/reusables/ThemedButton";
 import ThemedIcon, { ThemedIconProps } from "@/components/reusables/ThemedIcon";
 import ThemedText from "@/components/reusables/ThemedText";
 import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
