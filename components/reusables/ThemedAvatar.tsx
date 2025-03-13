@@ -34,7 +34,7 @@ export default function ThemedAvatar({
           // If image URL is not reachable, set imageUrl to null
           setImageUrl(null);
         }
-      } catch (error) {
+      } catch {
         // Handle network errors or other issues here
         setImageUrl(null);
       }
@@ -65,7 +65,7 @@ export default function ThemedAvatar({
           align="center"
           justify="center"
           onPress={() => {
-            onPress ? onPress() : () => {};
+            if (onPress) onPress();
           }}
         >
           <Image
@@ -87,7 +87,7 @@ export default function ThemedAvatar({
           align="center"
           justify="center"
           onPress={() => {
-            onPress ? onPress() : () => {};
+            if (onPress) onPress();
           }}
           {...buttonProps}
         >
@@ -102,7 +102,7 @@ export default function ThemedAvatar({
           radius={size}
           style={{ right: 0, bottom: 0, zIndex: 2, elevation: 2 }}
           onPress={() => {
-            onEditButtonPress ? onEditButtonPress() : () => {};
+            if (onEditButtonPress) onEditButtonPress();
           }}
           pa={8}
           color={theme.surface}
@@ -118,7 +118,7 @@ export default function ThemedAvatar({
         >
           <ThemedButton
             onPress={() => {
-              onEditButtonPress ? onEditButtonPress() : () => {};
+              if (onEditButtonPress) onEditButtonPress();
             }}
             color={badgeColor ?? theme.success}
             width={size / 3.5}

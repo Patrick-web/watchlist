@@ -196,6 +196,8 @@ const BaseButton = forwardRef<View, BaseButtonProps>((props, ref) => {
   );
 });
 
+BaseButton.displayName = 'BaseButton';
+
 export default BaseButton;
 
 type ButtonSize =

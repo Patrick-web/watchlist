@@ -1,35 +1,21 @@
 import { SUCCESS_ALERT } from "@/constants/common.constants";
-import { POSTER_RATIO, sWidth } from "@/constants/dimensions.constant";
-import { useTheme } from "@/hooks/useTheme.hook";
 import { MovieInfo } from "@/types";
 import { onMovieWatched } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import React, { useRef, useState } from "react";
 import { StyleSheet } from "react-native";
-import ReanimatedSwipeable, {
-  SwipeableMethods,
-} from "react-native-gesture-handler/ReanimatedSwipeable";
-import Reanimated, {
-  SharedValue,
-  useAnimatedStyle,
-} from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { toast } from "sonner-native";
 import ReminderForm from "./ReminderForm";
 import Box from "./reusables/Box";
 import ThemedBottomSheet from "./reusables/ThemedBottomSheet";
 import ThemedButton from "./reusables/ThemedButton";
 import ThemedIcon from "./reusables/ThemedIcon";
-import ThemedText from "./reusables/ThemedText";
 import Movie from "./Movie";
 import SwipeAction from "./SwipeAction";
 
-const ACTION_WIDTH = sWidth - 40;
-const POSTER_WIDTH = 100;
-const POSTER_HEIGHT = POSTER_RATIO * POSTER_WIDTH;
 
 export default function MovieCard({ movie }: { movie: MovieInfo }) {
-  const theme = useTheme();
   const [showActions, setShowActions] = useState(false);
   const [showReminderForm, setShowReminderForm] = useState(false);
   const [showWatchedConfirmation, setShowWatchedConfirmation] = useState(false);

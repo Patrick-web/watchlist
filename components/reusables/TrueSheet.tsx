@@ -1,17 +1,9 @@
-import React, {
-  forwardRef,
-  useEffect,
-  useRef,
-  useCallback,
-  useState,
-} from "react";
-import Box, { BottomSheetBox, BoxProps } from "./Box";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
+import Box from "./Box";
 import ThemedIcon, { ThemedIconProps } from "./ThemedIcon";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
-import useBack from "@/hooks/useBack.hook";
 import { useTheme } from "@/hooks/useTheme.hook";
 import { TrueSheet, TrueSheetProps } from "@lodev09/react-native-true-sheet";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Platform, ScrollView, ScrollViewProps } from "react-native";
 
 const ThemedTrueSheet = forwardRef<TrueSheet, ThemedSheetProps>(
@@ -29,7 +21,7 @@ const ThemedTrueSheet = forwardRef<TrueSheet, ThemedSheetProps>(
       children,
       ...sheetProps
     },
-    ref
+    ref,
   ) => {
     const trueSheetRef = useRef<TrueSheet>(null);
     const theme = useTheme();
@@ -106,8 +98,10 @@ const ThemedTrueSheet = forwardRef<TrueSheet, ThemedSheetProps>(
         {/* )} */}
       </>
     );
-  }
+  },
 );
+
+ThemedTrueSheet.displayName = "ThemedTrueSheet";
 
 export default ThemedTrueSheet;
 

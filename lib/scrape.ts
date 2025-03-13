@@ -1,6 +1,5 @@
 import { FilmResult, MovieInfo, Season, SeasonEpisode } from "@/types";
 import * as he from "he";
-import { z } from "zod";
 
 export function extractFilmInfo(html: string) {
   const genreRegex = /<a[^"]*href="\/genre\/[^"]*"[^"]*title="([^"]*)">/;

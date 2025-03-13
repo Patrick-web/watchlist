@@ -184,7 +184,6 @@ export interface ThemedIconProps {
     | keyof typeof Foundation.glyphMap
     | keyof typeof Ionicons.glyphMap
     | keyof typeof MaterialCommunityIcons.glyphMap
-    | keyof typeof MaterialCommunityIcons.glyphMap
     | keyof typeof MaterialIcons.glyphMap
     | keyof typeof Octicons.glyphMap
     | keyof typeof SimpleLineIcons.glyphMap

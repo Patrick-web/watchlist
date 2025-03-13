@@ -1,11 +1,8 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useEffect, useState } from "react";
 import { Platform } from "react-native";
-import Box from "./Box";
 import ThemedButton from "./ThemedButton";
-import ThemedIcon from "./ThemedIcon";
-import ThemedModal from "./ThemedModal";
-import ThemedTextInput, { ThemedTextInputProps } from "./ThemedTextInput";
+import { ThemedTextInputProps } from "./ThemedTextInput";
 import ThemedBottomSheet from "./ThemedBottomSheet";
 
 export function ThemedDatePicker({
@@ -23,7 +20,7 @@ export function ThemedDatePicker({
     if (date && typeof date === "object") {
       onPickDate(date);
     }
-  }, [date]);
+  }, [date, onPickDate]);
 
   return (
     <>

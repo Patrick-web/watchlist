@@ -112,3 +112,6 @@ const TabButton = React.forwardRef<View, TabButtonProps>((props, ref) => {
     </Pressable>
   );
 });
+
+TabButton.displayName = 'TabButton';
+

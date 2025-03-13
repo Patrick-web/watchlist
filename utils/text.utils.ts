@@ -33,7 +33,7 @@ export function changeCase(
 			default:
 				return inputString;
 		}
-	} catch (e) {
+	} catch {
 		return inputString;
 	}
 }

@@ -3,20 +3,16 @@ import Empty from "@/components/Empty";
 import Box from "@/components/reusables/Box";
 import Page from "@/components/reusables/Page";
 import ThemedButton from "@/components/reusables/ThemedButton";
-import ThemedText from "@/components/reusables/ThemedText";
 import SubscribedShow from "@/components/SubscribedShow";
-import { useTheme } from "@/hooks/useTheme.hook";
 import { PERSISTED_APP_STATE } from "@/valitio.store";
 import { router } from "expo-router";
-import { Platform } from "react-native";
-import Reanimated, { LinearTransition } from "react-native-reanimated";
+import Reanimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSnapshot } from "valtio";
 
 export default function Shows() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
   const insets = useSafeAreaInsets();
-  const theme = useTheme();
   return (
     <Page>
       <AppHeader title="Subscribed Shows">

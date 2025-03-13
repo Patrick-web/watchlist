@@ -18,7 +18,7 @@ const ThemedText = forwardRef(
       case: textCase,
       ...styleProps
     }: ThemedTextProps,
-    ref: any,
+    ref: React.Ref<Text>,
   ) => {
     const theme = useTheme();
 
@@ -46,12 +46,14 @@ const ThemedText = forwardRef(
   },
 );
 
+ThemedText.displayName = 'ThemedText';
+
 export default ThemedText;
 
 function mapFontweightToFontFamily(
   weight: FontWeight,
   fontPrefix = "SpaceGrotesk",
-) {
+): string | undefined {
   switch (weight) {
     case "extralight":
       return `${fontPrefix}ExtraLight`;
@@ -165,6 +167,10 @@ export interface ThemedTextProps extends ShortStyles {
   style?: TextStyle;
   textProps?: TextProps;
   children?: ReactNode;
+  fontFamily?: string;
+  fontWeight?: FontWeight;
+  color?: TextStyle["color"] | presetColors;
+  case?: Parameters<typeof changeCase>[1];
 }
 
 export type FontWeight =
@@ -181,9 +187,6 @@ export type FontWeight =
 type presetColors = keyof ColorOptions;
 
 interface ShortStyles extends Omit<TextStyle, "fontWeight" | "color"> {
-  color?: TextStyle["color"] | presetColors;
-  case?: Parameters<typeof changeCase>[1];
-  fontWeight?: FontWeight;
   size?: TextStyle["fontSize"] | TextSize;
   align?: TextStyle["textAlign"];
   darkModeColor?: TextStyle["color"];

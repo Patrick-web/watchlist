@@ -19,7 +19,7 @@ export type FilmResult<T = any> = T & {
   title: string;
 };
 
-export interface ShowResult {}
+export type ShowResult = object;
 
 export interface MovieResult {
   year: number;

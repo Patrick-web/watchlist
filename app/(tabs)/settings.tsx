@@ -2,18 +2,14 @@ import Box from "@/components/reusables/Box";
 import Page from "@/components/reusables/Page";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import ThemedSettingSwitch from "@/components/reusables/ThemedSettingSwitch";
-import { useTheme } from "@/hooks/useTheme.hook";
 import { PERSISTED_APP_STATE, setSetting } from "@/valitio.store";
 import { useState } from "react";
 import * as Updates from "expo-updates";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSnapshot } from "valtio";
 import AppHeader from "@/components/AppHeader";
 
 export default function Settings() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
-  const insets = useSafeAreaInsets();
-  const theme = useTheme();
 
   const [checkingUpdate, setCheckingUpdate] = useState(false);
 
@@ -28,7 +24,7 @@ export default function Settings() {
       } else {
         alert("No update found");
       }
-    } catch (error) {}
+    } catch {/* ignore errors */}
     setCheckingUpdate(false);
   }
   return (

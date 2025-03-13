@@ -45,7 +45,6 @@ const Film = () => {
   });
 
   const insets = useSafeAreaInsets();
-  const yInsets = insets.bottom + insets.top;
 
   const theme = useTheme();
   const themeMode = useThemeMode();

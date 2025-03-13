@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 interface MemoryEntry<T> {
   route: string;
-  params?: Record<string, {}> | undefined;
+  params?: Record<string, Record<string, unknown>> | undefined;
   data: T;
 }
 

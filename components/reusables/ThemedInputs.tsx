@@ -1,6 +1,5 @@
 import { sHeight } from "@/constants/dimensions.constant";
-import { useTheme } from "@react-navigation/native";
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, FlatList } from "react-native";
 import Box from "./Box";
 import ThemedButton, { ThemedButtonProps } from "./ThemedButton";
@@ -8,6 +7,8 @@ import ThemedIcon from "./ThemedIcon";
 import ThemedModal from "./ThemedModal";
 import ThemedText from "./ThemedText";
 import ThemedTextInput, { ThemedTextInputProps } from "./ThemedTextInput";
+
+type Obj = { [key: string]: any };
 
 export function ThemedEmailInput(props: ThemedTextInputProps) {
   return (
@@ -53,7 +54,7 @@ export function ThemedPasswordInput(props: ThemedTextInputProps) {
 }
 
 export function ThemedSearchInput(
-  props: ThemedTextInputProps & { clear?: () => void }
+  props: ThemedTextInputProps & { clear?: () => void },
 ) {
   const [value, setValue] = useState(props.value || "");
 
@@ -92,28 +93,28 @@ export function ThemedSearchInput(
 }
 
 export function ThemedSelectInput<T extends Obj[]>(
-  props: ThemedSelectProps<T>
+  props: ThemedSelectProps<T>,
 ) {
   const [selectedOption, setSelectedOption] = useState<Record<string, any>>(
-    props.selected as any
+    props.selected as any,
   );
   const [showOptionPicker, setShowOptionPicker] = useState(false);
-
-  const theme = useTheme();
-
   const [filteredOptions, setFilteredOptions] = useState<T[number][]>(
-    props.options
+    props.options,
   );
 
-  function filterOptions(query: string) {
-    const found = props.options.filter((option) =>
-      option[props.labelProperty]
-        .toString()
-        .toLowerCase()
-        .includes(query.toLowerCase())
-    );
-    setFilteredOptions(found);
-  }
+  const filterOptions = useCallback(
+    (query: string) => {
+      const found = props.options.filter((option) =>
+        option[props.labelProperty]
+          .toString()
+          .toLowerCase()
+          .includes(query.toLowerCase()),
+      );
+      setFilteredOptions(found);
+    },
+    [props.options, props.labelProperty],
+  );
 
   return (
     <>
@@ -182,7 +183,7 @@ export function ThemedSelectInput<T extends Obj[]>(
 }
 
 export function ThemedOptionsPicker<T extends Obj[]>(
-  props: ThemedOptionsPickerProps<T>
+  props: ThemedOptionsPickerProps<T>,
 ) {
   const [selectedOption, setSelectedOption] = useState<
     Record<string, any> | null | undefined
@@ -191,25 +192,28 @@ export function ThemedOptionsPicker<T extends Obj[]>(
   const [showOptionPicker, setShowOptionPicker] = useState(false);
 
   const [filteredOptions, setFilteredOptions] = useState<T[number][]>(
-    props.options
+    props.options,
   );
 
-  function filterOptions(query: string) {
-    const found = props.options.filter((option) =>
-      option[props.labelProperty]
-        .toString()
-        .toLowerCase()
-        .includes(query.toLowerCase())
-    );
+  const filterOptions = useCallback(
+    (query: string) => {
+      const found = props.options.filter((option) =>
+        option[props.labelProperty]
+          .toString()
+          .toLowerCase()
+          .includes(query.toLowerCase()),
+      );
 
-    setFilteredOptions(found);
-  }
+      setFilteredOptions(found);
+    },
+    [props.options, props.labelProperty],
+  );
 
   useEffect(() => {
     setSelectedOption(props.selected);
 
     filterOptions("");
-  }, [props.selected]);
+  }, [props.selected, filterOptions]);
 
   return (
     <>
@@ -219,8 +223,8 @@ export function ThemedOptionsPicker<T extends Obj[]>(
           selectedOption
             ? selectedOption[props.labelProperty].toString()
             : props.label
-            ? props.label
-            : "Select"
+              ? props.label
+              : "Select"
         }
         icon={{ name: "chevron-down", position: "append" }}
         onPress={() => setShowOptionPicker(true)}
@@ -273,8 +277,7 @@ export function ThemedOptionsPicker<T extends Obj[]>(
   );
 }
 
-type Obj = { [key: string]: any };
-type KeysUnion<T extends Obj[]> = T extends Array<infer U> ? keyof U : never; // Extract keys union from array of objects
+type KeysUnion<T extends Obj[]> = T extends (infer U)[] ? keyof U : never; // Extract keys union from array of objects
 
 interface ThemedSelectProps<T extends Obj[]> extends ThemedTextInputProps {
   options: T;

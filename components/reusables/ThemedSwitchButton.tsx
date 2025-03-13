@@ -24,4 +24,6 @@ const ThemedSwitchButton = forwardRef<
   );
 });
 
+ThemedSwitchButton.displayName = 'ThemedSwitchButton';
+
 export default ThemedSwitchButton;

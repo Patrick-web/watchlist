@@ -128,7 +128,7 @@ const Film = () => {
     }
 
     console.log({ $show });
-    if ($show == undefined) return;
+    if ($show === undefined) return;
 
     addSubscribedShow($show);
     if (Platform.OS === "ios") {
@@ -138,7 +138,7 @@ const Film = () => {
   }
 
   function addToWatchList() {
-    if (fullShow == undefined) return;
+    if (fullShow === undefined) return;
     addShowToWatchList(fullShow);
 
     if (Platform.OS === "ios") {

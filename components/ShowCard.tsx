@@ -1,33 +1,20 @@
 import { SUCCESS_ALERT } from "@/constants/common.constants";
-import { POSTER_RATIO, sWidth } from "@/constants/dimensions.constant";
-import { useTheme } from "@/hooks/useTheme.hook";
 import { ShowInfo } from "@/types";
 import { onShowWatched } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import React, { useRef, useState } from "react";
 import { StyleSheet } from "react-native";
-import ReanimatedSwipeable, {
-  SwipeableMethods,
-} from "react-native-gesture-handler/ReanimatedSwipeable";
-import Reanimated, {
-  SharedValue,
-  useAnimatedStyle,
-} from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { toast } from "sonner-native";
 import ReminderForm from "./ReminderForm";
 import Box from "./reusables/Box";
 import ThemedBottomSheet from "./reusables/ThemedBottomSheet";
 import ThemedButton from "./reusables/ThemedButton";
 import ThemedIcon from "./reusables/ThemedIcon";
-import ThemedText from "./reusables/ThemedText";
 import Show from "./Show";
 import SwipeAction from "./SwipeAction";
 
-const ACTION_WIDTH = sWidth - 40;
-
 export default function ShowCard({ show }: { show: ShowInfo }) {
-  const theme = useTheme();
   const [showActions, setShowActions] = useState(false);
   const [showReminderForm, setShowReminderForm] = useState(false);
   const [showWatchedConfirmation, setShowWatchedConfirmation] = useState(false);

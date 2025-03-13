@@ -126,6 +126,8 @@ const ThemedSheet = forwardRef<BottomSheet, ThemedSheetProps>(
   }
 );
 
+ThemedSheet.displayName = 'ThemedSheet';
+
 export default ThemedSheet;
 
 export interface ThemedSheetProps extends Omit<BottomSheetProps, "children"> {

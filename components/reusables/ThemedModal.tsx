@@ -5,7 +5,6 @@ import Animated, {
   SlideInDown,
   SlideInUp,
   ZoomInDown,
-  ZoomInUp,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../hooks/useTheme.hook";
@@ -17,7 +16,6 @@ import ThemedText, { ThemedTextProps } from "./ThemedText";
 export default function ThemedModal({
   visible = false,
   containerProps,
-  onRequestClose,
   position = "center",
   scrollable,
   title,
@@ -28,7 +26,6 @@ export default function ThemedModal({
   hideCloseButton = false,
   backgroundColor,
   close,
-  disableKeyboardAvoidance,
   canClose = true,
   ...modalProps
 }: ThemedModalProps) {
@@ -85,7 +82,7 @@ export default function ThemedModal({
               }
               exiting={
                 position === "center"
-                  ? ZoomInUp
+                  ? ZoomInDown
                   : position === "bottom"
                     ? SlideInDown
                     : SlideInUp
@@ -130,7 +127,7 @@ export default function ThemedModal({
                     <Box flex={0.5} align="flex-end"></Box>
                   </Box>
                 )}
-                {hideCloseButton == false && canClose === true && (
+                {hideCloseButton === false && canClose === true && (
                   <ThemedButton
                     type="text"
                     size="xs"
@@ -201,6 +198,5 @@ export interface ThemedModalProps extends ModalBaseProps {
   hideCloseButton?: boolean;
   close: () => void;
   backgroundColor?: string;
-  disableKeyboardAvoidance?: boolean;
   canClose?: boolean;
 }

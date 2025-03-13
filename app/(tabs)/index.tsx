@@ -8,7 +8,7 @@ import Reanimated, {
   FadeOutDown,
   LinearTransition,
 } from "react-native-reanimated";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PERSISTED_APP_STATE } from "@/valitio.store";
 import { useSnapshot } from "valtio";
 import { findNewEpisodes } from "@/lib/refresh";
@@ -33,8 +33,6 @@ export default function HomeScreen() {
   });
 
   const theme = useTheme();
-
-  const [showSheet, setShowSheet] = useState(false);
 
   useEffect(() => {
     registerBackgroundFetchAsync();

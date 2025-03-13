@@ -6,7 +6,7 @@ import ThemedTextInput from "@/components/reusables/ThemedTextInput";
 
 import useDebounce from "@/hooks/useDebounce.hook";
 import useSearch from "@/hooks/useSearchShows.hook";
-import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
+import { useTheme } from "@/hooks/useTheme.hook";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Platform } from "react-native";
@@ -31,7 +31,6 @@ export default function Search() {
   const params = useLocalSearchParams<{ mode: "movies" | "shows" | "all" }>();
 
   const theme = useTheme();
-  const themeMode = useThemeMode();
 
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 1000);
@@ -39,7 +38,6 @@ export default function Search() {
   const { data, isLoading, isFetching, isFetched, error } =
     useSearch(debouncedQuery);
 
-  const [view, setView] = useState<"shows" | "movies">("shows");
 
   const insets = useSafeAreaInsets();
   const yInsets = insets.bottom + insets.top;
@@ -50,7 +48,7 @@ export default function Search() {
     <Page px={0} pl={0} height={sHeight - yInsets}>
       <ThemedTextInput
         placeholder={
-          params.mode != "all"
+          params.mode !== "all"
             ? `Search ${changeCase(params.mode, "sentence")}`
             : "Search Shows & Movies"
         }
@@ -259,3 +257,6 @@ const SearchResults = React.memo(
     );
   },
 );
+
+SearchResults.displayName = 'SearchResults';
+

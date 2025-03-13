@@ -1,6 +1,6 @@
 import { useTheme } from "@/hooks/useTheme.hook";
 import { ReactNode } from "react";
-import { Platform, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import Box, { BoxProps } from "./Box";
 import ThemedText from "./ThemedText";
 

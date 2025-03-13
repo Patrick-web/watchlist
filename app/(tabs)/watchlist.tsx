@@ -10,21 +10,19 @@ import Reanimated, {
 import { useState } from "react";
 import { PERSISTED_APP_STATE } from "@/valitio.store";
 import { useSnapshot } from "valtio";
-import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
+import { useTheme } from "@/hooks/useTheme.hook";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import { router } from "expo-router";
 import ShowCard from "@/components/ShowCard";
 import MovieCard from "@/components/MovieCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Empty from "@/components/Empty";
-import ThemedText from "@/components/reusables/ThemedText";
 import AppHeader from "@/components/AppHeader";
 
 export default function Watchlist() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
 
   const theme = useTheme();
-  const themeMode = useThemeMode();
 
   const [view, setView] = useState<"shows" | "movies">("shows");
 

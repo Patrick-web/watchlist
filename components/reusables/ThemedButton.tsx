@@ -14,7 +14,7 @@ import {
   withSpring,
 } from "react-native-reanimated";
 import { useTheme } from "../../hooks/useTheme.hook";
-import Box, { AnimatedBox, AnimatedBoxProps, ShortStyles } from "./Box";
+import Box, { AnimatedBox, AnimatedBoxProps } from "./Box";
 import ThemedIcon, { ThemedIconProps } from "./ThemedIcon";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
 import * as Haptics from "expo-haptics";
@@ -248,8 +248,6 @@ const ThemedButton = (props: ThemedButtonProps) => {
 export default ThemedButton;
 
 export function SectionButton(props: ThemedButtonProps) {
-  const theme = useTheme();
-
   return (
     <ThemedButton
       px={0}
@@ -270,23 +268,6 @@ export function SectionButton(props: ThemedButtonProps) {
     />
   );
 }
-
-type BaseButtonProps = ShortStyles &
-  PressableProps & {
-    loading?: boolean;
-    label?: string | number;
-    labelProps?: Omit<ThemedTextProps, "children">;
-    icon?: ButtonIconProps;
-    type?:
-      | "text"
-      | "secondary"
-      | "surface"
-      | "primary"
-      | "primary-outlined"
-      | "secondary-outlined";
-    size?: ButtonSize;
-  };
-
 export function ThemedToggleButton(props: ToggleButtonProps) {
   return (
     <ThemedButton
@@ -357,23 +338,6 @@ interface ButtonIconProps extends ThemedIconProps {
   position?: "append" | "prepend";
   gap?: number;
 }
-
-interface IconButtonProps extends PressableProps {
-  type?:
-    | "text"
-    | "secondary"
-    | "primary"
-    | "primary-outlined"
-    | "secondary-outlined";
-
-  icon: ButtonIconProps;
-  size?: number;
-  height?: number;
-  width?: number;
-  background?: string;
-  radius?: number;
-}
-
 interface ToggleButtonProps extends ThemedButtonProps {
   active?: boolean;
 }

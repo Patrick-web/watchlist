@@ -6,7 +6,6 @@ import {
   BottomSheetModal,
   BottomSheetProps,
   BottomSheetScrollView,
-  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import Box, { BottomSheetBox, BoxProps } from "./Box";
 import ThemedIcon, { ThemedIconProps } from "./ThemedIcon";
@@ -141,6 +140,8 @@ const ThemedBottomSheet = forwardRef<BottomSheetModal, ThemedBottomSheetProps>(
     );
   },
 );
+
+ThemedBottomSheet.displayName = 'ThemedBottomSheet';
 
 export default ThemedBottomSheet;
 

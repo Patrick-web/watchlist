@@ -1,28 +1,15 @@
-import { sHeight } from "@/constants/dimensions.constant";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import React, {
-  ReactNode,
-  Ref,
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from "react";
+import React, { ReactNode, Ref, forwardRef } from "react";
 import {
-  FlatList,
   Platform,
   TextInput,
   TextInputProps,
   TextStyle,
-  TouchableOpacity,
   StyleSheet,
 } from "react-native";
 import { useTheme } from "../../hooks/useTheme.hook";
 import Box, { BoxProps } from "./Box";
 import Spacer from "./Spacer";
-import ThemedButton, { ThemedButtonProps } from "./ThemedButton";
-import ThemedIcon from "./ThemedIcon";
-import ThemedModal from "./ThemedModal";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
 
 // label component with memo
@@ -37,8 +24,10 @@ const Label = React.memo(
         <Spacer height={5} />
       </>
     );
-  }
+  },
 );
+
+Label.displayName = "Label";
 
 // left slot component with memo
 const LeftSlot = React.memo(
@@ -54,8 +43,10 @@ const LeftSlot = React.memo(
         {leftSlot}
       </Box>
     );
-  }
+  },
 );
+
+LeftSlot.displayName = "LeftSlot";
 
 // right slot component with memo
 const RightSlot = React.memo(
@@ -71,8 +62,10 @@ const RightSlot = React.memo(
         {rightSlot}
       </Box>
     );
-  }
+  },
 );
+
+RightSlot.displayName = "RightSlot";
 
 // Forward ref to ThemedTextInput
 const ThemedTextInput = forwardRef(
@@ -85,14 +78,13 @@ const ThemedTextInput = forwardRef(
       leftSlotProps,
       rightSlot,
       rightSlotProps,
-      dense,
       label,
       labelProps,
       size = "md",
       forBottomSheet = false,
       ...input
     }: ThemedTextInputProps,
-    ref: any
+    ref: Ref<TextInput>,
   ) => {
     const theme = useTheme();
     const sizeStyles = getTextStyles(size);
@@ -119,7 +111,8 @@ const ThemedTextInput = forwardRef(
           )}
 
           <TextInputComponent
-            ref={ref} // Forward the ref to the TextInputComponent
+            //eslint-ignore
+            ref={ref as any}
             placeholderTextColor={theme.text}
             {...input}
             style={[
@@ -161,8 +154,10 @@ const ThemedTextInput = forwardRef(
         )}
       </Box>
     );
-  }
+  },
 );
+
+ThemedTextInput.displayName = "ThemedTextInput";
 
 export default ThemedTextInput;
 
@@ -182,9 +177,7 @@ export interface ThemedTextInputProps extends TextInputProps {
   rightSlotProps?: SlotProps;
   label?: string;
   labelProps?: ThemedTextProps;
-  dense?: boolean;
   size?: InputSize | TextStyle["fontSize"];
-  textInputRef?: Ref<TextInput>;
   forBottomSheet?: boolean;
 }
 
@@ -206,7 +199,7 @@ interface InputStyles {
 }
 
 const getTextStyles = (
-  size: InputSize | TextStyle["fontSize"]
+  size: InputSize | TextStyle["fontSize"],
 ): InputStyles => {
   let styles: InputStyles = {
     paddingVertical: 14,

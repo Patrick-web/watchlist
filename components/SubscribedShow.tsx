@@ -4,7 +4,6 @@ import { Image } from "expo-image";
 import ThemedText from "./reusables/ThemedText";
 import ThemedButton from "./reusables/ThemedButton";
 import { POSTER_RATIO, sWidth } from "@/constants/dimensions.constant";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { unsubscribeShow } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import { ShowInfo } from "@/types";
@@ -20,8 +19,6 @@ export default function SubscribedShow({ show }: { show: ShowInfo }) {
   }
 
   const [showModal, setShowModal] = useState(false);
-
-  const insets = useSafeAreaInsets();
 
   const themeMode = useThemeMode();
 

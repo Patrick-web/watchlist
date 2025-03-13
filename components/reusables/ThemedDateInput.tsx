@@ -21,7 +21,7 @@ export function ThemedDateInput({
     if (date && typeof date === "object") {
       onInput(date);
     }
-  }, [date]);
+  }, [date, onInput]);
 
   return (
     <>

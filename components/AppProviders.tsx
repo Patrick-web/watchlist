@@ -41,7 +41,7 @@ const AppProviders = ({ children }: { children: ReactNode }) => {
   });
 
   async function getScheduled() {
-    const nots = await Notifications.getAllScheduledNotificationsAsync();
+    await Notifications.getAllScheduledNotificationsAsync();
     // console.log({ nots });
   }
 

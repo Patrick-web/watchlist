@@ -4,7 +4,6 @@ import { Image } from "expo-image";
 import ThemedText from "./reusables/ThemedText";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import ThemedButton from "./reusables/ThemedButton";
-import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import { toast } from "sonner-native";
 import ThemedIcon from "./reusables/ThemedIcon";
 import { onEpisodeWatched } from "@/valitio.store";
@@ -13,16 +12,14 @@ import ReminderForm from "./ReminderForm";
 import { SUCCESS_ALERT } from "@/constants/common.constants";
 import Haptics from "expo-haptics";
 import { NewEpisode } from "@/types";
-import { POSTER_RATIO, sWidth } from "@/constants/dimensions.constant";
+import { POSTER_RATIO } from "@/constants/dimensions.constant";
 import { StyleSheet } from "react-native";
 import SwipeAction from "./SwipeAction";
 
-const ACTION_WIDTH = sWidth - 40;
 const POSTER_WIDTH = 100;
 const POSTER_HEIGHT = POSTER_RATIO * POSTER_WIDTH;
 
 export function Episode({ episode }: { episode: NewEpisode }) {
-  const theme = useTheme();
   return (
     <Box
       direction="row"
@@ -58,7 +55,6 @@ export function Episode({ episode }: { episode: NewEpisode }) {
 }
 
 export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
-  const theme = useTheme();
   const [showActions, setShowActions] = useState(false);
   const [showReminderForm, setShowReminderForm] = useState(false);
   const [showWatchedConfirmation, setShowWatchedConfirmation] = useState(false);
@@ -81,7 +77,6 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
     });
   }
 
-  const themeMode = useThemeMode();
 
   return (
     <>

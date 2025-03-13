@@ -86,7 +86,7 @@ export function formatDate(
   if (typeof date === "string") {
     try {
       dateObj = new Date(date);
-    } catch (error) {
+    } catch {
       return "Invalid Date String";
     }
   }
