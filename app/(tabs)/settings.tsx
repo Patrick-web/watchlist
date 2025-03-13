@@ -2,7 +2,6 @@ import Box from "@/components/reusables/Box";
 import Page from "@/components/reusables/Page";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import ThemedSettingSwitch from "@/components/reusables/ThemedSettingSwitch";
-import ThemedText from "@/components/reusables/ThemedText";
 import { useTheme } from "@/hooks/useTheme.hook";
 import { PERSISTED_APP_STATE, setSetting } from "@/valitio.store";
 import { useState } from "react";

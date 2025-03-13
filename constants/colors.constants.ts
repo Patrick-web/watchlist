@@ -70,7 +70,7 @@ export const lightTheme: Theme = {
     underline: "#E8E8EA",
     lightBackground: "rgba(0,0,0,0.04)",
     card: "rgb(18, 18, 18)",
-    text: "#343A40",
+    text: "#000000",
     lightText: "rgba(0,0,0,0.7)",
     border: "rgba(0, 0, 0,0.2)",
     notification: "rgb(255, 69, 58)",

@@ -4,6 +4,7 @@ import { BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { ReactNode } from "react";
 import {
   FlexStyle,
+  StyleProp,
   StyleSheet,
   View,
   ViewProps,
@@ -76,7 +77,10 @@ export function AnimatedBox({
     style,
   ];
   return (
-    <Animated.View style={combinedStyles} {...viewProps}>
+    <Animated.View
+      style={combinedStyles as StyleProp<AnimatedStyle<StyleProp<ViewStyle>>>}
+      {...viewProps}
+    >
       {children}
     </Animated.View>
   );

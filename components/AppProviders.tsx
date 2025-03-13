@@ -13,7 +13,9 @@ import { setupValtio } from "@/valitio.store";
 import { useFonts } from "expo-font";
 import { vexo } from "vexo-analytics";
 
-vexo("4c3a9c16-8dc8-4784-a9fa-62912fa6168c");
+if (!__DEV__) {
+  vexo("4c3a9c16-8dc8-4784-a9fa-62912fa6168c");
+}
 
 SplashScreen.preventAutoHideAsync();
 

@@ -6,7 +6,6 @@ import {
   PressableProps,
   ViewStyle,
   StyleSheet,
-  View,
 } from "react-native";
 import {
   FadeIn,
@@ -15,13 +14,7 @@ import {
   withSpring,
 } from "react-native-reanimated";
 import { useTheme } from "../../hooks/useTheme.hook";
-import Box, {
-  AnimatedBox,
-  AnimatedBoxProps,
-  BoxProps,
-  generateStylesObject,
-  ShortStyles,
-} from "./Box";
+import Box, { AnimatedBox, AnimatedBoxProps, ShortStyles } from "./Box";
 import ThemedIcon, { ThemedIconProps } from "./ThemedIcon";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
 import * as Haptics from "expo-haptics";
@@ -112,7 +105,11 @@ const ThemedButton = (props: ThemedButtonProps) => {
 
   const buttonColors = () => {
     if (color) {
-      return { background: color, border: "transparent" };
+      let bg = color;
+      if (theme[color as keyof ColorOptions]) {
+        bg = theme[color as keyof ColorOptions];
+      }
+      return { background: bg, border: "transparent" };
     }
     if (type === "primary") {
       return { background: theme.primary, border: "transparent" };
@@ -215,7 +212,7 @@ const ThemedButton = (props: ThemedButtonProps) => {
             direction={outerWrapperProps.direction || "row"}
             align="center"
             justify="center"
-            {...wrapperProps}
+            {...(wrapperProps as any)}
           >
             {loading && (
               <ActivityIndicator size={"small"} color={labelColor()} />
@@ -333,7 +330,6 @@ export function ThemedListButton(
 
 type BoxWrapper = Omit<AnimatedBoxProps, "children">;
 export interface ThemedButtonProps extends BoxWrapper {
-  color?: string;
   label?: string | number;
   labelProps?: Omit<ThemedTextProps, "children">;
   loading?: boolean;

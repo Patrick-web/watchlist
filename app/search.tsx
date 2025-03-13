@@ -1,16 +1,16 @@
-import MovieResult from "@/components/MovieResult";
 import Box from "@/components/reusables/Box";
 import ThemedActivityIndicator from "@/components/reusables/ThemedActivityIndicator";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import ThemedErrorCard from "@/components/reusables/ThemedErrorCard";
 import ThemedTextInput from "@/components/reusables/ThemedTextInput";
-import ShowResult from "@/components/ShowResult";
+
 import useDebounce from "@/hooks/useDebounce.hook";
 import useSearch from "@/hooks/useSearchShows.hook";
 import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Platform } from "react-native";
+import { Image } from "expo-image";
 import {
   FadeInLeft,
   FadeInRight,
@@ -22,9 +22,10 @@ import Reanimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { changeCase } from "@/utils/text.utils";
 import Page from "@/components/reusables/Page";
-import { MovieInfo, ShowInfo } from "@/types";
+import { FilmResult, MovieResult } from "@/types";
 import Empty from "@/components/Empty";
-import { sHeight } from "@/constants/dimensions.constant";
+import { POSTER_RATIO, sHeight, sWidth } from "@/constants/dimensions.constant";
+import Movie from "@/components/Movie";
 
 export default function Search() {
   const params = useLocalSearchParams<{ mode: "movies" | "shows" | "all" }>();
@@ -46,7 +47,7 @@ export default function Search() {
   const inputRef = React.useRef<any>();
 
   return (
-    <Page px={0} height={sHeight - yInsets}>
+    <Page px={0} pl={0} height={sHeight - yInsets}>
       <ThemedTextInput
         placeholder={
           params.mode != "all"
@@ -61,11 +62,19 @@ export default function Search() {
         }}
         ref={inputRef}
         autoFocus
-        wrapper={{
-          borderWidth: 0,
-          backgroundColor: "transparent",
-          flexGrow: 1,
-        }}
+        wrapper={
+          Platform.OS === "ios"
+            ? {
+                borderWidth: 0,
+                backgroundColor: "transparent",
+                flexGrow: 1,
+                pl: 20,
+              }
+            : {
+                radius: 40,
+                mx: 20,
+              }
+        }
         leftSlot={
           <>
             {Platform.OS === "android" && (
@@ -118,8 +127,8 @@ const SearchResults = React.memo(
     error,
   }: {
     data: {
-      shows: ShowInfo[];
-      movies: MovieInfo[];
+      shows: FilmResult[];
+      movies: FilmResult<MovieResult>[];
     };
     isFetching: boolean;
     isLoading: boolean;
@@ -169,13 +178,40 @@ const SearchResults = React.memo(
         {error && (
           <ThemedErrorCard title="Something went wrong" error={error.message} />
         )}
-        <Box px={20} flex={1}>
+        <Box flex={1}>
           {view === "shows" && (
             <Reanimated.FlatList
               data={data.shows}
               keyExtractor={(item) => item.url}
-              renderItem={({ item }) => <ShowResult show={item} />}
+              numColumns={2}
+              columnWrapperStyle={{
+                alignItems: "center",
+                justifyContent: data.shows.length > 0 ? "center" : "flex-start",
+                columnGap: 20,
+              }}
               ItemSeparatorComponent={() => <Box height={20} />}
+              renderItem={({ item: show }) => (
+                <ThemedButton
+                  type="text"
+                  align="center"
+                  alignSelf="center"
+                  onPress={() => {
+                    router.push({
+                      pathname: `/show-details`,
+                      params: { film: JSON.stringify(show) },
+                    });
+                  }}
+                >
+                  <Image
+                    source={show.poster}
+                    style={{
+                      width: sWidth / 2 - 40,
+                      height: (sWidth / 2 - 40) * POSTER_RATIO,
+                      borderRadius: sWidth / 2,
+                    }}
+                  />
+                </ThemedButton>
+              )}
               ListEmptyComponent={
                 isFetched ? <Empty message="No shows found" /> : <></>
               }
@@ -191,7 +227,20 @@ const SearchResults = React.memo(
             <Reanimated.FlatList
               data={data.movies}
               keyExtractor={(item) => item.url}
-              renderItem={({ item }) => <MovieResult movie={item} />}
+              renderItem={({ item: movie }) => (
+                <ThemedButton
+                  type="text"
+                  block
+                  onPress={() => {
+                    router.push({
+                      pathname: `/movie-details`,
+                      params: { film: JSON.stringify(movie) },
+                    });
+                  }}
+                >
+                  <Movie movie={movie} />
+                </ThemedButton>
+              )}
               ItemSeparatorComponent={() => <Box height={20} />}
               ListEmptyComponent={
                 isFetched ? <Empty message="No movies found" /> : <></>
@@ -200,6 +249,7 @@ const SearchResults = React.memo(
               exiting={FadeOutRight.springify().stiffness(200).damping(80)}
               contentContainerStyle={{
                 flex: data.shows.length > 0 ? 0 : 1,
+                paddingHorizontal: 20,
               }}
               contentInset={{ bottom: insets.bottom }}
             />

@@ -46,7 +46,7 @@ export default function ThemedListItem({
         direction="row"
         justify="space-between"
         align="center"
-        flex={varaint === "vertical" ? undefined : 0.5}
+        flex={varaint === "vertical" ? undefined : undefined}
       >
         {value && (
           <ThemedText

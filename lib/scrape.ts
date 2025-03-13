@@ -1,58 +1,130 @@
-import { MovieInfo, ShowInfo } from "@/types";
+import { FilmResult, MovieInfo, Season, SeasonEpisode } from "@/types";
+import * as he from "he";
+import { z } from "zod";
 
-export function extractSearchResults(html: string) {
-  const aTagRegex = /<a[^>]*>.*?<\/a>/gs;
-  const showDetailsRegex =
-    /href="([^"]+)".*src="([^"]+)".*<h3 class="film-name">(.*?)<\/h3>.*?(SS \d+).*(EPS \d+)/gs;
-  const movieDetailsRegex =
-    /href="([^"]+)".*src="([^"]+)".*<h3 class="film-name">(.*?)<\/h3>.*?film-info.*?span>(\d{4}).*?span>(\d{2,3})/gs;
+export function extractFilmInfo(html: string) {
+  const genreRegex = /<a[^"]*href="\/genre\/[^"]*"[^"]*title="([^"]*)">/;
+  const releaseDateRegex =
+    /<span class="type">Released:<\/span>\s*(\d{4}-\d{2}-\d{2})/;
+  const productionRegex = /<a href="\/production[^"]*"[^"]*title="([^"]*)"/gs;
+  const castsRegex = /<a href="\/cast[^"]*"[^"]*title="([^"]*)"/gs;
+  const durationRegex = /\d{2,3}m/g;
+  const ratingRegex = /fa-star.*(\d\.\d)/g;
+
+  const genreMatch = html.match(genreRegex);
+  const releaseDateMatch = html.match(releaseDateRegex);
+  const ratingMatch = html.match(ratingRegex);
+  const rating =
+    ratingMatch && ratingMatch[0]
+      ? ratingMatch[0].match(/\d\.\d/)?.[0] || "Not Found"
+      : "Not Found";
+  const durationMatch = html.match(durationRegex);
+
+  let productionMatch;
+  let castsMatch;
+
+  const productions: string[] = [];
+  const casts: string[] = [];
+
+  while ((productionMatch = productionRegex.exec(html)) !== null) {
+    productions.push(productionMatch[1]);
+  }
+
+  while ((castsMatch = castsRegex.exec(html)) !== null) {
+    casts.push(castsMatch[1]);
+  }
+
+  return {
+    genre: genreMatch ? genreMatch[1] : "Not Found",
+    releaseDate: releaseDateMatch ? releaseDateMatch[1] : "Not Found",
+    productions,
+    casts,
+    duration: durationMatch ? durationMatch[0] : "Not Found",
+    rating: rating,
+  };
+}
+
+export function extractShowSeasons(html: string) {
+  const aTagRegex = /<a data-id="(\d*)"[^>]*>([^>]*)<\/a>/gs;
 
   const resultsAsHtml = html.matchAll(aTagRegex);
 
-  let tvShowMatches: string[] = [];
-  let movieMatches: string[] = [];
+  const seasons: Season[] = [];
 
   for (const match of resultsAsHtml) {
-    if (match[0].includes("/tv/")) {
-      tvShowMatches.push(match[0]);
-    }
-    if (match[0].includes("/movie/")) {
-      movieMatches.push(match[0]);
-    }
+    const seasonNumberMatch = match[2].match(/\d{1,2}/gm);
+    seasons.push({
+      id: parseInt(match[1]),
+      title: he.decode(match[2]),
+      seasonNumber: seasonNumberMatch ? parseInt(seasonNumberMatch[0]) : 0,
+    });
   }
 
-  const shows: ShowInfo[] = [];
+  return seasons;
+}
 
-  tvShowMatches.forEach((showHtml) => {
-    const matches = showHtml.matchAll(showDetailsRegex);
-    for (const match of matches) {
-      const showInfo: ShowInfo = {
-        url: match[1],
-        poster: match[2],
-        title: match[3],
-        season: parseInt(match[4].replace(/\D/g, "")),
-        episode: parseInt(match[5].replace(/\D/g, "")),
-      };
-      shows.push(showInfo);
+export function extractShowEpisodes(html: string) {
+  const aTagRegex = /<a[^>]*title="([^>]*)"/gs;
+
+  const resultsAsHtml = html.matchAll(aTagRegex);
+  const episodes: SeasonEpisode[] = [];
+
+  for (const match of resultsAsHtml) {
+    const episodeTitle = match[1] || "";
+    const episodeNumberMatch = episodeTitle.match(/\d*:/);
+    const episodeNumber = episodeNumberMatch
+      ? parseInt(episodeNumberMatch[0].replace(":", ""))
+      : 0;
+    episodes.push({
+      title: he.decode(episodeTitle),
+      episode: episodeNumber,
+    });
+  }
+
+  return episodes;
+}
+
+export function extractSearchResults(html: string) {
+  console.log(html);
+  const showDetailsRegex =
+    /<img[^>]*data-src="([^"]*)"[^.]*href="([^"]*)"[^>]*title="([^"]*)"[^>]*>[^.]*SS[^.]*\d{1,2}[^.]*TV/gms;
+
+  const showMatches = html.matchAll(showDetailsRegex);
+
+  const shows: FilmResult[] = [];
+
+  console.log(showMatches);
+
+  if (showMatches) {
+    for (const match of showMatches) {
+      shows.push({
+        poster: match[1],
+        url: match[2],
+        title: he.decode(match[3]),
+      });
     }
-  });
-
+  }
   const movies: MovieInfo[] = [];
 
-  movieMatches.forEach((showHtml) => {
-    const matches = showHtml.matchAll(movieDetailsRegex);
-    for (const match of matches) {
+  const movieDetailsRegex =
+    /<img[^>]*data-src="([^"]*)"[^.]*href="([^"]*)"[^>]*title="([^"]*)"[^>]*>[^.]*(\d{4})[^.]*(\d{2,3}m)/gms;
+
+  const movieMatches = html.matchAll(movieDetailsRegex);
+
+  console.log({ movieMatches });
+
+  if (movieMatches) {
+    for (const match of movieMatches) {
       const movieInfo: MovieInfo = {
-        url: match[1],
-        poster: match[2],
-        title: match[3],
+        url: match[2],
+        poster: match[1],
+        title: he.decode(match[3]),
         year: parseInt(match[4].replace(/\D/g, "")),
         duration: parseInt(match[5].replace(/\D/g, "")),
       };
       movies.push(movieInfo);
     }
-  });
-
+  }
   return { shows, movies };
 }
 
@@ -79,7 +151,3 @@ F_HEADERS.append(
   "Content-Type",
   "application/x-www-form-urlencoded; charset=UTF-8",
 );
-
-export function cleanTitle(title: string) {
-  return title.replace("&amp;", "&");
-}

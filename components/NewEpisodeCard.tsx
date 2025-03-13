@@ -1,23 +1,14 @@
-import React, { LegacyRef, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Box from "./reusables/Box";
 import { Image } from "expo-image";
 import ThemedText from "./reusables/ThemedText";
-import { cleanTitle } from "@/lib/scrape";
-import Reanimated, {
-  SharedValue,
-  useAnimatedStyle,
-} from "react-native-reanimated";
-import ReanimatedSwipeable, {
-  SwipeableMethods,
-} from "react-native-gesture-handler/ReanimatedSwipeable";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import ThemedButton from "./reusables/ThemedButton";
 import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import { toast } from "sonner-native";
 import ThemedIcon from "./reusables/ThemedIcon";
-import { onEpisodeWatched, PERSISTED_APP_STATE } from "@/valitio.store";
-import { useSnapshot } from "valtio";
+import { onEpisodeWatched } from "@/valitio.store";
 import ThemedBottomSheet from "./reusables/ThemedBottomSheet";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ReminderForm from "./ReminderForm";
 import { SUCCESS_ALERT } from "@/constants/common.constants";
 import Haptics from "expo-haptics";
@@ -25,7 +16,6 @@ import { NewEpisode } from "@/types";
 import { POSTER_RATIO, sWidth } from "@/constants/dimensions.constant";
 import { StyleSheet } from "react-native";
 import SwipeAction from "./SwipeAction";
-import ThemedTrueSheet from "./reusables/TrueSheet";
 
 const ACTION_WIDTH = sWidth - 40;
 const POSTER_WIDTH = 100;
@@ -58,7 +48,7 @@ export function Episode({ episode }: { episode: NewEpisode }) {
         </ThemedText>
       </Box>
       <Box justify="center" gap={5} height={"100%"} flex={1}>
-        <ThemedText size={"lg"}>{cleanTitle(episode.show.title)}</ThemedText>
+        <ThemedText size={"lg"}>{episode.show.title}</ThemedText>
         <ThemedText size={"sm"} opacity={0.5}>
           Season {episode.show.season}
         </ThemedText>

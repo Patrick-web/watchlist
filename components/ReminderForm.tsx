@@ -1,8 +1,6 @@
-import { cleanTitle } from "@/lib/scrape";
 import Box, { AnimatedBox } from "./reusables/Box";
 import ThemedButton from "./reusables/ThemedButton";
-import { Children, ReactNode, useEffect, useState } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ReactNode, useEffect, useState } from "react";
 import {
   requestNotificationPermission,
   scheduleNotification,
@@ -15,11 +13,7 @@ import { FadeInUp } from "react-native-reanimated";
 import { ThemedDatePicker } from "./reusables/ThemedDatePicker";
 import { notificationAsync, NotificationFeedbackType } from "expo-haptics";
 import { MovieInfo, NewEpisode, ShowInfo } from "@/types";
-import {
-  onEpisodeReminderSet,
-  PERSISTED_APP_STATE,
-  setSetting,
-} from "@/valitio.store";
+import { PERSISTED_APP_STATE, setSetting } from "@/valitio.store";
 import ThemedBottomSheet from "./reusables/ThemedBottomSheet";
 import { useSnapshot } from "valtio";
 
@@ -196,13 +190,11 @@ export default function ReminderForm({
     // dynamic message based on what is passed in i.e movie, episode or show
     const message = () => {
       if (movie) {
-        return `Watch ${cleanTitle(movie.title)}`;
+        return `Watch ${movie.title}`;
       } else if (episode) {
-        return `Watch ${cleanTitle(episode.show.title)} Episode ${
-          episode.show.episode
-        }`;
+        return `Watch ${episode.show.title} Episode ${episode.show.episode}`;
       } else if (show) {
-        return `Watch ${cleanTitle(show.title)}`;
+        return `Watch ${show.title}`;
       }
     };
 
@@ -282,8 +274,8 @@ export default function ReminderForm({
                 selectedDay?.label === day.label
                   ? "100%"
                   : selectedDay || customDate
-                  ? "0%"
-                  : "48%"
+                    ? "0%"
+                    : "48%"
               }
               overflow="hidden"
               key={day.label}

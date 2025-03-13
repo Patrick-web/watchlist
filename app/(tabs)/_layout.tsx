@@ -1,8 +1,6 @@
 import ThemedIcon, { ThemedIconProps } from "@/components/reusables/ThemedIcon";
-import ThemedText from "@/components/reusables/ThemedText";
 import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import { LinearGradient } from "expo-linear-gradient";
-import { router, usePathname } from "expo-router";
 import {
   TabList,
   Tabs,
@@ -16,7 +14,7 @@ import { Pressable, View } from "react-native";
 export default function TabLayout() {
   const theme = useTheme();
   const themeMode = useThemeMode();
-  const currentPath = usePathname();
+
   return (
     <Tabs>
       <TabSlot />

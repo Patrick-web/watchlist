@@ -1,4 +1,3 @@
-import { cleanTitle } from "@/lib/scrape";
 import { MovieInfo } from "@/types";
 import { Image } from "expo-image";
 import React from "react";
@@ -39,7 +38,7 @@ export default function Movie({
           }}
         />
         <Box justify="center" gap={5} height={"100%"} flex={1}>
-          <ThemedText size={"lg"}>{cleanTitle(movie.title)}</ThemedText>
+          <ThemedText size={"lg"}>{movie.title}</ThemedText>
           <Box direction="row" gap={10}>
             <ThemedText size={"sm"} opacity={0.8}>
               {movie.year}

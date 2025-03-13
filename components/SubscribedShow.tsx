@@ -2,16 +2,12 @@ import React, { useState } from "react";
 import Box from "./reusables/Box";
 import { Image } from "expo-image";
 import ThemedText from "./reusables/ThemedText";
-import { cleanTitle } from "@/lib/scrape";
 import ThemedButton from "./reusables/ThemedButton";
-import ThemedBottomSheet from "./reusables/ThemedBottomSheet";
 import { POSTER_RATIO, sWidth } from "@/constants/dimensions.constant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Platform } from "react-native";
 import { unsubscribeShow } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import { ShowInfo } from "@/types";
-import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import ThemedTrueSheet from "./reusables/TrueSheet";
 import { useThemeMode } from "@/hooks/useTheme.hook";
 
@@ -67,7 +63,7 @@ export default function SubscribedShow({ show }: { show: ShowInfo }) {
             }}
           />
           <ThemedText size={"xxl"} fontWeight="bold">
-            {cleanTitle(show.title)}
+            {show.title}
           </ThemedText>
           <Box direction="row" opacity={0.8} gap={10}>
             <ThemedText size={"sm"}>Season {show.season}</ThemedText>

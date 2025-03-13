@@ -13,6 +13,19 @@ export interface ShowInfo {
   episode: number;
 }
 
+export type FilmResult<T = any> = T & {
+  url: string;
+  poster: string;
+  title: string;
+};
+
+export interface ShowResult {}
+
+export interface MovieResult {
+  year: number;
+  duration: number;
+}
+
 export interface MovieInfo {
   url: string;
   poster: string;
@@ -20,3 +33,14 @@ export interface MovieInfo {
   year: number;
   duration: number;
 }
+
+export interface Season {
+  id: number;
+  title: string;
+  seasonNumber: number;
+}
+
+export type SeasonEpisode = {
+  title: string;
+  episode: number;
+};

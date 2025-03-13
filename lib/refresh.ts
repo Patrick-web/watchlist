@@ -1,35 +1,75 @@
-import {
-  addNewEpisode,
-  onEpisodeNotificationShown,
-  PERSISTED_APP_STATE,
-} from "@/valitio.store";
-import { cleanTitle, extractSearchResults, F_HEADERS } from "./scrape";
+import { addNewEpisode, PERSISTED_APP_STATE } from "@/valitio.store";
+import { extractShowEpisodes, extractShowSeasons, F_HEADERS } from "./scrape";
 import * as Notifications from "expo-notifications";
-import { AppState } from "react-native";
 import { ShowInfo } from "@/types";
 
-async function checkNewEpisode(currentShow: ShowInfo) {
-  const APP_OS_STATE = AppState.currentState;
-
-  const data = new URLSearchParams();
-
-  console.log("Searching..." + cleanTitle(currentShow.title));
-
-  data.append("keyword", cleanTitle(currentShow.title));
-
-  const resp = await fetch("https://fmovies.ps/ajax/search", {
-    method: "POST",
-    body: data.toString(),
+export async function fetchShowSeasons(showId: string) {
+  console.log("Fetching seasons");
+  const resp = await fetch(`https://fmovies.ps/ajax/season/list/${showId}`, {
     headers: F_HEADERS,
   });
 
   const html = await resp.text();
 
-  const results = extractSearchResults(html);
+  const seasons = extractShowSeasons(html);
+  console.log({ seasonsExtracted: seasons });
 
-  const updatedShow = results.shows.find(
-    (show) => show.title === currentShow.title,
+  return seasons;
+}
+
+export async function fetchShowEpisodes(seasonId: number) {
+  console.log("Fetching episodes");
+  const resp = await fetch(
+    `https://fmovies.ps/ajax/season/episodes/${seasonId}`,
+    {
+      headers: F_HEADERS,
+    },
   );
+
+  const html = await resp.text();
+
+  const episodes = extractShowEpisodes(html);
+
+  return episodes;
+}
+
+async function checkNewEpisode(currentShow: ShowInfo) {
+  const match = currentShow.url.match(/\d*$/);
+
+  console.log({ match });
+
+  if (!match) {
+    console.error("Invalid show URL:", currentShow.url);
+    return;
+  }
+  const showId = match[0];
+
+  console.log({ showId });
+
+  const seasons = await fetchShowSeasons(showId);
+  console.log({ seasons });
+  const latestSeason = seasons[seasons.length - 1];
+
+  const episodes = await fetchShowEpisodes(latestSeason.id);
+  console.log({ episodes });
+
+  const latestEpisode = episodes[episodes.length - 1];
+
+  console.log({
+    latestEpisode,
+    latestSeason,
+  });
+
+  console.log({
+    currentEpisode: currentShow.episode,
+    currentSeason: currentShow.season,
+  });
+
+  const updatedShow = {
+    ...currentShow,
+    season: latestSeason.seasonNumber,
+    episode: latestEpisode.episode,
+  };
   if (updatedShow) {
     if (
       updatedShow.season >= currentShow.season &&
