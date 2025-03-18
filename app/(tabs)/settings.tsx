@@ -3,7 +3,6 @@ import Page from "@/components/reusables/Page";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import ThemedSettingSwitch from "@/components/reusables/ThemedSettingSwitch";
 import { PERSISTED_APP_STATE, setSetting } from "@/valitio.store";
-import { useState } from "react";
 import * as Updates from "expo-updates";
 import { useSnapshot } from "valtio";
 import AppHeader from "@/components/AppHeader";
@@ -11,21 +10,15 @@ import AppHeader from "@/components/AppHeader";
 export default function Settings() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
 
-  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const { isUpdateAvailable, isDownloading } = Updates.useUpdates();
 
-  async function lookForUpdate() {
+  async function updateOTA() {
     try {
-      setCheckingUpdate(true);
-      const update = await Updates.checkForUpdateAsync();
-
-      if (update.isAvailable) {
-        await Updates.fetchUpdateAsync();
-        await Updates.reloadAsync();
-      } else {
-        alert("No update found");
-      }
-    } catch {/* ignore errors */}
-    setCheckingUpdate(false);
+      await Updates.fetchUpdateAsync();
+      await Updates.reloadAsync();
+    } catch {
+      /* ignore errors */
+    }
   }
   return (
     <Page>
@@ -49,13 +42,15 @@ export default function Settings() {
             }}
           />
         </Box>
-        <ThemedButton
-          size="sm"
-          label={"Check Update"}
-          type="surface"
-          loading={checkingUpdate}
-          onPress={lookForUpdate}
-        />
+        {isUpdateAvailable && (
+          <ThemedButton
+            size="sm"
+            label={"Update"}
+            type="surface"
+            loading={isDownloading}
+            onPress={updateOTA}
+          />
+        )}
       </Box>
     </Page>
   );
