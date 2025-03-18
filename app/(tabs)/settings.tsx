@@ -6,9 +6,13 @@ import { PERSISTED_APP_STATE, setSetting } from "@/valitio.store";
 import * as Updates from "expo-updates";
 import { useSnapshot } from "valtio";
 import AppHeader from "@/components/AppHeader";
+import ThemedText from "@/components/reusables/ThemedText";
+import ThemedCard from "@/components/reusables/ThemedCard";
 
 export default function Settings() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
+
+  const runtime = Updates.runtimeVersion;
 
   const { isUpdateAvailable, isDownloading } = Updates.useUpdates();
 
@@ -43,14 +47,22 @@ export default function Settings() {
           />
         </Box>
         {isUpdateAvailable && (
-          <ThemedButton
-            size="sm"
-            label={"Update"}
-            type="surface"
-            loading={isDownloading}
-            onPress={updateOTA}
-          />
+          <ThemedCard
+            title="New Update available"
+            icon={{ name: "burst-new", source: "Foundation" }}
+          >
+            <ThemedButton
+              size="sm"
+              label={"Update Now"}
+              type="primary"
+              loading={isDownloading}
+              onPress={updateOTA}
+            />
+          </ThemedCard>
         )}
+        <ThemedText align="center" opacity={0.8}>
+          v{runtime}
+        </ThemedText>
       </Box>
     </Page>
   );
