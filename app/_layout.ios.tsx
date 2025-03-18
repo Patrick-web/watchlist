@@ -33,9 +33,7 @@ export default function RootLayout() {
             headerShown: false,
             sheetCornerRadius: 40,
             contentStyle: {
-              // color on Ipad only
-              backgroundColor:
-                Platform.OS === "ios" ? theme.surface : theme.background,
+              backgroundColor: theme.background,
             },
           }}
         />
@@ -46,9 +44,7 @@ export default function RootLayout() {
             headerShown: false,
             sheetCornerRadius: 40,
             contentStyle: {
-              // color on Ipad only
-              backgroundColor:
-                Platform.OS === "ios" ? theme.surface : theme.background,
+              backgroundColor: theme.background,
             },
           }}
         />
