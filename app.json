@@ -7,9 +7,9 @@
     "icon": "./assets/images/icon.png",
     "scheme": "sync",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "xyz.justpatrick.sync",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
