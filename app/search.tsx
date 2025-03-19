@@ -21,7 +21,6 @@ import {
 import Reanimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { changeCase } from "@/utils/text.utils";
-import Page from "@/components/reusables/Page";
 import { FilmResult, MovieResult } from "@/types";
 import Empty from "@/components/Empty";
 import { POSTER_RATIO, sHeight, sWidth } from "@/constants/dimensions.constant";
@@ -38,14 +37,18 @@ export default function Search() {
   const { data, isLoading, isFetching, isFetched, error } =
     useSearch(debouncedQuery);
 
-
   const insets = useSafeAreaInsets();
-  const yInsets = insets.bottom + insets.top;
 
   const inputRef = React.useRef<any>();
 
   return (
-    <Page px={0} pl={0} height={sHeight - yInsets}>
+    <Box
+      pt={Platform.OS === "ios" ? 0 : insets.top}
+      height={sHeight - insets.bottom - insets.top}
+      justify="space-between"
+      color={"background"}
+      gap={10}
+    >
       <ThemedTextInput
         placeholder={
           params.mode !== "all"
@@ -112,7 +115,7 @@ export default function Search() {
         isFetched={isFetched}
         error={error}
       />
-    </Page>
+    </Box>
   );
 }
 
@@ -258,5 +261,4 @@ const SearchResults = React.memo(
   },
 );
 
-SearchResults.displayName = 'SearchResults';
-
+SearchResults.displayName = "SearchResults";

@@ -3,29 +3,26 @@ import Page from "@/components/reusables/Page";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import ThemedSettingSwitch from "@/components/reusables/ThemedSettingSwitch";
 import { PERSISTED_APP_STATE, setSetting } from "@/valitio.store";
-import { useState } from "react";
 import * as Updates from "expo-updates";
 import { useSnapshot } from "valtio";
 import AppHeader from "@/components/AppHeader";
+import ThemedText from "@/components/reusables/ThemedText";
+import ThemedCard from "@/components/reusables/ThemedCard";
 
 export default function Settings() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
 
-  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const runtime = Updates.runtimeVersion;
 
-  async function lookForUpdate() {
+  const { isUpdateAvailable, isDownloading } = Updates.useUpdates();
+
+  async function updateOTA() {
     try {
-      setCheckingUpdate(true);
-      const update = await Updates.checkForUpdateAsync();
-
-      if (update.isAvailable) {
-        await Updates.fetchUpdateAsync();
-        await Updates.reloadAsync();
-      } else {
-        alert("No update found");
-      }
-    } catch {/* ignore errors */}
-    setCheckingUpdate(false);
+      await Updates.fetchUpdateAsync();
+      await Updates.reloadAsync();
+    } catch {
+      /* ignore errors */
+    }
   }
   return (
     <Page>
@@ -49,13 +46,23 @@ export default function Settings() {
             }}
           />
         </Box>
-        <ThemedButton
-          size="sm"
-          label={"Check Update"}
-          type="surface"
-          loading={checkingUpdate}
-          onPress={lookForUpdate}
-        />
+        {isUpdateAvailable && (
+          <ThemedCard
+            title="New Update available"
+            icon={{ name: "burst-new", source: "Foundation" }}
+          >
+            <ThemedButton
+              size="sm"
+              label={"Update Now"}
+              type="primary"
+              loading={isDownloading}
+              onPress={updateOTA}
+            />
+          </ThemedCard>
+        )}
+        <ThemedText align="center" opacity={0.8}>
+          v{runtime}
+        </ThemedText>
       </Box>
     </Page>
   );

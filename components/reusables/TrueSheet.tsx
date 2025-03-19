@@ -66,8 +66,6 @@ const ThemedTrueSheet = forwardRef<TrueSheet, ThemedSheetProps>(
             );
           }}
           sizes={["auto"]}
-          initialIndex={visible ? 1 : undefined}
-          initialIndexAnimated
           backgroundColor={backgroundColor || theme.background}
           {...sheetProps}
         >
