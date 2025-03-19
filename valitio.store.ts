@@ -83,6 +83,16 @@ export function addSubscribedShow(show: ShowInfo) {
   }
 }
 
+export function updateShow(show: ShowInfo) {
+  const index = PERSISTED_APP_STATE.subscribedShows.findIndex(
+    ($show) => $show.url === show.url,
+  );
+
+  if (index !== -1) {
+    PERSISTED_APP_STATE.subscribedShows[index] = show;
+  }
+}
+
 export function unsubscribeShow(show: ShowInfo) {
   PERSISTED_APP_STATE.subscribedShows =
     PERSISTED_APP_STATE.subscribedShows.filter(
@@ -96,12 +106,19 @@ export function unsubscribeShow(show: ShowInfo) {
   });
 }
 
-export const isSubscribed = (searchShow: ShowInfo) =>
-  PERSISTED_APP_STATE.subscribedShows.find(
-    (show) => show.url === searchShow.url,
-  )
+export const isSubscribed = (showUrl: string) =>
+  PERSISTED_APP_STATE.subscribedShows.find((show) => show.url === showUrl)
     ? true
     : false;
+
+export const isInWatchList = (filmUrl: string) => {
+  const fullWatchlist = [
+    ...PERSISTED_APP_STATE.watchList.shows,
+    ...PERSISTED_APP_STATE.watchList.movies,
+  ];
+
+  return fullWatchlist.find((item) => item.url === filmUrl) ? true : false;
+};
 
 export function onEpisodeWatched(target: NewEpisode) {
   const indexOfShow = PERSISTED_APP_STATE.subscribedShows.findIndex(

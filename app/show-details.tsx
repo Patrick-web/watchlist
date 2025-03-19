@@ -1,7 +1,6 @@
 import Box from "@/components/reusables/Box";
-import { POSTER_RATIO } from "@/constants/dimensions.constant";
+import { sHeight } from "@/constants/dimensions.constant";
 import React, { useRef, useState } from "react";
-import { Image, ImageBackground } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { extractFilmInfo, F_HEADERS } from "@/lib/scrape";
@@ -9,18 +8,19 @@ import { Season, ShowInfo, FilmResult } from "@/types";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import ThemedActivityIndicator from "@/components/reusables/ThemedActivityIndicator";
 import ThemedText from "@/components/reusables/ThemedText";
-import ThemedListItem from "@/components/reusables/ThemedListItem";
 import { fetchShowEpisodes, fetchShowSeasons } from "@/lib/refresh";
 import { Platform, ScrollView } from "react-native";
-import { addShowToWatchList, addSubscribedShow } from "@/valitio.store";
-import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
-import { LinearGradient } from "expo-linear-gradient";
-import { ScreenRoot } from "@/components/PlatformScreenRoot";
+import {
+  addShowToWatchList,
+  addSubscribedShow,
+  isInWatchList,
+  isSubscribed,
+} from "@/valitio.store";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import FilmInfo from "@/components/FilmInfo";
+import FilmHeader from "@/components/FilmHeader";
 
-const POSTER_HEIGHT = 250;
-const POSTER_WIDTH = POSTER_HEIGHT / POSTER_RATIO;
-
-const Film = () => {
+function ShowDetails() {
   const { film: filmString } = useLocalSearchParams<{ film: string }>();
 
   const show = JSON.parse(filmString) as FilmResult;
@@ -108,9 +108,6 @@ const Film = () => {
     enabled: !!currentSeason,
   });
 
-  const theme = useTheme();
-  const themeMode = useThemeMode();
-
   function subscribe() {
     let $show = fullShow;
 
@@ -147,58 +144,17 @@ const Film = () => {
     router.replace("/(tabs)/watchlist");
   }
 
+  const insets = useSafeAreaInsets();
   return (
-    <ScreenRoot>
+    <Box
+      height={Platform.OS === "android" ? "100%" : sHeight - insets.top}
+      pb={insets.bottom + 20}
+      justify="space-between"
+      color={"background"}
+      gap={10}
+    >
       <Box gap={10}>
-        <ImageBackground
-          source={show.poster}
-          blurRadius={100}
-          style={{
-            width: "100%",
-          }}
-        >
-          {Platform.OS !== "ios" && (
-            <ThemedButton
-              icon={{ name: "arrow-left", color: "white" }}
-              type="surface"
-              position="absolute"
-              color={"rgba(0,0,0,0.2)"}
-              top={10}
-              left={10}
-              onPress={router.back}
-            />
-          )}
-          <Box block align="center" color={"rgba(0,0,0,0.3)"} pt={20}>
-            <Image
-              source={show.poster}
-              style={{
-                width: POSTER_WIDTH,
-                height: POSTER_HEIGHT,
-                borderRadius: POSTER_WIDTH / 2,
-              }}
-            />
-            <LinearGradient
-              colors={[
-                themeMode === "dark"
-                  ? "rgba(32,32,32,0)"
-                  : "rgba(255,255,255,0)",
-                theme.background,
-              ]}
-              style={{ width: "100%" }}
-            >
-              <Box px={20} py={10}>
-                <ThemedText
-                  size={"xxl"}
-                  align="center"
-                  fontWeight="bold"
-                  color={"white"}
-                >
-                  {show.title}
-                </ThemedText>
-              </Box>
-            </LinearGradient>
-          </Box>
-        </ImageBackground>
+        <FilmHeader film={show} />
         <Box align="flex-start" px={10} gap={0}>
           <Box direction="row" gap={5}>
             {seasons !== undefined &&
@@ -254,53 +210,37 @@ const Film = () => {
         {filmQueries[0].isLoading ? (
           <ThemedActivityIndicator />
         ) : (
-          filmInfo !== undefined && (
-            <Box block>
-              <ThemedListItem
-                label="Duration"
-                value={filmInfo.duration}
-                varaint="horizontal"
-              />
-              <ThemedListItem
-                label="Released"
-                value={filmInfo.releaseDate}
-                varaint="horizontal"
-              />
-              <ThemedListItem
-                label="Rating"
-                value={filmInfo.rating}
-                varaint="horizontal"
-              />
-              <ThemedListItem label="Genre" value={filmInfo.genre} />
-              <ThemedListItem label="Cast" value={filmInfo.casts.join(", ")} />
-            </Box>
-          )
+          filmInfo !== undefined && <FilmInfo filmInfo={filmInfo} />
         )}
       </Box>
       {fullShow && fullShow.episode && fullShow.season && (
         <Box gap={20} direction="row" px={20}>
           <ThemedButton
-            label={"Subscribe"}
-            type="surface"
+            label={isSubscribed(fullShow.url) ? "Subscribed" : "Subscribe"}
+            type={isSubscribed(fullShow.url) ? "primary" : "surface"}
             direction="column"
             size="sm"
             py={10}
             onPress={subscribe}
             flex={1}
           />
-          <ThemedButton
-            label={"Watch Later"}
-            type="surface"
-            direction="column"
-            size="sm"
-            py={10}
-            onPress={addToWatchList}
-            flex={1}
-          />
+          {isSubscribed(fullShow.url) === false && (
+            <ThemedButton
+              label={
+                isInWatchList(fullShow.url) ? "Watching Later" : "Watch Later"
+              }
+              type={isInWatchList(fullShow.url) ? "primary" : "surface"}
+              direction="column"
+              size="sm"
+              py={10}
+              onPress={addToWatchList}
+              flex={1}
+            />
+          )}
         </Box>
       )}
-    </ScreenRoot>
+    </Box>
   );
-};
+}
 
-export default Film;
+export default ShowDetails;
