@@ -38,7 +38,6 @@ export default function Search() {
     useSearch(debouncedQuery);
 
   const insets = useSafeAreaInsets();
-  const yInsets = insets.bottom + insets.top;
 
   const inputRef = React.useRef<any>();
 

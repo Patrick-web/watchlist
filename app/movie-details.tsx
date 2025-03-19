@@ -1,26 +1,17 @@
 import Box from "@/components/reusables/Box";
-import { POSTER_RATIO, sHeight } from "@/constants/dimensions.constant";
+import { sHeight } from "@/constants/dimensions.constant";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Image, ImageBackground } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { extractFilmInfo, F_HEADERS } from "@/lib/scrape";
 import { MovieInfo } from "@/types";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import ThemedActivityIndicator from "@/components/reusables/ThemedActivityIndicator";
-import ThemedText from "@/components/reusables/ThemedText";
-import ThemedListItem from "@/components/reusables/ThemedListItem";
 import { addMovieToWatchList, isInWatchList } from "@/valitio.store";
-import { LinearGradient } from "expo-linear-gradient";
-import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import { Platform } from "react-native";
-import he from "he";
 import FilmInfo from "@/components/FilmInfo";
 import FilmHeader from "@/components/FilmHeader";
-
-const POSTER_HEIGHT = 250;
-const POSTER_WIDTH = POSTER_HEIGHT / POSTER_RATIO;
 
 const Film = () => {
   const { film: filmString } = useLocalSearchParams<{ film: string }>();
@@ -47,9 +38,6 @@ const Film = () => {
   });
 
   const insets = useSafeAreaInsets();
-
-  const theme = useTheme();
-  const themeMode = useThemeMode();
 
   function addToWatchList() {
     addMovieToWatchList(movie);
