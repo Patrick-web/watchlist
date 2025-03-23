@@ -72,6 +72,7 @@ function ShowDetails() {
   const seasons = filmQueries[1].data;
 
   const episodesScrollRef = useRef<ScrollView>(null);
+  const seasonsScrollRef = useRef<ScrollView>(null);
 
   const { data: currentEpisodes, isLoading: loadingEpisodes } = useQuery({
     queryKey: ["show", "season", "episodes", filmId, currentSeason?.id],
@@ -84,6 +85,7 @@ function ShowDetails() {
       console.log({ episodes });
 
       episodesScrollRef.current?.scrollToEnd({ animated: true });
+      seasonsScrollRef.current?.scrollToEnd({ animated: true });
 
       const lastEpisode = episodes[episodes.length - 1];
       const lastSeason = seasons![seasons!.length - 1];
@@ -156,26 +158,32 @@ function ShowDetails() {
       <Box gap={10}>
         <FilmHeader film={show} />
         <Box align="flex-start" px={10} gap={0}>
-          <Box direction="row" gap={5}>
-            {seasons !== undefined &&
-              seasons.map((season) => (
-                <ThemedButton
-                  key={season.id}
-                  size="xs"
-                  label={season.title ?? ""}
-                  type="text"
-                  color={
-                    currentSeason?.id === season.id
-                      ? "lightBackground"
-                      : "transparent"
-                  }
-                  radiusTop={15}
-                  radiusBottom={0}
-                  onPress={() => setCurrentSeason(season)}
-                  labelProps={{ color: "text" }}
-                />
-              ))}
-          </Box>
+          <ScrollView
+            ref={seasonsScrollRef}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            <Box direction="row" gap={5}>
+              {seasons !== undefined &&
+                seasons.map((season) => (
+                  <ThemedButton
+                    key={season.id}
+                    size="xs"
+                    label={season.title ?? ""}
+                    type="text"
+                    color={
+                      currentSeason?.id === season.id
+                        ? "lightBackground"
+                        : "transparent"
+                    }
+                    radiusTop={15}
+                    radiusBottom={0}
+                    onPress={() => setCurrentSeason(season)}
+                    labelProps={{ color: "text" }}
+                  />
+                ))}
+            </Box>
+          </ScrollView>
           <Box
             radiusBottom={10}
             borderTopRightRadius={10}
@@ -208,7 +216,7 @@ function ShowDetails() {
           </Box>
         </Box>
         {filmQueries[0].isLoading ? (
-          <ThemedActivityIndicator />
+          <ThemedActivityIndicator style={{ margin: "auto" }} />
         ) : (
           filmInfo !== undefined && <FilmInfo filmInfo={filmInfo} />
         )}
