@@ -47,28 +47,98 @@ export default function SubscribedShow({ show }: { show: ShowInfo }) {
         onDismiss={() => {
           setShowModal(false);
         }}
-        cornerRadius={0}
+        cornerRadius={60}
         blurTint={themeMode}
+        grabber={false}
       >
-        <Box justify="center" align="center" gap={5} py={20}>
+        <Box justify="center" align="center" gap={20} pb={60} pt={80}>
+          <Box direction="row" block justify="center" align="center">
+            <Box
+              flex={1}
+              align="flex-end"
+              direction="row"
+              alignSelf="flex-start"
+              transform={[{ translateX: "20%" }]}
+              zIndex={4}
+              position="absolute"
+              top={30}
+              left={0}
+            >
+              <ThemedText
+                size={"xl"}
+                fontWeight="bold"
+                transform={[{ translateY: "-35%" }]}
+              >
+                SN
+              </ThemedText>
+              <ThemedText
+                size={120}
+                fontWeight="bold"
+                textShadowColor={"rgba(0,0,0,0.6)"}
+                textShadowRadius={8}
+                textShadowOffset={{ width: 0, height: 8 }}
+              >
+                {show.season}
+              </ThemedText>
+            </Box>
+            <Image
+              source={show.poster}
+              style={{
+                width: POSTER_WIDTH * 1.5,
+                height: POSTER_WIDTH * 1.5 * POSTER_RATIO,
+                borderRadius: 40,
+              }}
+            />
+            <Box
+              align="flex-end"
+              justify="flex-end"
+              transform={[
+                {
+                  translateX:
+                    show.episode.toString().length === 1 ? "-30%" : "-10%",
+                },
+              ]}
+              direction="row"
+              position="absolute"
+              bottom={40}
+              right={0}
+            >
+              <ThemedText
+                size={100}
+                fontWeight="bold"
+                textShadowColor={"rgba(0,0,0,0.6)"}
+                textShadowRadius={8}
+                textShadowOffset={{ width: 0, height: 8 }}
+              >
+                {show.episode}
+              </ThemedText>
+              <ThemedText
+                size={"xl"}
+                fontWeight="bold"
+                transform={[{ translateY: "-25%" }]}
+              >
+                EP
+              </ThemedText>
+            </Box>
+          </Box>
           <Image
             source={show.poster}
             style={{
-              width: POSTER_WIDTH,
-              height: POSTER_WIDTH * POSTER_RATIO,
-              borderRadius: sWidth / 2,
+              width: "100%",
+              height: "140%",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              opacity: 0.2,
+              zIndex: -1,
             }}
+            blurRadius={90}
           />
-          <ThemedText size={"xxl"} fontWeight="bold">
+          <ThemedText size={"xxxl"} fontWeight="bold">
             {show.title}
           </ThemedText>
-          <Box direction="row" opacity={0.8} gap={10}>
-            <ThemedText size={"sm"}>Season {show.season}</ThemedText>
-            <ThemedText size={"sm"}>⋅</ThemedText>
-            <ThemedText size={"sm"}>Episode {show.episode}</ThemedText>
-          </Box>
           <ThemedButton
-            type={"surface"}
+            type={"secondary"}
             size="xs"
             label={"Unsubscribe"}
             mt={10}
