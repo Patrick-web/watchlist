@@ -21,7 +21,6 @@ const Film = () => {
   const { data: filmInfo, isLoading } = useQuery({
     queryKey: ["movie", movie.url],
     queryFn: async () => {
-      console.log({ film: movie });
       const resp = await fetch(`https://fmovies.ps/${movie.url}`, {
         method: "GET",
         headers: F_HEADERS,
@@ -29,8 +28,6 @@ const Film = () => {
       const html = await resp.text();
 
       const movieInfo = extractFilmInfo(html);
-
-      console.log({ movieInfo });
 
       return movieInfo;
     },
