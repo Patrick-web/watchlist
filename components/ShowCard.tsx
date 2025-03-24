@@ -4,6 +4,7 @@ import { onShowWatched } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import React, { useRef, useState } from "react";
 import { StyleSheet } from "react-native";
+import { Image } from "expo-image";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { toast } from "sonner-native";
 import ReminderForm from "./ReminderForm";
@@ -13,8 +14,13 @@ import ThemedButton from "./reusables/ThemedButton";
 import ThemedIcon from "./reusables/ThemedIcon";
 import Show from "./Show";
 import SwipeAction from "./SwipeAction";
+import ThemedTrueSheet from "./reusables/TrueSheet";
+import { useThemeMode } from "@/hooks/useTheme.hook";
+import FilmPosterBackground from "./FilmPosterBackground";
 
 export default function ShowCard({ show }: { show: ShowInfo }) {
+  const themeMode = useThemeMode();
+
   const [showActions, setShowActions] = useState(false);
   const [showReminderForm, setShowReminderForm] = useState(false);
   const [showWatchedConfirmation, setShowWatchedConfirmation] = useState(false);
@@ -80,39 +86,61 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
           <Show show={show} />
         </ThemedButton>
       </ReanimatedSwipeable>
-      <ThemedBottomSheet
+      <ThemedTrueSheet
         visible={showActions}
-        close={() => setShowActions(false)}
-        containerProps={{ px: 20, gap: 20, radius: 60 }}
+        onDismiss={() => setShowActions(false)}
+        cornerRadius={60}
+        blurTint={themeMode}
+        grabber={false}
       >
-        <Show show={show} />
-        <Box color={"border"} block height={StyleSheet.hairlineWidth} />
-        <Box gap={10}>
-          <ThemedButton
-            label={"Mark as Watched"}
-            icon={{
-              name: "movie-check",
-              source: "MaterialCommunityIcons",
-            }}
-            direction="column"
-            type="surface"
-            size="sm"
-            py={10}
-            onPress={() => {
-              setShowWatchedConfirmation(true);
-            }}
+        <FilmPosterBackground url={show.poster} />
+        <Box pt={20} px={20} pb={80} gap={20} block>
+          <Show show={show} />
+          <Box
+            color={"rgba(255,255,255,0.5)"}
+            block
+            height={StyleSheet.hairlineWidth}
           />
-          <ThemedButton
-            label={"Create Reminder"}
-            icon={{ name: "alarm-bell", source: "MaterialCommunityIcons" }}
-            type="surface"
-            direction="column"
-            size="sm"
-            py={10}
-            onPress={() => setShowReminderForm(true)}
-          />
+          <Box gap={10}>
+            <ThemedButton
+              label={"Mark as Watched"}
+              icon={{
+                name: "movie-check",
+                source: "MaterialCommunityIcons",
+                color: "white",
+              }}
+              color={"rgba(255,255,255,0.1)"}
+              labelProps={{
+                color: "white",
+              }}
+              direction="column"
+              type="surface"
+              size="sm"
+              py={10}
+              onPress={() => {
+                setShowWatchedConfirmation(true);
+              }}
+            />
+            <ThemedButton
+              label={"Create Reminder"}
+              icon={{
+                name: "alarm-bell",
+                source: "MaterialCommunityIcons",
+                color: "white",
+              }}
+              color={"rgba(255,255,255,0.1)"}
+              labelProps={{
+                color: "white",
+              }}
+              type="surface"
+              direction="column"
+              size="sm"
+              py={10}
+              onPress={() => setShowReminderForm(true)}
+            />
+          </Box>
         </Box>
-      </ThemedBottomSheet>
+      </ThemedTrueSheet>
 
       <ReminderForm
         show={show}
