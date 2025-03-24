@@ -26,7 +26,6 @@ export default function Movie({
         justify="space-between"
         width="100%"
         height={POSTER_HEIGHT}
-        color={theme.background}
         gap={20}
       >
         <Image

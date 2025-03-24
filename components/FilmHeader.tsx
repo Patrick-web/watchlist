@@ -42,7 +42,7 @@ export default function FilmHeader({ film }: { film: FilmResult }) {
         block
         align="center"
         color={"rgba(0,0,0,0.3)"}
-        pt={Platform.OS === "ios" ? 20 : 60}
+        pt={Platform.OS === "ios" ? 20 : insets.top}
       >
         <Image
           source={film.poster}
@@ -60,12 +60,7 @@ export default function FilmHeader({ film }: { film: FilmResult }) {
           style={{ width: "100%" }}
         >
           <Box px={20} py={10}>
-            <ThemedText
-              size={"xxl"}
-              align="center"
-              fontWeight="bold"
-              color={"white"}
-            >
+            <ThemedText size={"xxl"} align="center" fontWeight="bold">
               {film.title}
             </ThemedText>
           </Box>

@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { useTheme } from "../../hooks/useTheme.hook";
 import Box, { BoxProps } from "./Box";
-import Spacer from "./Spacer";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
 
 // label component with memo
@@ -21,7 +20,7 @@ const Label = React.memo(
         <ThemedText size={"sm"} {...labelProps}>
           {label}
         </ThemedText>
-        <Spacer height={5} />
+        <Box height={5} />
       </>
     );
   },

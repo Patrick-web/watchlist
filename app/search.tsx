@@ -143,38 +143,37 @@ const SearchResults = React.memo(
     const insets = useSafeAreaInsets();
     return (
       <>
-        {params.mode === "all" &&
-          (data.movies.length > 0 || data.shows.length > 0) && (
-            <Box
-              direction="row"
-              pa={5}
-              radius={20}
-              color={theme.surface}
-              mx={"auto"}
-              flexDirection={
-                data && data.movies.length > 0 && data.shows.length === 0
-                  ? "row-reverse"
-                  : "row"
-              }
-            >
-              <ThemedButton
-                label={"Shows"}
-                onPress={() => setView("shows")}
-                viewProps={{ layout: LinearTransition }}
-                size="xxs"
-                type={view === "shows" ? "secondary" : "surface"}
-              />
-              <ThemedButton
-                label={"Movies"}
-                onPress={() => {
-                  setView("movies");
-                }}
-                viewProps={{ layout: LinearTransition }}
-                size="xxs"
-                type={view === "movies" ? "secondary" : "surface"}
-              />
-            </Box>
-          )}
+        {params.mode === "all" && (
+          <Box
+            direction="row"
+            pa={5}
+            radius={20}
+            color={theme.surface}
+            mx={"auto"}
+            flexDirection={
+              data && data.movies.length > 0 && data.shows.length === 0
+                ? "row-reverse"
+                : "row"
+            }
+          >
+            <ThemedButton
+              label={"Shows"}
+              onPress={() => setView("shows")}
+              viewProps={{ layout: LinearTransition }}
+              size="xxs"
+              type={view === "shows" ? "secondary" : "surface"}
+            />
+            <ThemedButton
+              label={"Movies"}
+              onPress={() => {
+                setView("movies");
+              }}
+              viewProps={{ layout: LinearTransition }}
+              size="xxs"
+              type={view === "movies" ? "secondary" : "surface"}
+            />
+          </Box>
+        )}
         {(isLoading || isFetching) && <ThemedActivityIndicator />}
         {error && (
           <ThemedErrorCard title="Something went wrong" error={error.message} />
@@ -220,6 +219,7 @@ const SearchResults = React.memo(
               exiting={FadeOutLeft.springify().stiffness(200).damping(80)}
               contentContainerStyle={{
                 flex: data.shows.length > 0 ? 0 : 1,
+                paddingHorizontal: 20,
               }}
               contentInset={{ bottom: insets.bottom }}
             />
