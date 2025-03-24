@@ -13,7 +13,7 @@ import {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { useTheme } from "../../hooks/useTheme.hook";
+import { useTheme, useThemeMode } from "../../hooks/useTheme.hook";
 import Box, { AnimatedBox, AnimatedBoxProps } from "./Box";
 import ThemedIcon, { ThemedIconProps } from "./ThemedIcon";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
@@ -43,6 +43,7 @@ const ThemedButton = (props: ThemedButtonProps) => {
   const sizeStyles = getButtonStyles(size);
 
   const theme = useTheme();
+  const themeMode = useThemeMode();
 
   const scaleValue = useSharedValue(1);
 
@@ -83,6 +84,11 @@ const ThemedButton = (props: ThemedButtonProps) => {
     if (type === "secondary") {
       return theme.background;
     }
+    if (type === "translucent") {
+      return themeMode === "dark" ? "white" : theme.text;
+    }
+
+    return theme.text;
   };
 
   const labelColor = () => {
@@ -101,6 +107,11 @@ const ThemedButton = (props: ThemedButtonProps) => {
     if (type === "secondary") {
       return theme.background;
     }
+    if (type === "translucent") {
+      return themeMode === "dark" ? "white" : theme.text;
+    }
+
+    return theme.text;
   };
 
   const buttonColors = () => {
@@ -125,6 +136,11 @@ const ThemedButton = (props: ThemedButtonProps) => {
     }
     if (type === "secondary") {
       return { background: theme.text, border: "transparent" };
+    }
+    if (type === "translucent") {
+      return themeMode === "dark"
+        ? { background: theme.translucent, border: "transparent" }
+        : { background: theme.translucent, border: "transparent" };
     }
     return { background: "transparent", border: "transparent" };
   };
@@ -323,7 +339,8 @@ export interface ThemedButtonProps extends BoxWrapper {
     | "surface"
     | "primary"
     | "primary-outlined"
-    | "secondary-outlined";
+    | "secondary-outlined"
+    | "translucent";
   disabled?: boolean;
   wrapperProps?: BoxWrapper;
   size?: ButtonSize;
