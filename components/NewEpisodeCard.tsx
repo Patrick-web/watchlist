@@ -13,8 +13,11 @@ import { SUCCESS_ALERT } from "@/constants/common.constants";
 import Haptics from "expo-haptics";
 import { NewEpisode } from "@/types";
 import { POSTER_RATIO } from "@/constants/dimensions.constant";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import SwipeAction from "./SwipeAction";
+import ThemedTrueSheet from "./reusables/TrueSheet";
+import { useThemeMode } from "@/hooks/useTheme.hook";
+import FilmPosterBackground from "./FilmPosterBackground";
 
 const POSTER_WIDTH = 100;
 const POSTER_HEIGHT = POSTER_RATIO * POSTER_WIDTH;
@@ -55,6 +58,8 @@ export function Episode({ episode }: { episode: NewEpisode }) {
 }
 
 export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
+  const themeMode = useThemeMode();
+
   const [showActions, setShowActions] = useState(false);
   const [showReminderForm, setShowReminderForm] = useState(false);
   const [showWatchedConfirmation, setShowWatchedConfirmation] = useState(false);
@@ -76,7 +81,6 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
       ...SUCCESS_ALERT,
     });
   }
-
 
   return (
     <>
@@ -125,48 +129,55 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
           <Episode episode={episode} />
         </ThemedButton>
       </ReanimatedSwipeable>
-      <ThemedBottomSheet
+      <ThemedTrueSheet
         visible={showActions}
-        close={() => setShowActions(false)}
-        containerProps={{
-          px: 20,
-          pb: 80,
-          radius: 60,
-          gap: 20,
-        }}
+        onDismiss={() => setShowActions(false)}
+        cornerRadius={Platform.OS === "ios" ? 60 : 80}
+        blurTint={themeMode}
+        grabber={false}
       >
-        <Episode episode={episode} />
-        <Box color={"border"} block height={StyleSheet.hairlineWidth} />
-        <Box gap={10}>
-          <ThemedButton
-            label={"Mark as Watched"}
-            icon={{
-              name: "movie-check",
-              source: "MaterialCommunityIcons",
-            }}
-            direction="column"
-            type="surface"
-            size="sm"
-            py={10}
-            onPress={() => {
-              setShowActions(false);
-              setShowWatchedConfirmation(true);
-            }}
+        <FilmPosterBackground url={episode.show.poster} />
+        <Box pt={20} px={20} pb={80} gap={20}>
+          <Episode episode={episode} />
+          <Box
+            color={"rgba(255,255,255,0.5)"}
+            block
+            height={StyleSheet.hairlineWidth}
           />
-          <ThemedButton
-            label={"Create Reminder"}
-            icon={{ name: "alarm-bell", source: "MaterialCommunityIcons" }}
-            type="surface"
-            direction="column"
-            size="sm"
-            py={10}
-            onPress={() => {
-              setShowActions(false);
-              setShowReminderForm(true);
-            }}
-          />
+          <Box gap={10}>
+            <ThemedButton
+              label={"Mark as Watched"}
+              direction="column"
+              radius={100}
+              icon={{
+                name: "movie-check",
+                source: "MaterialCommunityIcons",
+              }}
+              type="translucent"
+              py={10}
+              onPress={() => {
+                setShowActions(false);
+                setShowWatchedConfirmation(true);
+              }}
+            />
+            <ThemedButton
+              label={"Create Reminder"}
+              icon={{
+                name: "alarm-bell",
+                source: "MaterialCommunityIcons",
+              }}
+              type="translucent"
+              direction="column"
+              size="sm"
+              py={10}
+              onPress={() => {
+                setShowActions(false);
+                setShowReminderForm(true);
+              }}
+            />
+          </Box>
         </Box>
-      </ThemedBottomSheet>
+      </ThemedTrueSheet>
 
       <ReminderForm
         episode={episode}
