@@ -3,7 +3,7 @@ import { MovieInfo } from "@/types";
 import { onMovieWatched } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import React, { useRef, useState } from "react";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { toast } from "sonner-native";
 import ReminderForm from "./ReminderForm";
@@ -13,9 +13,14 @@ import ThemedButton from "./reusables/ThemedButton";
 import ThemedIcon from "./reusables/ThemedIcon";
 import Movie from "./Movie";
 import SwipeAction from "./SwipeAction";
-
+import ThemedTrueSheet from "./reusables/TrueSheet";
+import { useThemeMode } from "@/hooks/useTheme.hook";
+import { Image } from "expo-image";
+import FilmPosterBackground from "./FilmPosterBackground";
 
 export default function MovieCard({ movie }: { movie: MovieInfo }) {
+  const themeMode = useThemeMode();
+
   const [showActions, setShowActions] = useState(false);
   const [showReminderForm, setShowReminderForm] = useState(false);
   const [showWatchedConfirmation, setShowWatchedConfirmation] = useState(false);
@@ -89,43 +94,64 @@ export default function MovieCard({ movie }: { movie: MovieInfo }) {
           <Movie movie={movie} />
         </ThemedButton>
       </ReanimatedSwipeable>
-      <ThemedBottomSheet
+      <ThemedTrueSheet
         visible={showActions}
-        close={() => setShowActions(false)}
-        containerProps={{ px: 20, gap: 20, radius: 60 }}
+        onDismiss={() => setShowActions(false)}
+        cornerRadius={60}
+        blurTint={themeMode}
+        grabber={false}
       >
-        <Movie movie={movie} />
-        <Box color={"border"} block height={StyleSheet.hairlineWidth} />
-        <Box gap={10}>
-          <ThemedButton
-            label={"Mark as Watched"}
-            icon={{
-              name: "movie-check",
-              source: "MaterialCommunityIcons",
-            }}
-            direction="column"
-            type="surface"
-            size="sm"
-            py={10}
-            onPress={() => {
-              setShowActions(false);
-              setShowWatchedConfirmation(true);
-            }}
+        <FilmPosterBackground url={movie.poster} />
+        <Box pt={20} px={20} pb={80} gap={20}>
+          <Movie movie={movie} />
+          <Box
+            color={"rgba(255,255,255,0.5)"}
+            block
+            height={StyleSheet.hairlineWidth}
           />
-          <ThemedButton
-            label={"Create Reminder"}
-            icon={{ name: "alarm-bell", source: "MaterialCommunityIcons" }}
-            type="surface"
-            direction="column"
-            size="sm"
-            py={10}
-            onPress={() => {
-              setShowActions(false);
-              setShowReminderForm(true);
-            }}
-          />
+          <Box gap={10}>
+            <ThemedButton
+              label={"Mark as Watched"}
+              icon={{
+                name: "movie-check",
+                source: "MaterialCommunityIcons",
+                color: "white",
+              }}
+              color={"rgba(255,255,255,0.1)"}
+              labelProps={{
+                color: "white",
+              }}
+              direction="column"
+              type="surface"
+              size="sm"
+              py={10}
+              onPress={() => {
+                setShowActions(false);
+                setShowWatchedConfirmation(true);
+              }}
+            />
+            <ThemedButton
+              label={"Create Reminder"}
+              icon={{
+                name: "alarm-bell",
+                source: "MaterialCommunityIcons",
+                color: "white",
+              }}
+              color={"rgba(255,255,255,0.1)"}
+              labelProps={{
+                color: "white",
+              }}
+              direction="column"
+              size="sm"
+              py={10}
+              onPress={() => {
+                setShowActions(false);
+                setShowReminderForm(true);
+              }}
+            />
+          </Box>
         </Box>
-      </ThemedBottomSheet>
+      </ThemedTrueSheet>
 
       <ReminderForm
         movie={movie}
