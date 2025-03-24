@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
       "bundleIdentifier": "xyz.justpatrick.sync",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
