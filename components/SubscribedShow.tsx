@@ -9,7 +9,7 @@ import Haptics from "expo-haptics";
 import { ShowInfo } from "@/types";
 import ThemedTrueSheet from "./reusables/TrueSheet";
 import { useThemeMode } from "@/hooks/useTheme.hook";
-import { FadeInLeft, FadeInRight } from "react-native-reanimated";
+import { FadeIn, FadeInLeft, FadeInRight } from "react-native-reanimated";
 
 const POSTER_WIDTH = sWidth / 2 - 40;
 
@@ -64,9 +64,6 @@ export default function SubscribedShow({ show }: { show: ShowInfo }) {
                 position="absolute"
                 top={30}
                 left={20}
-                viewProps={{
-                  entering: FadeInLeft.duration(1000),
-                }}
               >
                 <ThemedText
                   size={"xl"}
@@ -102,9 +99,6 @@ export default function SubscribedShow({ show }: { show: ShowInfo }) {
                 position="absolute"
                 bottom={40}
                 right={show.episode.toString().length === 1 ? 30 : 0}
-                viewProps={{
-                  entering: FadeInRight.duration(1000),
-                }}
               >
                 <ThemedText
                   size={100}
