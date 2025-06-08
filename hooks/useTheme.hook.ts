@@ -1,5 +1,6 @@
-import SettingsStore from "@/stores/settings.store";
+import { SETTINGS_STATE } from "@/stores/settings.store";
 import { useColorScheme } from "react-native";
+import { useSnapshot } from "valtio";
 import Colors from "../constants/colors.constants";
 
 export function useThemeColor(
@@ -8,7 +9,7 @@ export function useThemeColor(
 ) {
   let themeToSet: "dark" | "light" = "light";
 
-  const { theme: userTheme } = SettingsStore();
+  const { theme: userTheme } = useSnapshot(SETTINGS_STATE);
 
   const systemTheme = useColorScheme() ?? "light";
 
@@ -33,7 +34,7 @@ export function useThemeColor(
 export function useTheme() {
   let themeToSet: "dark" | "light" = "light";
 
-  const { theme: userTheme } = SettingsStore();
+  const { theme: userTheme } = useSnapshot(SETTINGS_STATE);
 
   const systemTheme = useColorScheme() ?? "light";
 
@@ -47,7 +48,7 @@ export function useTheme() {
 }
 
 export function useThemeMode() {
-  const { theme: userTheme } = SettingsStore();
+  const { theme: userTheme } = useSnapshot(SETTINGS_STATE);
 
   const systemTheme = useColorScheme() ?? "light";
 

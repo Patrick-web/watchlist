@@ -4,24 +4,26 @@ import { Platform } from "react-native";
 import Box from "./reusables/Box";
 import ThemedButton from "./reusables/ThemedButton";
 import ThemedText from "./reusables/ThemedText";
-import { FilmResult } from "@/types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ImageBackground, Image } from "expo-image";
-import { useTheme, useThemeMode } from "@/hooks/useTheme.hook";
 import { POSTER_RATIO } from "@/constants/dimensions.constant";
+import { MovieResult, TVShowDetailsResponse } from "@/types/tmdb.types";
+import { buildBackdropUrl } from "@/utils/api.utils";
 
 const POSTER_HEIGHT = 250;
 const POSTER_WIDTH = POSTER_HEIGHT / POSTER_RATIO;
 
-export default function FilmHeader({ film }: { film: FilmResult }) {
+export default function FilmHeader({
+  preview,
+}: {
+  preview: MovieResult | TVShowDetailsResponse;
+}) {
   const insets = useSafeAreaInsets();
-  const themeMode = useThemeMode();
-  const theme = useTheme();
 
   return (
     <ImageBackground
-      source={film.poster}
-      blurRadius={100}
+      source={buildBackdropUrl(preview.poster_path)}
+      blurRadius={400}
       style={{
         width: "100%",
       }}
@@ -42,29 +44,27 @@ export default function FilmHeader({ film }: { film: FilmResult }) {
         block
         align="center"
         color={"rgba(0,0,0,0.3)"}
-        pt={Platform.OS === "ios" ? 20 : insets.top}
+        py={Platform.OS === "ios" ? 20 : insets.top}
+        gap={10}
       >
         <Image
-          source={film.poster}
+          source={buildBackdropUrl(preview.poster_path)}
           style={{
             width: POSTER_WIDTH,
             height: POSTER_HEIGHT,
             borderRadius: POSTER_WIDTH / 2,
           }}
         />
-        <LinearGradient
-          colors={[
-            themeMode === "dark" ? "rgba(32,32,32,0)" : "rgba(255,255,255,0)",
-            theme.background,
-          ]}
-          style={{ width: "100%" }}
+        <ThemedText
+          size={"xxl"}
+          align="center"
+          fontWeight="bold"
+          color={"white"}
         >
-          <Box px={20} py={10}>
-            <ThemedText size={"xxl"} align="center" fontWeight="bold">
-              {film.title}
-            </ThemedText>
-          </Box>
-        </LinearGradient>
+          {(preview as MovieResult)?.title ||
+            (preview as TVShowDetailsResponse)?.name ||
+            "Unknown"}
+        </ThemedText>
       </Box>
     </ImageBackground>
   );

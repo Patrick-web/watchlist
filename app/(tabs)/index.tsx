@@ -114,7 +114,7 @@ export default function HomeScreen() {
                   router.push({
                     pathname: "/search",
                     params: {
-                      mode: "all",
+                      mode: "shows",
                     },
                   });
                 }}

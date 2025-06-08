@@ -1,23 +1,34 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState } from "react-native";
 import { proxy, subscribe } from "valtio";
-import { MovieInfo, NewEpisode, ShowInfo } from "./types";
+import { NewEpisode, ShowInfo } from "./types";
 import { requestNotificationPermission } from "./lib/refresh";
 import * as Notifications from "expo-notifications";
+import {
+  MovieDetailsResponse,
+  TVShowDetailsResponse,
+} from "./types/tmdb.types";
 
 const APP_OS_STATE = AppState.currentState;
 
+export interface WatchedEpisode {
+  showId: number;
+  seasonNumber: number;
+  episodeNumber: number;
+  watchedAt: string;
+}
+
 interface PersistedAppStateType {
-  subscribedShows: ShowInfo[];
+  subscribedShows: TVShowDetailsResponse[];
   newEpisodes: NewEpisode[];
+  watchedEpisodes: WatchedEpisode[];
   watchList: {
-    shows: ShowInfo[];
-    movies: MovieInfo[];
+    shows: TVShowDetailsResponse[];
+    movies: MovieDetailsResponse[];
   };
   history: {
-    watchedEpisodes: NewEpisode[];
-    watchedMovies: MovieInfo[];
-    watchedShows: ShowInfo[];
+    watchedMovies: MovieDetailsResponse[];
+    watchedShows: TVShowDetailsResponse[];
   };
   settings: {
     newEpisodeNotification: boolean;
@@ -29,12 +40,12 @@ interface PersistedAppStateType {
 export const PERSISTED_APP_STATE = proxy<PersistedAppStateType>({
   subscribedShows: [],
   newEpisodes: [],
+  watchedEpisodes: [],
   watchList: {
     shows: [],
     movies: [],
   },
   history: {
-    watchedEpisodes: [],
     watchedMovies: [],
     watchedShows: [],
   },
@@ -71,9 +82,9 @@ export function setupValtio() {
 
 // subscribed shows
 
-export function addSubscribedShow(show: ShowInfo) {
+export function addSubscribedShow(show: TVShowDetailsResponse) {
   const alreadyAdded = PERSISTED_APP_STATE.subscribedShows.find(
-    ($show) => $show.url === show.url,
+    ($show) => $show.id === show.id,
   );
 
   if (!alreadyAdded) {
@@ -83,9 +94,9 @@ export function addSubscribedShow(show: ShowInfo) {
   }
 }
 
-export function updateShow(show: ShowInfo) {
+export function updateShow(show: TVShowDetailsResponse) {
   const index = PERSISTED_APP_STATE.subscribedShows.findIndex(
-    ($show) => $show.url === show.url,
+    ($show) => $show.id === show.id,
   );
 
   if (index !== -1) {
@@ -93,59 +104,80 @@ export function updateShow(show: ShowInfo) {
   }
 }
 
-export function unsubscribeShow(show: ShowInfo) {
+export function unsubscribeShow(show: TVShowDetailsResponse) {
   PERSISTED_APP_STATE.subscribedShows =
-    PERSISTED_APP_STATE.subscribedShows.filter(
-      ($show) => $show.title !== show.title,
-    );
+    PERSISTED_APP_STATE.subscribedShows.filter(($show) => $show.id !== show.id);
 
-  PERSISTED_APP_STATE.newEpisodes.map((episode) => {
-    if (episode.show.title === show.title) {
-      deleteNewEpisode(episode);
-    }
-  });
+  // Remove related new episodes
+  PERSISTED_APP_STATE.newEpisodes = PERSISTED_APP_STATE.newEpisodes.filter(
+    episode => parseInt(episode.show.id) !== show.id
+  );
+
+  // Optionally clear watched episodes for the show
+  // clearWatchedEpisodesForShow(show.id);
 }
 
-export const isSubscribed = (showUrl: string) =>
-  PERSISTED_APP_STATE.subscribedShows.find((show) => show.url === showUrl)
+export const isSubscribed = (showId: number) =>
+  PERSISTED_APP_STATE.subscribedShows.find((show) => show.id === showId)
     ? true
     : false;
 
-export const isInWatchList = (filmUrl: string) => {
+export const isInWatchList = (id: number) => {
   const fullWatchlist = [
     ...PERSISTED_APP_STATE.watchList.shows,
     ...PERSISTED_APP_STATE.watchList.movies,
   ];
 
-  return fullWatchlist.find((item) => item.url === filmUrl) ? true : false;
+  return fullWatchlist.find((item) => item.id === id) ? true : false;
 };
 
 export function onEpisodeWatched(target: NewEpisode) {
-  const indexOfShow = PERSISTED_APP_STATE.subscribedShows.findIndex(
-    (show) => show.title === target.show.title,
+  // Add to watched episodes
+  const watchedEpisode: WatchedEpisode = {
+    showId: parseInt(target.show.id),
+    seasonNumber: target.show.season,
+    episodeNumber: target.show.episode,
+    watchedAt: new Date().toISOString(),
+  };
+
+  // Check if already marked as watched
+  const alreadyWatched = PERSISTED_APP_STATE.watchedEpisodes.find(
+    (ep) => ep.showId === watchedEpisode.showId && 
+           ep.seasonNumber === watchedEpisode.seasonNumber && 
+           ep.episodeNumber === watchedEpisode.episodeNumber
   );
 
-  PERSISTED_APP_STATE.subscribedShows[indexOfShow].episode =
-    target.show.episode;
+  if (!alreadyWatched) {
+    PERSISTED_APP_STATE.watchedEpisodes.push(watchedEpisode);
+  }
 
   deleteNewEpisode(target);
-
-  PERSISTED_APP_STATE.history.watchedEpisodes.push(target);
 }
 
 export async function addNewEpisode(show: ShowInfo) {
   console.log("Adding new episode");
   const newEpisode: NewEpisode = {
-    id: `${show.title}-${show.episode}`,
+    id: `${show.id}-S${show.season}E${show.episode}`,
     show,
     notifiedUser: false,
     reminder: null,
   };
+  
+  // Check if this exact episode is already in new episodes
   const alreadyAdded = PERSISTED_APP_STATE.newEpisodes.find(
-    (episode) => episode.show.title === newEpisode.show.title,
+    (episode) => episode.show.id === newEpisode.show.id && 
+    episode.show.season === newEpisode.show.season &&
+    episode.show.episode === newEpisode.show.episode,
   );
 
-  if (!alreadyAdded) {
+  // Also check if this episode was already watched
+  const alreadyWatched = isEpisodeWatched(
+    parseInt(show.id), 
+    show.season, 
+    show.episode
+  );
+
+  if (!alreadyAdded && !alreadyWatched) {
     PERSISTED_APP_STATE.newEpisodes.push(newEpisode);
     if (
       APP_OS_STATE === "background" &&
@@ -154,12 +186,14 @@ export async function addNewEpisode(show: ShowInfo) {
       await scheduleNotification({
         content: {
           title: "🎬 New Episode Dropped",
-          body: `Episode ${newEpisode.show.episode} of ${newEpisode.show.title} is out`,
+          body: `S${newEpisode.show.season}E${newEpisode.show.episode} of ${newEpisode.show.title} is out`,
           sound: "Default",
         },
         trigger: null,
       });
     }
+  } else if (alreadyWatched) {
+    console.log(`Episode S${show.season}E${show.episode} of ${show.title} was already watched, not adding as new`);
   }
 }
 
@@ -180,23 +214,25 @@ export function onEpisodeReminderSet(
   PERSISTED_APP_STATE.newEpisodes[index].reminder = reminder;
 }
 
-export function onEpisodeNotificationShown(show: ShowInfo) {
+export function onEpisodeNotificationShown(showId: string) {
   const index = PERSISTED_APP_STATE.newEpisodes.findIndex(
-    (episode) => episode.show.url === show.url,
+    (episode) => episode.show.id === showId,
   );
 
-  PERSISTED_APP_STATE.newEpisodes[index].notifiedUser = true;
+  if (index !== -1) {
+    PERSISTED_APP_STATE.newEpisodes[index].notifiedUser = true;
+  }
 }
 
 // toWatch
 
-export function addShowToWatchList(show: ShowInfo) {
+export function addShowToWatchList(show: TVShowDetailsResponse) {
   PERSISTED_APP_STATE.watchList.shows.unshift(show);
 }
 
-export function addMovieToWatchList(movie: MovieInfo) {
+export function addMovieToWatchList(movie: MovieDetailsResponse) {
   const alreadyAdded = PERSISTED_APP_STATE.watchList.movies.find(
-    ($movie) => $movie.title === movie.title,
+    ($movie) => $movie.id === movie.id,
   );
 
   if (!alreadyAdded) {
@@ -204,50 +240,121 @@ export function addMovieToWatchList(movie: MovieInfo) {
   }
 }
 
-export function removeShowFromWatchList(show: ShowInfo) {
+export function removeShowFromWatchList(show: TVShowDetailsResponse) {
   PERSISTED_APP_STATE.watchList.shows =
-    PERSISTED_APP_STATE.watchList.shows.filter((item) => item.url !== show.url);
+    PERSISTED_APP_STATE.watchList.shows.filter((item) => item.id !== show.id);
 }
 
-export function removeMovieFromWatchList(movie: MovieInfo) {
+export function removeMovieFromWatchList(movie: MovieDetailsResponse) {
   PERSISTED_APP_STATE.watchList.movies =
-    PERSISTED_APP_STATE.watchList.movies.filter(
-      (item) => item.url !== movie.url,
-    );
+    PERSISTED_APP_STATE.watchList.movies.filter((item) => item.id !== movie.id);
 }
 
-export function isShowInWatchList(show: ShowInfo) {
+export function isShowInWatchList(show: TVShowDetailsResponse) {
   return PERSISTED_APP_STATE.watchList.shows.find(
-    (item) => item.url === show.url,
+    (item) => item.id === show.id,
   );
 }
 
-export function isMovieInWatchList(movie: MovieInfo) {
+export function isMovieInWatchList(movie: MovieDetailsResponse) {
   return PERSISTED_APP_STATE.watchList.movies.find(
-    (item) => item.url === movie.url,
+    (item) => item.id === movie.id,
   );
 }
 
-export function onShowWatched(show: ShowInfo) {
+export function onShowWatched(show: TVShowDetailsResponse) {
   PERSISTED_APP_STATE.history.watchedShows.push(show);
   removeShowFromWatchList(show);
 }
 
-export function onMovieWatched(movie: MovieInfo) {
+export function onMovieWatched(movie: MovieDetailsResponse) {
   PERSISTED_APP_STATE.history.watchedMovies.push(movie);
   removeMovieFromWatchList(movie);
 }
 
+// Helper functions for watched episodes
+export function markEpisodeAsWatched(showId: number, seasonNumber: number, episodeNumber: number) {
+  const watchedEpisode: WatchedEpisode = {
+    showId,
+    seasonNumber,
+    episodeNumber,
+    watchedAt: new Date().toISOString(),
+  };
+
+  const alreadyWatched = PERSISTED_APP_STATE.watchedEpisodes.find(
+    (ep) => ep.showId === showId && 
+           ep.seasonNumber === seasonNumber && 
+           ep.episodeNumber === episodeNumber
+  );
+
+  if (!alreadyWatched) {
+    PERSISTED_APP_STATE.watchedEpisodes.push(watchedEpisode);
+  }
+}
+
+export function isEpisodeWatched(showId: number, seasonNumber: number, episodeNumber: number): boolean {
+  return PERSISTED_APP_STATE.watchedEpisodes.some(
+    (ep) => ep.showId === showId && 
+           ep.seasonNumber === seasonNumber && 
+           ep.episodeNumber === episodeNumber
+  );
+}
+
+export function getLastWatchedEpisode(showId: number): WatchedEpisode | null {
+  const watchedEpisodes = PERSISTED_APP_STATE.watchedEpisodes
+    .filter(ep => ep.showId === showId)
+    .sort((a, b) => {
+      if (a.seasonNumber !== b.seasonNumber) {
+        return b.seasonNumber - a.seasonNumber;
+      }
+      return b.episodeNumber - a.episodeNumber;
+    });
+
+  return watchedEpisodes[0] || null;
+}
+
+export function getWatchedEpisodesForShow(showId: number): WatchedEpisode[] {
+  return PERSISTED_APP_STATE.watchedEpisodes
+    .filter(ep => ep.showId === showId)
+    .sort((a, b) => {
+      if (a.seasonNumber !== b.seasonNumber) {
+        return a.seasonNumber - b.seasonNumber;
+      }
+      return a.episodeNumber - b.episodeNumber;
+    });
+}
+
+export function getWatchedEpisodesCount(showId: number): number {
+  return PERSISTED_APP_STATE.watchedEpisodes.filter(ep => ep.showId === showId).length;
+}
+
+export function removeWatchedEpisode(showId: number, seasonNumber: number, episodeNumber: number) {
+  PERSISTED_APP_STATE.watchedEpisodes = PERSISTED_APP_STATE.watchedEpisodes.filter(
+    ep => !(ep.showId === showId && 
+           ep.seasonNumber === seasonNumber && 
+           ep.episodeNumber === episodeNumber)
+  );
+}
+
+export function clearWatchedEpisodesForShow(showId: number) {
+  PERSISTED_APP_STATE.watchedEpisodes = PERSISTED_APP_STATE.watchedEpisodes.filter(
+    ep => ep.showId !== showId
+  );
+}
+
 // temporary function that decreases the episode number in the subscribed shows
 export function decreaseEpisode() {
-  PERSISTED_APP_STATE.subscribedShows = PERSISTED_APP_STATE.subscribedShows.map(
-    (show) => {
-      return {
-        ...show,
-        episode: show.episode !== 1 ? show.episode - 1 : show.episode,
-      };
-    },
-  );
+  // Remove the last watched episode for each show
+  PERSISTED_APP_STATE.subscribedShows.forEach(show => {
+    const lastWatched = getLastWatchedEpisode(show.id);
+    if (lastWatched) {
+      PERSISTED_APP_STATE.watchedEpisodes = PERSISTED_APP_STATE.watchedEpisodes.filter(
+        ep => !(ep.showId === show.id && 
+               ep.seasonNumber === lastWatched.seasonNumber && 
+               ep.episodeNumber === lastWatched.episodeNumber)
+      );
+    }
+  });
 }
 
 export function setSetting(

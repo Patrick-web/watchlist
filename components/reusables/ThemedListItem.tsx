@@ -47,6 +47,7 @@ export default function ThemedListItem({
         justify="space-between"
         align="center"
         flex={varaint === "vertical" ? undefined : undefined}
+        maxWidth={varaint === "horizontal" ? "50%" : "100%"}
       >
         {value && (
           <ThemedText

@@ -1,10 +1,11 @@
-import { MovieInfo } from "@/types";
 import { Image } from "expo-image";
 import React from "react";
 import Box from "./reusables/Box";
 import ThemedText from "./reusables/ThemedText";
 import { POSTER_RATIO } from "@/constants/dimensions.constant";
 import { useTheme } from "@/hooks/useTheme.hook";
+import { MovieDetailsResponse } from "@/types/tmdb.types";
+import { buildImageUrl } from "@/utils/api.utils";
 
 const POSTER_WIDTH = 100;
 const POSTER_HEIGHT = POSTER_RATIO * POSTER_WIDTH;
@@ -13,7 +14,7 @@ export default function Movie({
   movie,
   children,
 }: {
-  movie: MovieInfo;
+  movie: MovieDetailsResponse;
   children?: React.ReactNode;
 }) {
   const theme = useTheme();
@@ -29,7 +30,7 @@ export default function Movie({
         gap={20}
       >
         <Image
-          source={movie.poster}
+          source={buildImageUrl(movie.poster_path)}
           style={{
             width: POSTER_WIDTH,
             height: POSTER_HEIGHT,
@@ -40,13 +41,13 @@ export default function Movie({
           <ThemedText size={"lg"}>{movie.title}</ThemedText>
           <Box direction="row" gap={10}>
             <ThemedText size={"sm"} opacity={0.8}>
-              {movie.year}
+              {new Date(movie.release_date).getFullYear()}
             </ThemedText>
             <ThemedText size={"sm"} opacity={0.8}>
               ⋅
             </ThemedText>
             <ThemedText size={"sm"} opacity={0.8}>
-              {movie.duration}m
+              {movie.runtime}m
             </ThemedText>
           </Box>
           {children}

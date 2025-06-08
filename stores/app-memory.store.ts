@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { proxy, subscribe } from "valtio";
 
 interface MemoryEntry<T> {
   route: string;
@@ -8,46 +7,61 @@ interface MemoryEntry<T> {
   data: T;
 }
 
-interface AppMemoryStoreInterface {
+interface AppMemoryStateType {
   routeToRestore: string;
   entries: MemoryEntry<any>[];
-  addEntry: <T>(newEntry: MemoryEntry<T>) => void;
-  getEntry: <T>(route: string) => MemoryEntry<T> | undefined;
-  deleteEntry: (route: string) => void;
-  clearMemory: () => void;
 }
 
-const AppMemoryStore = create(
-  persist<AppMemoryStoreInterface>(
-    (set, get) => ({
-      routeToRestore: "",
-      entries: [],
-      addEntry: (newEntry) => {
-        console.log("Adding entry", newEntry);
-        set({
-          entries: [
-            ...get().entries.filter((entry) => entry.route !== newEntry.route),
-            newEntry,
-          ],
-        });
-      },
-      getEntry: (route) => {
-        return get().entries.find((entry) => entry.route === route);
-      },
-      deleteEntry: (route) => {
-        set({
-          entries: get().entries.filter((entry) => entry.route !== route),
-        });
-      },
-      clearMemory: () => {
-        set({ entries: [], routeToRestore: "" });
-      },
-    }),
-    {
-      name: "app-memory",
-      storage: createJSONStorage(() => AsyncStorage),
-    },
-  ),
-);
+export const APP_MEMORY_STATE = proxy<AppMemoryStateType>({
+  routeToRestore: "",
+  entries: [],
+});
 
-export default AppMemoryStore;
+const persistAppMemoryData = async () => {
+  await AsyncStorage.setItem("app-memory", JSON.stringify(APP_MEMORY_STATE));
+};
+
+const loadPersistedAppMemoryData = async () => {
+  const value = await AsyncStorage.getItem("app-memory");
+  if (value) {
+    const parsedState = JSON.parse(value) as AppMemoryStateType;
+    for (const [key, value] of Object.entries(parsedState)) {
+      APP_MEMORY_STATE[key as keyof AppMemoryStateType] = value;
+    }
+  }
+};
+
+export function setupAppMemoryStore() {
+  loadPersistedAppMemoryData();
+
+  const unsubscribe = subscribe(APP_MEMORY_STATE, () => {
+    persistAppMemoryData();
+  });
+
+  return unsubscribe;
+}
+
+export function addEntry<T>(newEntry: MemoryEntry<T>) {
+  console.log("Adding entry", newEntry);
+  APP_MEMORY_STATE.entries = [
+    ...APP_MEMORY_STATE.entries.filter((entry) => entry.route !== newEntry.route),
+    newEntry,
+  ];
+}
+
+export function getEntry<T>(route: string): MemoryEntry<T> | undefined {
+  return APP_MEMORY_STATE.entries.find((entry) => entry.route === route) as MemoryEntry<T> | undefined;
+}
+
+export function deleteEntry(route: string) {
+  APP_MEMORY_STATE.entries = APP_MEMORY_STATE.entries.filter((entry) => entry.route !== route);
+}
+
+export function clearMemory() {
+  APP_MEMORY_STATE.entries = [];
+  APP_MEMORY_STATE.routeToRestore = "";
+}
+
+export function setRouteToRestore(route: string) {
+  APP_MEMORY_STATE.routeToRestore = route;
+}

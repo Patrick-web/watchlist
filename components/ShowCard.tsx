@@ -1,10 +1,8 @@
 import { SUCCESS_ALERT } from "@/constants/common.constants";
-import { ShowInfo } from "@/types";
 import { onShowWatched } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import React, { useRef, useState } from "react";
 import { StyleSheet } from "react-native";
-import { Image } from "expo-image";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { toast } from "sonner-native";
 import ReminderForm from "./ReminderForm";
@@ -17,8 +15,10 @@ import SwipeAction from "./SwipeAction";
 import ThemedTrueSheet from "./reusables/TrueSheet";
 import { useThemeMode } from "@/hooks/useTheme.hook";
 import FilmPosterBackground from "./FilmPosterBackground";
+import { TVShowDetailsResponse } from "@/types/tmdb.types";
+import { buildImageUrl } from "@/utils/api.utils";
 
-export default function ShowCard({ show }: { show: ShowInfo }) {
+export default function ShowCard({ show }: { show: TVShowDetailsResponse }) {
   const themeMode = useThemeMode();
 
   const [showActions, setShowActions] = useState(false);
@@ -93,7 +93,7 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
         blurTint={themeMode}
         grabber={false}
       >
-        <FilmPosterBackground url={show.poster} />
+        <FilmPosterBackground url={buildImageUrl(show.poster_path)} />
         <Box pt={20} px={20} pb={80} gap={20} block>
           <Show show={show} />
           <Box
@@ -136,7 +136,10 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
               direction="column"
               size="sm"
               py={10}
-              onPress={() => setShowReminderForm(true)}
+              onPress={() => {
+                setShowActions(false);
+                setShowReminderForm(true);
+              }}
             />
           </Box>
         </Box>
@@ -146,6 +149,7 @@ export default function ShowCard({ show }: { show: ShowInfo }) {
         show={show}
         visible={showReminderForm}
         close={() => {
+          setShowActions(true);
           setShowReminderForm(false);
           swipeRef.current?.close();
         }}

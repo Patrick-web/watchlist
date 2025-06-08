@@ -1,3 +1,5 @@
+import { TVShowDetailsResponse } from "./types/tmdb.types";
+
 export interface NewEpisode {
   id: string;
   show: ShowInfo;
@@ -6,6 +8,7 @@ export interface NewEpisode {
 }
 
 export interface ShowInfo {
+  id: string;
   url: string;
   poster: string;
   title: string;
@@ -14,6 +17,7 @@ export interface ShowInfo {
 }
 
 export type FilmResult<T = any> = T & {
+  id: string | number;
   url: string;
   poster: string;
   title: string;

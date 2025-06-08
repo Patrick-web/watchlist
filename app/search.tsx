@@ -5,26 +5,97 @@ import ThemedErrorCard from "@/components/reusables/ThemedErrorCard";
 import ThemedTextInput from "@/components/reusables/ThemedTextInput";
 
 import useDebounce from "@/hooks/useDebounce.hook";
-import useSearch from "@/hooks/useSearchShows.hook";
 import { useTheme } from "@/hooks/useTheme.hook";
+import { buildImageUrl, TMDBApiError } from "@/utils/api.utils";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Platform } from "react-native";
 import { Image } from "expo-image";
-import {
-  FadeInLeft,
-  FadeInRight,
-  FadeOutLeft,
-  FadeOutRight,
-  LinearTransition,
-} from "react-native-reanimated";
+import { FadeInLeft, FadeOutLeft } from "react-native-reanimated";
 import Reanimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { changeCase } from "@/utils/text.utils";
-import { FilmResult, MovieResult } from "@/types";
 import Empty from "@/components/Empty";
 import { POSTER_RATIO, sHeight, sWidth } from "@/constants/dimensions.constant";
-import Movie from "@/components/Movie";
+import ThemedText from "@/components/reusables/ThemedText";
+import useSearch from "@/hooks/useSearch.hook";
+import { SearchResponse } from "@/types/tmdb.types";
+
+// Loading skeleton component
+const SearchSkeleton = React.memo(() => {
+  const theme = useTheme();
+
+  return (
+    <Box flex={1} px={20}>
+      {/* Movie skeletons */}
+      {Array.from({ length: 3 }).map((_, index) => (
+        <Box
+          key={index}
+          color={theme.surface}
+          width={sWidth / 2 - 40}
+          height={(sWidth / 2 - 40) * POSTER_RATIO}
+          borderRadius={sWidth / 2 - 40}
+        ></Box>
+      ))}
+    </Box>
+  );
+});
+
+SearchSkeleton.displayName = "SearchSkeleton";
+
+// Search prompt component for empty state
+const SearchPrompt = React.memo(() => {
+  const theme = useTheme();
+  const params = useLocalSearchParams<{ mode: "movies" | "shows" }>();
+
+  return (
+    <Box flex={1} justify="center" align="center" px={40}>
+      <Box align="center" gap={16}>
+        <Box
+          width={80}
+          height={80}
+          radius={40}
+          color={theme.surface}
+          justify="center"
+          align="center"
+          mb={8}
+        >
+          <ThemedText size="xxl" color={theme.onSurface} opacity={0.5}>
+            🔍
+          </ThemedText>
+        </Box>
+
+        <ThemedText
+          size="xl"
+          style={{ fontWeight: "bold" }}
+          color={theme.onSurface}
+          align="center"
+        >
+          {params.mode === "movies"
+            ? "Search Movies"
+            : params.mode === "shows"
+              ? "Search TV Shows"
+              : "Search Movies & Shows"}
+        </ThemedText>
+
+        <ThemedText
+          size="md"
+          color={theme.onSurface}
+          opacity={0.7}
+          align="center"
+        >
+          {params.mode === "movies"
+            ? "Find your favorite movies by title, actor, or keyword"
+            : params.mode === "shows"
+              ? "Discover TV shows by title, cast, or genre"
+              : "Explore thousands of movies and TV shows"}
+        </ThemedText>
+      </Box>
+    </Box>
+  );
+});
+
+SearchPrompt.displayName = "SearchPrompt";
 
 export default function Search() {
   const params = useLocalSearchParams<{ mode: "movies" | "shows" | "all" }>();
@@ -34,8 +105,14 @@ export default function Search() {
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 1000);
 
-  const { data, isLoading, isFetching, isFetched, error } =
-    useSearch(debouncedQuery);
+  const { data, isLoading, isFetching, isFetched, error } = useSearch(
+    debouncedQuery,
+    {
+      type: params.mode === "movies" ? "movie" : "tv",
+      page: 1,
+      includeAdult: false,
+    },
+  );
 
   const insets = useSafeAreaInsets();
 
@@ -61,6 +138,12 @@ export default function Search() {
         onChangeText={(text) => {
           setQuery(text.toLowerCase());
         }}
+        accessibilityLabel="Search input"
+        accessibilityHint={
+          params.mode !== "all"
+            ? `Search for ${changeCase(params.mode, "sentence")}`
+            : "Search for movies and TV shows"
+        }
         ref={inputRef}
         autoFocus
         wrapper={
@@ -84,6 +167,10 @@ export default function Search() {
                 type="text"
                 size="xs"
                 px={10}
+                viewProps={{
+                  accessibilityLabel: "Go back",
+                  accessibilityRole: "button",
+                }}
                 onPress={() => {
                   router.back();
                 }}
@@ -100,7 +187,12 @@ export default function Search() {
                 type="text"
                 size="xs"
                 px={10}
+                viewProps={{
+                  accessibilityLabel: "Clear search",
+                  accessibilityRole: "button",
+                }}
                 onPress={() => {
+                  setQuery("");
                   inputRef.current?.clear();
                 }}
               />
@@ -109,7 +201,7 @@ export default function Search() {
         }
       />
       <SearchResults
-        data={data}
+        data={data?.results || []}
         isFetching={isFetching}
         isLoading={isLoading}
         isFetched={isFetched}
@@ -127,134 +219,100 @@ const SearchResults = React.memo(
     isFetched,
     error,
   }: {
-    data: {
-      shows: FilmResult[];
-      movies: FilmResult<MovieResult>[];
-    };
+    data: SearchResponse["results"];
     isFetching: boolean;
     isLoading: boolean;
     isFetched: boolean;
     error: any;
   }) => {
-    const [view, setView] = useState<"shows" | "movies">("shows");
-    const params = useLocalSearchParams<{ mode: "movies" | "shows" | "all" }>();
-
-    const theme = useTheme();
     const insets = useSafeAreaInsets();
+
+    const params = useLocalSearchParams<{ mode: "movies" | "shows" }>();
+
     return (
       <>
-        {params.mode === "all" && (
-          <Box
-            direction="row"
-            pa={5}
-            radius={20}
-            color={theme.surface}
-            mx={"auto"}
-            flexDirection={
-              data && data.movies.length > 0 && data.shows.length === 0
-                ? "row-reverse"
-                : "row"
-            }
-          >
-            <ThemedButton
-              label={"Shows"}
-              onPress={() => setView("shows")}
-              viewProps={{ layout: LinearTransition }}
-              size="xxs"
-              type={view === "shows" ? "secondary" : "surface"}
+        {(isLoading || isFetching) && (
+          <>
+            <ThemedActivityIndicator />
+            <SearchSkeleton />
+          </>
+        )}
+        {error && (
+          <Box px={20}>
+            <ThemedErrorCard
+              title={
+                error instanceof TMDBApiError
+                  ? "API Error"
+                  : "Something went wrong"
+              }
+              error={
+                error instanceof TMDBApiError
+                  ? `${error.message} ${error.status ? `(${error.status})` : ""}`
+                  : error.message || "An unexpected error occurred"
+              }
             />
-            <ThemedButton
-              label={"Movies"}
-              onPress={() => {
-                setView("movies");
-              }}
-              viewProps={{ layout: LinearTransition }}
-              size="xxs"
-              type={view === "movies" ? "secondary" : "surface"}
-            />
+            {error instanceof TMDBApiError && error.status === 401 && (
+              <Box mt={10}>
+                <ThemedText size="sm" color="#ff0000" align="center">
+                  Please check your TMDB API key configuration
+                </ThemedText>
+              </Box>
+            )}
           </Box>
         )}
-        {(isLoading || isFetching) && <ThemedActivityIndicator />}
-        {error && (
-          <ThemedErrorCard title="Something went wrong" error={error.message} />
-        )}
         <Box flex={1}>
-          {view === "shows" && (
-            <Reanimated.FlatList
-              data={data.shows}
-              keyExtractor={(item) => item.url}
-              numColumns={2}
-              columnWrapperStyle={{
-                alignItems: "center",
-                justifyContent: data.shows.length > 0 ? "center" : "flex-start",
-                columnGap: 20,
-              }}
-              ItemSeparatorComponent={() => <Box height={20} />}
-              renderItem={({ item: show }) => (
-                <ThemedButton
-                  type="text"
-                  align="center"
-                  alignSelf="center"
-                  onPress={() => {
-                    router.push({
-                      pathname: `/show-details`,
-                      params: { film: JSON.stringify(show) },
-                    });
+          <Reanimated.FlatList
+            data={data || []}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={2}
+            columnWrapperStyle={{
+              alignItems: "center",
+              justifyContent: data.length > 0 ? "center" : "flex-start",
+              columnGap: 20,
+            }}
+            ItemSeparatorComponent={() => <Box height={20} />}
+            renderItem={({ item }) => (
+              <ThemedButton
+                type="text"
+                align="center"
+                alignSelf="center"
+                viewProps={{
+                  accessibilityHint: "Double tap to open show details",
+                  accessibilityRole: "button",
+                }}
+                onPress={() => {
+                  const path =
+                    params.mode === "movies"
+                      ? `/movie/${item.id.toString()}`
+                      : `/tv/${item.id.toString()}`;
+                  router.push({
+                    pathname: path as any,
+                    params: { preview: JSON.stringify(item) },
+                  });
+                }}
+              >
+                <Image
+                  source={buildImageUrl(item.poster_path)}
+                  style={{
+                    width: sWidth / 2 - 40,
+                    height: (sWidth / 2 - 40) * POSTER_RATIO,
+                    borderRadius: sWidth / 2 - 40,
                   }}
-                >
-                  <Image
-                    source={show.poster}
-                    style={{
-                      width: sWidth / 2 - 40,
-                      height: (sWidth / 2 - 40) * POSTER_RATIO,
-                      borderRadius: sWidth / 2,
-                    }}
-                  />
-                </ThemedButton>
-              )}
-              ListEmptyComponent={
-                isFetched ? <Empty message="No shows found" /> : <></>
-              }
-              entering={FadeInLeft.springify().stiffness(200).damping(80)}
-              exiting={FadeOutLeft.springify().stiffness(200).damping(80)}
-              contentContainerStyle={{
-                flex: data.shows.length > 0 ? 0 : 1,
-                paddingHorizontal: 20,
-              }}
-              contentInset={{ bottom: insets.bottom }}
-            />
-          )}
-          {view === "movies" && (
-            <Reanimated.FlatList
-              data={data.movies}
-              keyExtractor={(item) => item.url}
-              renderItem={({ item: movie }) => (
-                <ThemedButton
-                  type="text"
-                  block
-                  onPress={() => {
-                    router.push({
-                      pathname: `/movie-details`,
-                      params: { film: JSON.stringify(movie) },
-                    });
-                  }}
-                >
-                  <Movie movie={movie} />
-                </ThemedButton>
-              )}
-              ItemSeparatorComponent={() => <Box height={20} />}
-              ListEmptyComponent={
-                isFetched ? <Empty message="No movies found" /> : <></>
-              }
-              entering={FadeInRight.springify().stiffness(200).damping(80)}
-              exiting={FadeOutRight.springify().stiffness(200).damping(80)}
-              contentContainerStyle={{
-                flex: data.shows.length > 0 ? 0 : 1,
-                paddingHorizontal: 20,
-              }}
-              contentInset={{ bottom: insets.bottom }}
-            />
-          )}
+                  contentFit="cover"
+                />
+              </ThemedButton>
+            )}
+            ListEmptyComponent={
+              isFetched ? <Empty message="No results found" /> : <></>
+            }
+            entering={FadeInLeft.springify().stiffness(200).damping(80)}
+            exiting={FadeOutLeft.springify().stiffness(200).damping(80)}
+            contentContainerStyle={{
+              flex: data.length > 0 ? 0 : 1,
+              paddingHorizontal: 20,
+            }}
+            contentInset={{ bottom: insets.bottom }}
+          />
         </Box>
       </>
     );
