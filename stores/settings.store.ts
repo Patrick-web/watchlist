@@ -1,7 +1,6 @@
+import { ThemeType } from "@/types/app.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { proxy, subscribe } from "valtio";
-
-type ThemeType = "light" | "dark" | "system";
 
 interface SettingsStateType {
   theme: ThemeType;

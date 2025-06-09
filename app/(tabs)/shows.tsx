@@ -39,7 +39,7 @@ export default function Shows() {
       <Box flex={1}>
         <Reanimated.FlatList
           data={APP_STATE.subscribedShows}
-          keyExtractor={(item) => item.url}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => <SubscribedShow show={item} />}
           ItemSeparatorComponent={() => <Box height={20} />}
           numColumns={2}
