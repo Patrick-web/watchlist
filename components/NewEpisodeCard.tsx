@@ -18,6 +18,7 @@ import SwipeAction from "./SwipeAction";
 import ThemedTrueSheet from "./reusables/TrueSheet";
 import { useThemeMode } from "@/hooks/useTheme.hook";
 import FilmPosterBackground from "./FilmPosterBackground";
+import { buildImageUrl } from "@/utils/api.utils";
 
 const POSTER_WIDTH = 100;
 const POSTER_HEIGHT = POSTER_RATIO * POSTER_WIDTH;
@@ -32,7 +33,7 @@ export function Episode({ episode }: { episode: NewEpisode }) {
       height={POSTER_HEIGHT}
     >
       <Image
-        source={episode.show.poster}
+        source={buildImageUrl(episode.show.poster)}
         style={{
           width: POSTER_WIDTH,
           height: POSTER_HEIGHT,
@@ -136,7 +137,7 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
         blurTint={themeMode}
         grabber={false}
       >
-        <FilmPosterBackground url={episode.show.poster} />
+        <FilmPosterBackground url={buildImageUrl(episode.show.poster)} />
         <Box pt={20} px={20} pb={80} gap={20}>
           <Episode episode={episode} />
           <Box
@@ -147,13 +148,18 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
           <Box gap={10}>
             <ThemedButton
               label={"Mark as Watched"}
+              labelProps={{
+                color: "white",
+              }}
               direction="column"
               radius={100}
               icon={{
                 name: "movie-check",
                 source: "MaterialCommunityIcons",
+                color: "white",
               }}
               type="translucent"
+              color={"rgba(0,0,0,0.3)"}
               py={10}
               onPress={() => {
                 setShowActions(false);
@@ -162,11 +168,15 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
             />
             <ThemedButton
               label={"Create Reminder"}
+              labelProps={{
+                color: "white",
+              }}
               icon={{
                 name: "alarm-bell",
                 source: "MaterialCommunityIcons",
+                color: "white",
               }}
-              type="translucent"
+              color={"rgba(0,0,0,0.3)"}
               direction="column"
               size="sm"
               py={10}

@@ -100,6 +100,65 @@ interface SpokenLanguagesItem {
   name: string;
 }
 
+// Season Details Response
+export interface SeasonDetailsResponse {
+  _id: string;
+  air_date: string;
+  episodes: EpisodeItem[];
+  name: string;
+  overview: string;
+  id: number;
+  poster_path: string | null;
+  season_number: number;
+  vote_average: number;
+}
+
+interface EpisodeItem {
+  air_date: string;
+  episode_number: number;
+  episode_type: string;
+  id: number;
+  name: string;
+  overview: string;
+  production_code: string;
+  runtime: number | null;
+  season_number: number;
+  show_id: number;
+  still_path: string | null;
+  vote_average: number;
+  vote_count: number;
+  crew: CrewItem[];
+  guest_stars: GuestStarItem[];
+}
+
+interface CrewItem {
+  job: string;
+  department: string;
+  credit_id: string;
+  adult: boolean;
+  gender: number;
+  id: number;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null;
+}
+
+interface GuestStarItem {
+  character: string;
+  credit_id: string;
+  order: number;
+  adult: boolean;
+  gender: number;
+  id: number;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null;
+}
+
 // TV show
 //
 export interface TVShowDetailsResponse {

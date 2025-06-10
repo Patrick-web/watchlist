@@ -8,7 +8,6 @@ import {
   getRetryDelay,
 } from "@/utils/api.utils";
 
-// Add this constant at the top - you'll need to set your TMDB API key
 const TMDB_API_KEY = process.env.EXPO_PUBLIC_TMDB_API_KEY || "";
 
 interface SearchOptions {

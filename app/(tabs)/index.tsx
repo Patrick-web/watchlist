@@ -34,8 +34,17 @@ export default function HomeScreen() {
 
   const theme = useTheme();
 
+  async function testApiRequest() {
+    // json place holder
+    console.log("testApiRequest");
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await response.json();
+    console.log({ data });
+  }
+
   useEffect(() => {
     registerBackgroundFetchAsync();
+    testApiRequest();
   }, []);
   return (
     <Page>

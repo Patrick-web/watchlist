@@ -43,6 +43,7 @@ export const createApiError = (
 };
 
 export const handleApiResponse = async <T>(response: Response): Promise<T> => {
+  console.log("Handling api response");
   if (!response.ok) {
     let errorData;
     try {
@@ -54,6 +55,7 @@ export const handleApiResponse = async <T>(response: Response): Promise<T> => {
   }
 
   const data = await response.json();
+  console.log({ data });
   return data as T;
 };
 
@@ -93,10 +95,9 @@ export const buildImageUrl = (
 };
 
 export const buildBackdropUrl = (
-  path: string | null,
+  path: string,
   size: "w300" | "w780" | "w1280" | "original" = "w1280",
-): string | null => {
-  if (!path) return null;
+): string => {
   return `https://image.tmdb.org/t/p/${size}${path}`;
 };
 
