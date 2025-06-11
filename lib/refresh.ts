@@ -146,13 +146,10 @@ export async function findNewEpisodes() {
     return;
   }
   
-  // Check each subscribed show for new episodes
-  const promises = PERSISTED_APP_STATE.subscribedShows.map(show => 
-    checkNewEpisode(show)
-  );
-  
-  // Wait for all checks to complete
-  await Promise.allSettled(promises);
+  // Check each subscribed show for new episodes (serial execution)
+  for (const show of PERSISTED_APP_STATE.subscribedShows) {
+    await checkNewEpisode(show);
+  }
   
   console.log("Finished checking for new episodes");
 }
