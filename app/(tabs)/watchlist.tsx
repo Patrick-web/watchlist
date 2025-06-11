@@ -18,6 +18,10 @@ import MovieCard from "@/components/MovieCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Empty from "@/components/Empty";
 import AppHeader from "@/components/AppHeader";
+import {
+  MovieDetailsResponse,
+  TVShowDetailsResponse,
+} from "@/types/tmdb.types";
 
 export default function Watchlist() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
@@ -87,7 +91,7 @@ export default function Watchlist() {
         {view === "shows" && (
           <Reanimated.FlatList
             data={APP_STATE.watchList.shows}
-            keyExtractor={(item) => item.url}
+            keyExtractor={(item) => item.id.toString()}
             ListEmptyComponent={
               <Empty message="No shows in your watchlist">
                 <ThemedButton
@@ -99,14 +103,16 @@ export default function Watchlist() {
                     router.push({
                       pathname: "/search",
                       params: {
-                        mode: "all",
+                        mode: "shows",
                       },
                     });
                   }}
                 />
               </Empty>
             }
-            renderItem={({ item }) => <ShowCard show={item} />}
+            renderItem={({ item }) => (
+              <ShowCard show={item as TVShowDetailsResponse} />
+            )}
             itemLayoutAnimation={LinearTransition}
             ItemSeparatorComponent={() => <Box height={40} />}
             entering={FadeInLeft.springify().stiffness(200).damping(80)}
@@ -120,7 +126,7 @@ export default function Watchlist() {
         {view === "movies" && (
           <Reanimated.FlatList
             data={APP_STATE.watchList.movies}
-            keyExtractor={(item) => item.url}
+            keyExtractor={(item) => item.id.toString()}
             style={{ height: "70%", flex: 0.6 }}
             ListEmptyComponent={
               <Empty message="No movies in your watchlist">
@@ -133,7 +139,7 @@ export default function Watchlist() {
                     router.push({
                       pathname: "/search",
                       params: {
-                        mode: "all",
+                        mode: "movies",
                       },
                     });
                   }}
@@ -143,7 +149,9 @@ export default function Watchlist() {
             contentContainerStyle={{
               flex: APP_STATE.watchList.movies.length > 0 ? 0 : 1,
             }}
-            renderItem={({ item }) => <MovieCard movie={item} />}
+            renderItem={({ item }) => (
+              <MovieCard movie={item as MovieDetailsResponse} />
+            )}
             itemLayoutAnimation={LinearTransition}
             ItemSeparatorComponent={() => <Box height={40} />}
             entering={FadeInRight.springify().stiffness(200).damping(80)}

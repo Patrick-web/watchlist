@@ -34,8 +34,25 @@ export default function HomeScreen() {
 
   const theme = useTheme();
 
+  async function testApiRequest() {
+    // json place holder
+    try {
+      console.log("testApiRequest");
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/posts",
+      );
+      const data = await response.json();
+      console.log("Test api request data");
+      console.log({ data });
+    } catch (error) {
+      console.log("Error testing API request");
+      console.error(error);
+    }
+  }
+
   useEffect(() => {
     registerBackgroundFetchAsync();
+    testApiRequest();
   }, []);
   return (
     <Page>
@@ -114,7 +131,7 @@ export default function HomeScreen() {
                   router.push({
                     pathname: "/search",
                     params: {
-                      mode: "all",
+                      mode: "shows",
                     },
                   });
                 }}

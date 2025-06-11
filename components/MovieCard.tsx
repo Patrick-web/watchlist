@@ -1,5 +1,4 @@
 import { SUCCESS_ALERT } from "@/constants/common.constants";
-import { MovieInfo } from "@/types";
 import { onMovieWatched } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import React, { useRef, useState } from "react";
@@ -15,10 +14,11 @@ import Movie from "./Movie";
 import SwipeAction from "./SwipeAction";
 import ThemedTrueSheet from "./reusables/TrueSheet";
 import { useThemeMode } from "@/hooks/useTheme.hook";
-import { Image } from "expo-image";
 import FilmPosterBackground from "./FilmPosterBackground";
+import { MovieDetailsResponse } from "@/types/tmdb.types";
+import { buildImageUrl } from "@/utils/api.utils";
 
-export default function MovieCard({ movie }: { movie: MovieInfo }) {
+export default function MovieCard({ movie }: { movie: MovieDetailsResponse }) {
   const themeMode = useThemeMode();
 
   const [showActions, setShowActions] = useState(false);
@@ -97,13 +97,13 @@ export default function MovieCard({ movie }: { movie: MovieInfo }) {
       <ThemedTrueSheet
         visible={showActions}
         onDismiss={() => setShowActions(false)}
-        cornerRadius={60}
+        cornerRadius={Platform.OS === "ios" ? 60 : 0}
         blurTint={themeMode}
         grabber={false}
       >
-        <FilmPosterBackground url={movie.poster} />
+        <FilmPosterBackground url={buildImageUrl(movie.poster_path)} />
         <Box pt={20} px={20} pb={80} gap={20}>
-          <Movie movie={movie} />
+          <Movie movie={movie} keepWhite={true} />
           <Box
             color={"rgba(255,255,255,0.5)"}
             block

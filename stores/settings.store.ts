@@ -1,19 +1,43 @@
+import { ThemeType } from "@/types/app.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { proxy, subscribe } from "valtio";
 
-type ThemeType = "light" | "dark" | "system";
-
-interface SettingsStoreType {
-    theme: ThemeType;
+interface SettingsStateType {
+  theme: ThemeType;
 }
 
-const SettingsStore = create(persist<SettingsStoreType>((set, get) => ({
-    theme: "system",
-}), {
-    name: "settings",
-    storage: createJSONStorage(() => AsyncStorage)
-}))
+export const SETTINGS_STATE = proxy<SettingsStateType>({
+  theme: "system",
+});
 
+const persistSettingsData = async () => {
+  await AsyncStorage.setItem("settings", JSON.stringify(SETTINGS_STATE));
+};
 
-export default SettingsStore;
+const loadPersistedSettingsData = async () => {
+  const value = await AsyncStorage.getItem("settings");
+  if (value) {
+    const parsedState = JSON.parse(value) as SettingsStateType;
+    for (const [key, value] of Object.entries(parsedState)) {
+      SETTINGS_STATE[key as keyof SettingsStateType] = value;
+    }
+  }
+};
+
+export function setupSettingsStore() {
+  loadPersistedSettingsData();
+
+  const unsubscribe = subscribe(SETTINGS_STATE, () => {
+    persistSettingsData();
+  });
+
+  return unsubscribe;
+}
+
+export function setTheme(theme: ThemeType) {
+  SETTINGS_STATE.theme = theme;
+}
+
+export function getTheme(): ThemeType {
+  return SETTINGS_STATE.theme;
+}

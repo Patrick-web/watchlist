@@ -1,19 +1,22 @@
-import { MovieInfo } from "@/types";
 import { Image } from "expo-image";
 import React from "react";
 import Box from "./reusables/Box";
 import ThemedText from "./reusables/ThemedText";
 import { POSTER_RATIO } from "@/constants/dimensions.constant";
 import { useTheme } from "@/hooks/useTheme.hook";
+import { MovieDetailsResponse } from "@/types/tmdb.types";
+import { buildImageUrl } from "@/utils/api.utils";
 
 const POSTER_WIDTH = 100;
 const POSTER_HEIGHT = POSTER_RATIO * POSTER_WIDTH;
 
 export default function Movie({
   movie,
+  keepWhite,
   children,
 }: {
-  movie: MovieInfo;
+  movie: MovieDetailsResponse;
+  keepWhite?: boolean;
   children?: React.ReactNode;
 }) {
   const theme = useTheme();
@@ -29,7 +32,7 @@ export default function Movie({
         gap={20}
       >
         <Image
-          source={movie.poster}
+          source={buildImageUrl(movie.poster_path)}
           style={{
             width: POSTER_WIDTH,
             height: POSTER_HEIGHT,
@@ -37,16 +40,30 @@ export default function Movie({
           }}
         />
         <Box justify="center" gap={5} height={"100%"} flex={1}>
-          <ThemedText size={"lg"}>{movie.title}</ThemedText>
+          <ThemedText size={"lg"} color={keepWhite ? "white" : "text"}>
+            {movie.title}
+          </ThemedText>
           <Box direction="row" gap={10}>
-            <ThemedText size={"sm"} opacity={0.8}>
-              {movie.year}
+            <ThemedText
+              size={"sm"}
+              opacity={0.8}
+              color={keepWhite ? "white" : "text"}
+            >
+              {new Date(movie.release_date).getFullYear()}
             </ThemedText>
-            <ThemedText size={"sm"} opacity={0.8}>
+            <ThemedText
+              size={"sm"}
+              opacity={0.8}
+              color={keepWhite ? "white" : "text"}
+            >
               ⋅
             </ThemedText>
-            <ThemedText size={"sm"} opacity={0.8}>
-              {movie.duration}m
+            <ThemedText
+              size={"sm"}
+              opacity={0.8}
+              color={keepWhite ? "white" : "text"}
+            >
+              {movie.runtime}m
             </ThemedText>
           </Box>
           {children}

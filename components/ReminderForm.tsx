@@ -12,10 +12,14 @@ import { SUCCESS_ALERT } from "@/constants/common.constants";
 import { FadeInUp } from "react-native-reanimated";
 import { ThemedDatePicker } from "./reusables/ThemedDatePicker";
 import { notificationAsync, NotificationFeedbackType } from "expo-haptics";
-import { MovieInfo, NewEpisode, ShowInfo } from "@/types";
+import { NewEpisode } from "@/types";
 import { PERSISTED_APP_STATE, setSetting } from "@/valitio.store";
 import ThemedBottomSheet from "./reusables/ThemedBottomSheet";
 import { useSnapshot } from "valtio";
+import {
+  MovieDetailsResponse,
+  TVShowDetailsResponse,
+} from "@/types/tmdb.types";
 
 const hours = [
   "1:00",
@@ -65,7 +69,7 @@ function generateDateLabels(): Day[] {
 
 type ReminderFormProps =
   | {
-      movie: MovieInfo;
+      movie: MovieDetailsResponse;
       episode?: never;
       show?: never;
       close: () => void;
@@ -83,7 +87,7 @@ type ReminderFormProps =
   | {
       movie?: never;
       episode?: never;
-      show: ShowInfo;
+      show: TVShowDetailsResponse;
       close: () => void;
       visible: boolean;
       children?: ReactNode;
@@ -194,7 +198,7 @@ export default function ReminderForm({
       } else if (episode) {
         return `Watch ${episode.show.title} Episode ${episode.show.episode}`;
       } else if (show) {
-        return `Watch ${show.title}`;
+        return `Watch ${show.name}`;
       }
     };
 

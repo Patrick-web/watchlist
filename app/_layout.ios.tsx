@@ -27,24 +27,26 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="show-details"
+          name="movie"
           options={{
             presentation: "formSheet",
-            headerShown: false,
             sheetCornerRadius: 40,
+            headerShown: false,
             contentStyle: {
               backgroundColor: theme.background,
+              height: "100%",
             },
           }}
         />
         <Stack.Screen
-          name="movie-details"
+          name="tv"
           options={{
             presentation: "formSheet",
             headerShown: false,
             sheetCornerRadius: 40,
             contentStyle: {
               backgroundColor: theme.background,
+              height: "100%",
             },
           }}
         />

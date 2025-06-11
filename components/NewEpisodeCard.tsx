@@ -18,11 +18,18 @@ import SwipeAction from "./SwipeAction";
 import ThemedTrueSheet from "./reusables/TrueSheet";
 import { useThemeMode } from "@/hooks/useTheme.hook";
 import FilmPosterBackground from "./FilmPosterBackground";
+import { buildImageUrl } from "@/utils/api.utils";
 
 const POSTER_WIDTH = 100;
 const POSTER_HEIGHT = POSTER_RATIO * POSTER_WIDTH;
 
-export function Episode({ episode }: { episode: NewEpisode }) {
+export function Episode({
+  episode,
+  keepWhite,
+}: {
+  episode: NewEpisode;
+  keepWhite?: boolean;
+}) {
   return (
     <Box
       direction="row"
@@ -32,7 +39,7 @@ export function Episode({ episode }: { episode: NewEpisode }) {
       height={POSTER_HEIGHT}
     >
       <Image
-        source={episode.show.poster}
+        source={buildImageUrl(episode.show.poster)}
         style={{
           width: POSTER_WIDTH,
           height: POSTER_HEIGHT,
@@ -40,16 +47,30 @@ export function Episode({ episode }: { episode: NewEpisode }) {
         }}
       />
       <Box align="center" height={"100%"} width={"30%"} justify="center">
-        <ThemedText size={"sm"} opacity={0.5}>
+        <ThemedText
+          size={"sm"}
+          opacity={0.5}
+          color={keepWhite ? "white" : "text"}
+        >
           Episode
         </ThemedText>
-        <ThemedText size={80} fontWeight="bold">
+        <ThemedText
+          size={80}
+          fontWeight="bold"
+          color={keepWhite ? "white" : "text"}
+        >
           {episode.show.episode}
         </ThemedText>
       </Box>
       <Box justify="center" gap={5} height={"100%"} flex={1}>
-        <ThemedText size={"lg"}>{episode.show.title}</ThemedText>
-        <ThemedText size={"sm"} opacity={0.5}>
+        <ThemedText size={"lg"} color={keepWhite ? "white" : "text"}>
+          {episode.show.title}
+        </ThemedText>
+        <ThemedText
+          size={"sm"}
+          opacity={0.5}
+          color={keepWhite ? "white" : "text"}
+        >
           Season {episode.show.season}
         </ThemedText>
       </Box>
@@ -132,13 +153,13 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
       <ThemedTrueSheet
         visible={showActions}
         onDismiss={() => setShowActions(false)}
-        cornerRadius={Platform.OS === "ios" ? 60 : 80}
+        cornerRadius={Platform.OS === "ios" ? 60 : 0}
         blurTint={themeMode}
         grabber={false}
       >
-        <FilmPosterBackground url={episode.show.poster} />
+        <FilmPosterBackground url={buildImageUrl(episode.show.poster)} />
         <Box pt={20} px={20} pb={80} gap={20}>
-          <Episode episode={episode} />
+          <Episode episode={episode} keepWhite />
           <Box
             color={"rgba(255,255,255,0.5)"}
             block
@@ -147,13 +168,18 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
           <Box gap={10}>
             <ThemedButton
               label={"Mark as Watched"}
+              labelProps={{
+                color: "white",
+              }}
               direction="column"
               radius={100}
               icon={{
                 name: "movie-check",
                 source: "MaterialCommunityIcons",
+                color: "white",
               }}
               type="translucent"
+              color={"rgba(255,255,255,0.2)"}
               py={10}
               onPress={() => {
                 setShowActions(false);
@@ -162,11 +188,15 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
             />
             <ThemedButton
               label={"Create Reminder"}
+              labelProps={{
+                color: "white",
+              }}
               icon={{
                 name: "alarm-bell",
                 source: "MaterialCommunityIcons",
+                color: "white",
               }}
-              type="translucent"
+              color={"rgba(255,255,255,0.2)"}
               direction="column"
               size="sm"
               py={10}

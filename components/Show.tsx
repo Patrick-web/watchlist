@@ -2,13 +2,16 @@ import React from "react";
 import Box from "./reusables/Box";
 import { Image } from "expo-image";
 import ThemedText from "./reusables/ThemedText";
-import { ShowInfo } from "@/types";
+import { TVShowDetailsResponse } from "@/types/tmdb.types";
+import { buildImageUrl } from "@/utils/api.utils";
 
 export default function Show({
   show,
+  keepWhite,
   children,
 }: {
-  show: ShowInfo;
+  show: TVShowDetailsResponse;
+  keepWhite?: boolean;
   children?: React.ReactNode;
 }) {
   return (
@@ -20,7 +23,7 @@ export default function Show({
       height={150}
     >
       <Image
-        source={show.poster}
+        source={buildImageUrl(show.poster_path)}
         style={{
           width: 100,
           height: "100%",
@@ -28,11 +31,19 @@ export default function Show({
         }}
       />
       <Box justify="center" align="flex-start" gap={5} height={"100%"} flex={1}>
-        <ThemedText size={"lg"}>{show.title}</ThemedText>
+        <ThemedText size={"lg"} color={keepWhite ? "white" : "text"}>
+          {show.name}
+        </ThemedText>
         <Box direction="row" opacity={0.6} gap={10}>
-          <ThemedText size={"sm"}>Season {show.season}</ThemedText>
-          <ThemedText size={"sm"}>⋅</ThemedText>
-          <ThemedText size={"sm"}>Episode {show.episode}</ThemedText>
+          <ThemedText size={"sm"} color={keepWhite ? "white" : "text"}>
+            Season {show.last_episode_to_air.season_number}
+          </ThemedText>
+          <ThemedText size={"sm"} color={keepWhite ? "white" : "text"}>
+            ⋅
+          </ThemedText>
+          <ThemedText size={"sm"} color={keepWhite ? "white" : "text"}>
+            Episode {show.last_episode_to_air.episode_number}
+          </ThemedText>
         </Box>
         {children}
       </Box>
