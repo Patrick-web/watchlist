@@ -12,6 +12,7 @@ import ThemedCard from "@/components/reusables/ThemedCard";
 
 import { SETTINGS_STATE } from "@/stores/settings.store";
 import { ThemeType } from "@/types/app.types";
+import ThemedSettingItem from "@/components/reusables/ThemedSettingItem";
 
 export default function Settings() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
@@ -54,10 +55,10 @@ export default function Settings() {
             }}
           />
 
-          <Box gap={5}>
-            <ThemedText>Theme</ThemedText>
+          <ThemedSettingItem title="Theme" subtitle="Pick your app theme">
             <ThemedSegmentedPicker
-              size="sm"
+              size="xs"
+              width={"60%"}
               options={themeModes}
               selectedIndex={themeModes.findIndex(
                 (mode) => mode.toLowerCase() === SETTINGS.theme.toLowerCase(),
@@ -68,7 +69,7 @@ export default function Settings() {
               }}
               getLabel={(mode) => mode.charAt(0).toUpperCase() + mode.slice(1)}
             />
-          </Box>
+          </ThemedSettingItem>
         </Box>
         {isUpdateAvailable && (
           <ThemedCard
