@@ -79,7 +79,16 @@ const useSearch = (
         throw new Error("Invalid response format from TMDB API");
       }
 
-      return data;
+      // Filter out results without poster images
+      const filteredResults = data.results.filter(result => 
+        result.poster_path && result.poster_path.trim().length > 0
+      );
+
+      return {
+        ...data,
+        results: filteredResults,
+        total_results: filteredResults.length,
+      };
     },
     enabled: !!query && query.trim().length > 0,
     retry: (failureCount, error) => shouldRetry(error, failureCount),
