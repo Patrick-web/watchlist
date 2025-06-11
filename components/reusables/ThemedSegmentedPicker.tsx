@@ -60,7 +60,7 @@ export default function ThemedSegmentedPicker<T>({
       borderColor={theme.stroke}
       overflow="hidden"
       opacity={disabled ? 0.6 : 1}
-      pa={3}
+      pa={2}
       {...boxProps}
     >
       {options.map((option, index) => {
