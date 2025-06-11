@@ -7,9 +7,11 @@ import { buildImageUrl } from "@/utils/api.utils";
 
 export default function Show({
   show,
+  keepWhite,
   children,
 }: {
   show: TVShowDetailsResponse;
+  keepWhite?: boolean;
   children?: React.ReactNode;
 }) {
   return (
@@ -29,13 +31,17 @@ export default function Show({
         }}
       />
       <Box justify="center" align="flex-start" gap={5} height={"100%"} flex={1}>
-        <ThemedText size={"lg"}>{show.name}</ThemedText>
+        <ThemedText size={"lg"} color={keepWhite ? "white" : "text"}>
+          {show.name}
+        </ThemedText>
         <Box direction="row" opacity={0.6} gap={10}>
-          <ThemedText size={"sm"}>
+          <ThemedText size={"sm"} color={keepWhite ? "white" : "text"}>
             Season {show.last_episode_to_air.season_number}
           </ThemedText>
-          <ThemedText size={"sm"}>⋅</ThemedText>
-          <ThemedText size={"sm"}>
+          <ThemedText size={"sm"} color={keepWhite ? "white" : "text"}>
+            ⋅
+          </ThemedText>
+          <ThemedText size={"sm"} color={keepWhite ? "white" : "text"}>
             Episode {show.last_episode_to_air.episode_number}
           </ThemedText>
         </Box>

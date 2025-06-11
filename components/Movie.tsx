@@ -12,9 +12,11 @@ const POSTER_HEIGHT = POSTER_RATIO * POSTER_WIDTH;
 
 export default function Movie({
   movie,
+  keepWhite,
   children,
 }: {
   movie: MovieDetailsResponse;
+  keepWhite?: boolean;
   children?: React.ReactNode;
 }) {
   const theme = useTheme();
@@ -38,15 +40,29 @@ export default function Movie({
           }}
         />
         <Box justify="center" gap={5} height={"100%"} flex={1}>
-          <ThemedText size={"lg"}>{movie.title}</ThemedText>
+          <ThemedText size={"lg"} color={keepWhite ? "white" : "text"}>
+            {movie.title}
+          </ThemedText>
           <Box direction="row" gap={10}>
-            <ThemedText size={"sm"} opacity={0.8}>
+            <ThemedText
+              size={"sm"}
+              opacity={0.8}
+              color={keepWhite ? "white" : "text"}
+            >
               {new Date(movie.release_date).getFullYear()}
             </ThemedText>
-            <ThemedText size={"sm"} opacity={0.8}>
+            <ThemedText
+              size={"sm"}
+              opacity={0.8}
+              color={keepWhite ? "white" : "text"}
+            >
               ⋅
             </ThemedText>
-            <ThemedText size={"sm"} opacity={0.8}>
+            <ThemedText
+              size={"sm"}
+              opacity={0.8}
+              color={keepWhite ? "white" : "text"}
+            >
               {movie.runtime}m
             </ThemedText>
           </Box>

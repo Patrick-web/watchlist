@@ -26,9 +26,15 @@ const SearchSkeleton = React.memo(() => {
   const theme = useTheme();
 
   return (
-    <Box flex={1} px={20}>
-      {/* Movie skeletons */}
-      {Array.from({ length: 3 }).map((_, index) => (
+    <Box
+      flex={1}
+      px={20}
+      direction="row"
+      wrap="wrap"
+      justify="space-evenly"
+      gap={10}
+    >
+      {Array.from({ length: 5 }).map((_, index) => (
         <Box
           key={index}
           color={theme.surface}

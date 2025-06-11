@@ -18,7 +18,13 @@ import FilmPosterBackground from "./FilmPosterBackground";
 import { TVShowDetailsResponse } from "@/types/tmdb.types";
 import { buildImageUrl } from "@/utils/api.utils";
 
-export default function ShowCard({ show }: { show: TVShowDetailsResponse }) {
+export default function ShowCard({
+  show,
+  keepWhite,
+}: {
+  show: TVShowDetailsResponse;
+  keepWhite?: boolean;
+}) {
   const themeMode = useThemeMode();
 
   const [showActions, setShowActions] = useState(false);
@@ -83,7 +89,7 @@ export default function ShowCard({ show }: { show: TVShowDetailsResponse }) {
         overshootRight
       >
         <ThemedButton onPress={() => setShowActions(true)} type="text">
-          <Show show={show} />
+          <Show show={show} keepWhite={keepWhite} />
         </ThemedButton>
       </ReanimatedSwipeable>
       <ThemedTrueSheet
@@ -95,7 +101,7 @@ export default function ShowCard({ show }: { show: TVShowDetailsResponse }) {
       >
         <FilmPosterBackground url={buildImageUrl(show.poster_path)} />
         <Box pt={20} px={20} pb={80} gap={20} block>
-          <Show show={show} />
+          <Show show={show} keepWhite={true} />
           <Box
             color={"rgba(255,255,255,0.5)"}
             block
@@ -155,7 +161,7 @@ export default function ShowCard({ show }: { show: TVShowDetailsResponse }) {
         }}
       >
         <Box gap={20} px={20}>
-          <Show show={show} />
+          <Show show={show} keepWhite={keepWhite} />
           <Box color={"border"} block height={StyleSheet.hairlineWidth} />
         </Box>
       </ReminderForm>
@@ -177,7 +183,7 @@ export default function ShowCard({ show }: { show: TVShowDetailsResponse }) {
           gap: 20,
         }}
       >
-        <Show show={show} />
+        <Show show={show} keepWhite={keepWhite} />
         <Box direction="row" gap={20}>
           <ThemedButton
             label={"Not Yet"}

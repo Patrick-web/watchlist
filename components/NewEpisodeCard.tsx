@@ -23,7 +23,13 @@ import { buildImageUrl } from "@/utils/api.utils";
 const POSTER_WIDTH = 100;
 const POSTER_HEIGHT = POSTER_RATIO * POSTER_WIDTH;
 
-export function Episode({ episode }: { episode: NewEpisode }) {
+export function Episode({
+  episode,
+  keepWhite,
+}: {
+  episode: NewEpisode;
+  keepWhite?: boolean;
+}) {
   return (
     <Box
       direction="row"
@@ -41,16 +47,30 @@ export function Episode({ episode }: { episode: NewEpisode }) {
         }}
       />
       <Box align="center" height={"100%"} width={"30%"} justify="center">
-        <ThemedText size={"sm"} opacity={0.5}>
+        <ThemedText
+          size={"sm"}
+          opacity={0.5}
+          color={keepWhite ? "white" : "text"}
+        >
           Episode
         </ThemedText>
-        <ThemedText size={80} fontWeight="bold">
+        <ThemedText
+          size={80}
+          fontWeight="bold"
+          color={keepWhite ? "white" : "text"}
+        >
           {episode.show.episode}
         </ThemedText>
       </Box>
       <Box justify="center" gap={5} height={"100%"} flex={1}>
-        <ThemedText size={"lg"}>{episode.show.title}</ThemedText>
-        <ThemedText size={"sm"} opacity={0.5}>
+        <ThemedText size={"lg"} color={keepWhite ? "white" : "text"}>
+          {episode.show.title}
+        </ThemedText>
+        <ThemedText
+          size={"sm"}
+          opacity={0.5}
+          color={keepWhite ? "white" : "text"}
+        >
           Season {episode.show.season}
         </ThemedText>
       </Box>
@@ -139,7 +159,7 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
       >
         <FilmPosterBackground url={buildImageUrl(episode.show.poster)} />
         <Box pt={20} px={20} pb={80} gap={20}>
-          <Episode episode={episode} />
+          <Episode episode={episode} keepWhite />
           <Box
             color={"rgba(255,255,255,0.5)"}
             block
@@ -159,7 +179,7 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
                 color: "white",
               }}
               type="translucent"
-              color={"rgba(0,0,0,0.3)"}
+              color={"rgba(255,255,255,0.2)"}
               py={10}
               onPress={() => {
                 setShowActions(false);
@@ -176,7 +196,7 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
                 source: "MaterialCommunityIcons",
                 color: "white",
               }}
-              color={"rgba(0,0,0,0.3)"}
+              color={"rgba(255,255,255,0.2)"}
               direction="column"
               size="sm"
               py={10}

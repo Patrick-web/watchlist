@@ -103,7 +103,7 @@ export default function MovieCard({ movie }: { movie: MovieDetailsResponse }) {
       >
         <FilmPosterBackground url={buildImageUrl(movie.poster_path)} />
         <Box pt={20} px={20} pb={80} gap={20}>
-          <Movie movie={movie} />
+          <Movie movie={movie} keepWhite={true} />
           <Box
             color={"rgba(255,255,255,0.5)"}
             block

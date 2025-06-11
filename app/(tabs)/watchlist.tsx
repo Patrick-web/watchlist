@@ -18,6 +18,10 @@ import MovieCard from "@/components/MovieCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Empty from "@/components/Empty";
 import AppHeader from "@/components/AppHeader";
+import {
+  MovieDetailsResponse,
+  TVShowDetailsResponse,
+} from "@/types/tmdb.types";
 
 export default function Watchlist() {
   const APP_STATE = useSnapshot(PERSISTED_APP_STATE);
@@ -106,7 +110,9 @@ export default function Watchlist() {
                 />
               </Empty>
             }
-            renderItem={({ item }) => <ShowCard show={item} />}
+            renderItem={({ item }) => (
+              <ShowCard show={item as TVShowDetailsResponse} />
+            )}
             itemLayoutAnimation={LinearTransition}
             ItemSeparatorComponent={() => <Box height={40} />}
             entering={FadeInLeft.springify().stiffness(200).damping(80)}
@@ -143,7 +149,9 @@ export default function Watchlist() {
             contentContainerStyle={{
               flex: APP_STATE.watchList.movies.length > 0 ? 0 : 1,
             }}
-            renderItem={({ item }) => <MovieCard movie={item} />}
+            renderItem={({ item }) => (
+              <MovieCard movie={item as MovieDetailsResponse} />
+            )}
             itemLayoutAnimation={LinearTransition}
             ItemSeparatorComponent={() => <Box height={40} />}
             entering={FadeInRight.springify().stiffness(200).damping(80)}

@@ -11,9 +11,9 @@ import { useThemeMode } from "@/hooks/useTheme.hook";
 import { TVShowDetailsResponse } from "@/types/tmdb.types";
 import { buildBackdropUrl, buildImageUrl } from "@/utils/api.utils";
 import FilmPosterBackground from "./FilmPosterBackground";
-import ThemedIcon from "./reusables/ThemedIcon";
 import Animated, {
   Easing,
+  FadeInDown,
   useAnimatedRef,
   useAnimatedStyle,
   useSharedValue,
@@ -21,7 +21,6 @@ import Animated, {
 } from "react-native-reanimated";
 import useSeasonEpisodes from "@/hooks/useSeasonEpisodes.hook";
 import ThemedErrorCard from "./reusables/ThemedErrorCard";
-import { ScrollViewBase } from "react-native";
 import ThemedCard from "./reusables/ThemedCard";
 import ThemedActivityIndicator from "./reusables/ThemedActivityIndicator";
 
@@ -63,11 +62,15 @@ export default function ShowDetailsModal({
     };
   });
 
-  function showEpisodes() {
+  const [seasonsVisible, setSeasonsVisible] = useState(false);
+
+  function showSeasons() {
+    setSeasonsVisible(true);
     seasonsContainerOffset.value = 0;
   }
 
-  function hideEpisodes() {
+  function hideSeasons() {
+    setSeasonsVisible(false);
     seasonsContainerOffset.value = sHeight / 1.3;
   }
 
@@ -76,6 +79,7 @@ export default function ShowDetailsModal({
       <ThemedTrueSheet
         visible={visible}
         onDismiss={() => {
+          hideSeasons();
           onClose();
         }}
         cornerRadius={60}
@@ -179,7 +183,7 @@ export default function ShowDetailsModal({
               }}
               direction="column"
               onPress={() => {
-                showEpisodes();
+                showSeasons();
               }}
               flex={1}
             />
@@ -216,7 +220,7 @@ export default function ShowDetailsModal({
             }
           >
             <Image
-              source={buildBackdropUrl(show.backdrop_path)}
+              source={buildBackdropUrl(show.poster_path)}
               style={{
                 position: "absolute",
                 top: 0,
@@ -225,7 +229,7 @@ export default function ShowDetailsModal({
                 bottom: 0,
                 zIndex: -1,
               }}
-              blurRadius={100}
+              blurRadius={400}
             />
             <Animated.ScrollView
               ref={scrollAnimatedRef}
@@ -249,20 +253,23 @@ export default function ShowDetailsModal({
                   color="rgba(0,0,0,0.3)"
                   size="sm"
                   onPress={() => {
-                    hideEpisodes();
+                    hideSeasons();
                   }}
                 />
               </Box>
-              {show.seasons
-                .filter((season) => season.season_number >= 0)
-                .sort((a, b) => a.season_number - b.season_number)
-                .map((season) => (
-                  <RenderSeason
-                    key={season.id}
-                    season={season}
-                    showId={show.id}
-                  />
-                ))}
+
+              {seasonsVisible &&
+                show.seasons
+                  .filter((season) => season.season_number >= 0)
+                  .sort((a, b) => a.season_number - b.season_number)
+                  .map((season, index) => (
+                    <RenderSeason
+                      key={season.id}
+                      season={season}
+                      showId={show.id}
+                      index={index}
+                    />
+                  ))}
             </Animated.ScrollView>
           </AnimatedBox>
         </Box>
@@ -274,9 +281,11 @@ export default function ShowDetailsModal({
 function RenderSeason({
   season,
   showId,
+  index,
 }: {
   season: TVShowDetailsResponse["seasons"][0];
   showId: number;
+  index: number;
 }) {
   const hasPoster = season.poster_path;
   const [showEpisodes, setShowEpisodes] = useState(false);
@@ -295,10 +304,9 @@ function RenderSeason({
   }
 
   return (
-    <Box
+    <AnimatedBox
       mb={20}
-      color={showEpisodes ? "rgba(0,0,0,0.3)" : "transparent"}
-      radius={40}
+      radius={70}
       position={showEpisodes ? "absolute" : "relative"}
       top={showEpisodes ? 0 : undefined}
       left={showEpisodes ? 0 : undefined}
@@ -306,6 +314,11 @@ function RenderSeason({
       bottom={showEpisodes ? 0 : undefined}
       height={showEpisodes ? sHeight / 1.5 : undefined}
       zIndex={showEpisodes ? 1 : 0}
+      viewProps={{
+        entering: FadeInDown.delay(index * 100)
+          .duration(300)
+          .springify(),
+      }}
     >
       {showEpisodes && (
         <FilmPosterBackground url={buildImageUrl(season.poster_path)} />
@@ -313,8 +326,8 @@ function RenderSeason({
       <ThemedButton
         type="surface"
         onPress={() => handleSeasonPress(season)}
-        radius={40}
-        radiusBottom={showEpisodes ? 0 : 40}
+        radius={50}
+        radiusBottom={showEpisodes ? 0 : 50}
         pa={0}
         overflow="hidden"
         color={"rgba(0,0,0,0.2)"}
@@ -386,13 +399,18 @@ function RenderSeason({
                 contentContainerStyle={{ padding: 10, paddingBottom: 40 }}
               >
                 <Box gap={1} overflow="hidden" radius={40}>
-                  {seasonDetails.episodes.map((episode) => (
-                    <Box
+                  {seasonDetails.episodes.map((episode, index) => (
+                    <AnimatedBox
                       key={episode.id}
                       color="rgba(0,0,0,0.3)"
                       pa={20}
                       radius={0}
                       gap={5}
+                      viewProps={{
+                        entering: FadeInDown.delay(index * 100)
+                          .duration(300)
+                          .springify(),
+                      }}
                     >
                       <ThemedText
                         size="sm"
@@ -417,7 +435,7 @@ function RenderSeason({
                           {new Date(episode.air_date).toDateString()}
                         </ThemedText>
                       )}
-                    </Box>
+                    </AnimatedBox>
                   ))}
                 </Box>
               </Animated.ScrollView>
@@ -425,6 +443,6 @@ function RenderSeason({
           )}
         </Box>
       )}
-    </Box>
+    </AnimatedBox>
   );
 }

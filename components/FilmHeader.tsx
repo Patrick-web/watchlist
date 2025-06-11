@@ -1,4 +1,3 @@
-import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { Platform } from "react-native";
 import Box from "./reusables/Box";
