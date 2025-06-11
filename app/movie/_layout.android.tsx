@@ -4,7 +4,6 @@ export default function Layout() {
   return (
     <Stack
       screenOptions={{
-        presentation: "modal",
         headerShown: false,
       }}
     />
