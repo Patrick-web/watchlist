@@ -153,7 +153,7 @@ export default function NewEpisodeCard({ episode }: { episode: NewEpisode }) {
       <ThemedTrueSheet
         visible={showActions}
         onDismiss={() => setShowActions(false)}
-        cornerRadius={Platform.OS === "ios" ? 60 : 80}
+        cornerRadius={Platform.OS === "ios" ? 60 : 0}
         blurTint={themeMode}
         grabber={false}
       >

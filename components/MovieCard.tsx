@@ -2,7 +2,7 @@ import { SUCCESS_ALERT } from "@/constants/common.constants";
 import { onMovieWatched } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import React, { useRef, useState } from "react";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { toast } from "sonner-native";
 import ReminderForm from "./ReminderForm";
@@ -97,7 +97,7 @@ export default function MovieCard({ movie }: { movie: MovieDetailsResponse }) {
       <ThemedTrueSheet
         visible={showActions}
         onDismiss={() => setShowActions(false)}
-        cornerRadius={60}
+        cornerRadius={Platform.OS === "ios" ? 60 : 0}
         blurTint={themeMode}
         grabber={false}
       >

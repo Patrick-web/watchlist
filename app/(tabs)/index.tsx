@@ -36,10 +36,18 @@ export default function HomeScreen() {
 
   async function testApiRequest() {
     // json place holder
-    console.log("testApiRequest");
-    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-    const data = await response.json();
-    console.log({ data });
+    try {
+      console.log("testApiRequest");
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/posts",
+      );
+      const data = await response.json();
+      console.log("Test api request data");
+      console.log({ data });
+    } catch (error) {
+      console.log("Error testing API request");
+      console.error(error);
+    }
   }
 
   useEffect(() => {

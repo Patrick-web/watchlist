@@ -23,6 +23,7 @@ import useSeasonEpisodes from "@/hooks/useSeasonEpisodes.hook";
 import ThemedErrorCard from "./reusables/ThemedErrorCard";
 import ThemedCard from "./reusables/ThemedCard";
 import ThemedActivityIndicator from "./reusables/ThemedActivityIndicator";
+import { Platform } from "react-native";
 
 const POSTER_WIDTH = sWidth / 1.5;
 const POSTER_HEIGHT = POSTER_WIDTH * POSTER_RATIO;
@@ -82,7 +83,7 @@ export default function ShowDetailsModal({
           hideSeasons();
           onClose();
         }}
-        cornerRadius={60}
+        cornerRadius={Platform.OS === "ios" ? 60 : 0}
         blurTint={themeMode}
         grabber={false}
       >
@@ -105,12 +106,7 @@ export default function ShowDetailsModal({
               top={30}
               left={20}
             >
-              <ThemedText
-                size={"xl"}
-                fontWeight="bold"
-                transform={[{ translateY: "-35%" }]}
-                color={"white"}
-              >
+              <ThemedText size={"xl"} fontWeight="bold" color={"white"}>
                 SN
               </ThemedText>
               <ThemedText
@@ -154,12 +150,7 @@ export default function ShowDetailsModal({
               >
                 {show.last_episode_to_air.episode_number}
               </ThemedText>
-              <ThemedText
-                size={"xl"}
-                fontWeight="bold"
-                transform={[{ translateY: "-25%" }]}
-                color={"white"}
-              >
+              <ThemedText size={"xl"} fontWeight="bold" color={"white"}>
                 EP
               </ThemedText>
             </Box>

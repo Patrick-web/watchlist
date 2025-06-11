@@ -3,10 +3,12 @@ import { Stack } from "expo-router";
 import "react-native-reanimated";
 import AppProviders from "@/components/AppProviders";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useTheme } from "@/hooks/useTheme.hook";
 
 export const queryClient = new QueryClient();
 
 export default function RootLayout() {
+  const theme = useTheme();
   return (
     <SafeAreaProvider>
       <AppProviders>
@@ -20,17 +22,23 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name="show-details"
+            name="movie"
             options={{
-              presentation: "modal",
               headerShown: false,
+              contentStyle: {
+                backgroundColor: theme.background,
+                height: "100%",
+              },
             }}
           />
           <Stack.Screen
-            name="movie-details"
+            name="tv"
             options={{
-              presentation: "modal",
               headerShown: false,
+              contentStyle: {
+                backgroundColor: theme.background,
+                height: "100%",
+              },
             }}
           />
           <Stack.Screen name="+not-found" />

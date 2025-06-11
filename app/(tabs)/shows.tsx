@@ -4,8 +4,10 @@ import Box from "@/components/reusables/Box";
 import Page from "@/components/reusables/Page";
 import ThemedButton from "@/components/reusables/ThemedButton";
 import SubscribedShow from "@/components/SubscribedShow";
+import { TVShowDetailsResponse } from "@/types/tmdb.types";
 import { PERSISTED_APP_STATE } from "@/valitio.store";
 import { router } from "expo-router";
+import { FlatList } from "react-native";
 import Reanimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSnapshot } from "valtio";
@@ -37,10 +39,12 @@ export default function Shows() {
         />
       </AppHeader>
       <Box flex={1}>
-        <Reanimated.FlatList
+        <FlatList
           data={APP_STATE.subscribedShows}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <SubscribedShow show={item} />}
+          renderItem={({ item }) => (
+            <SubscribedShow show={item as TVShowDetailsResponse} />
+          )}
           ItemSeparatorComponent={() => <Box height={20} />}
           numColumns={2}
           columnWrapperStyle={{

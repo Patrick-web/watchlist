@@ -1,7 +1,13 @@
 import { Image } from "expo-image";
 import { Platform } from "react-native";
-import Box from "./reusables/Box";
-export default function FilmPosterBackground({ url }: { url: string }) {
+import Box, { BoxProps } from "./reusables/Box";
+export default function FilmPosterBackground({
+  url,
+  wrapper,
+}: {
+  url: string;
+  wrapper?: BoxProps;
+}) {
   return (
     <Box
       color={"rgba(0,0,0,0.5)"}
@@ -14,6 +20,8 @@ export default function FilmPosterBackground({ url }: { url: string }) {
       radius={Platform.OS === "ios" ? 60 : 25}
       width="100%"
       height="140%"
+      overflow="hidden"
+      {...wrapper}
     >
       <Image
         source={url}
