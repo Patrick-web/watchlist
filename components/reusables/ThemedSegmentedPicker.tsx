@@ -11,6 +11,7 @@ export default function ThemedSegmentedPicker<T>({
   selectedValue,
   onSelect,
   getLabel,
+  getIcon,
   getValue,
   disabled = false,
   size = "sm",
@@ -51,6 +52,13 @@ export default function ThemedSegmentedPicker<T>({
     return String(option);
   };
 
+  const getOptionIcon = (option: T): { name: string; source?: string } | undefined => {
+    if (getIcon) {
+      return getIcon(option);
+    }
+    return undefined;
+  };
+
   return (
     <Box
       direction="row"
@@ -77,7 +85,8 @@ export default function ThemedSegmentedPicker<T>({
             onPress={() => handleSelect(index, option)}
             mx={1}
             py={4}
-            label={getOptionLabel(option)}
+            label={getIcon ? undefined : getOptionLabel(option)}
+            icon={getIcon ? getOptionIcon(option) : undefined}
           />
         );
       })}
@@ -92,6 +101,7 @@ export interface ThemedSegmentedPickerProps<T>
   selectedValue?: T;
   onSelect?: (selection: { index: number; option: T; value: T }) => void;
   getLabel?: (option: T) => string;
+  getIcon?: (option: T) => { name: string; source?: string };
   getValue?: (option: T) => T;
   disabled?: boolean;
   size?: "xs" | "sm" | "md" | "lg";

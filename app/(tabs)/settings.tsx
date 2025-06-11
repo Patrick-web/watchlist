@@ -58,7 +58,7 @@ export default function Settings() {
           <ThemedSettingItem title="Theme" subtitle="Pick your app theme">
             <ThemedSegmentedPicker
               size="xs"
-              width={"60%"}
+              width={"40%"}
               options={themeModes}
               selectedIndex={themeModes.findIndex(
                 (mode) => mode.toLowerCase() === SETTINGS.theme.toLowerCase(),
@@ -67,7 +67,18 @@ export default function Settings() {
                 const modeSelected = themeModes[index];
                 SETTINGS_STATE.theme = modeSelected;
               }}
-              getLabel={(mode) => mode.charAt(0).toUpperCase() + mode.slice(1)}
+              getIcon={(mode) => {
+                switch (mode) {
+                  case "light":
+                    return { name: "sun", source: "Feather" };
+                  case "dark":
+                    return { name: "moon", source: "Feather" };
+                  case "system":
+                    return { name: "smartphone", source: "Feather" };
+                  default:
+                    return { name: "sun", source: "Feather" };
+                }
+              }}
             />
           </ThemedSettingItem>
         </Box>
