@@ -1,13 +1,11 @@
 import { sHeight } from "@/constants/dimensions.constant";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useRef } from "react";
 import { Modal, ModalBaseProps, Pressable, ScrollView } from "react-native";
 import Animated, {
-  FadeInDown,
   SlideInDown,
   SlideInUp,
   ZoomInDown,
   ZoomInEasyDown,
-  ZoomInEasyUp,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../hooks/useTheme.hook";
@@ -15,7 +13,6 @@ import Box, { BoxProps } from "./Box";
 import ThemedButton from "./ThemedButton";
 import ThemedIcon, { ThemedIconProps } from "./ThemedIcon";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
-import FilmPosterBackground from "../FilmPosterBackground";
 
 export default function ThemedModal({
   visible = false,
@@ -47,6 +44,7 @@ export default function ThemedModal({
     ></Pressable>
   );
   const scrollViewRef = React.useRef<ScrollView>(null);
+  const blurRef = useRef<BlurredBackdropRef>(null);
 
   return (
     <>
@@ -76,6 +74,7 @@ export default function ThemedModal({
           >
             {position === "center" && <CloseButton />}
             {position === "bottom" && <CloseButton />}
+
             <Animated.View
               entering={
                 position === "center"
