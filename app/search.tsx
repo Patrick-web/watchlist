@@ -3,6 +3,7 @@ import ThemedActivityIndicator from "@/components/reusables/ThemedActivityIndica
 import ThemedButton from "@/components/reusables/ThemedButton";
 import ThemedErrorCard from "@/components/reusables/ThemedErrorCard";
 import ThemedTextInput from "@/components/reusables/ThemedTextInput";
+import ThemedSegmentedPicker from "@/components/reusables/ThemedSegmentedPicker";
 
 import useDebounce from "@/hooks/useDebounce.hook";
 import { useTheme } from "@/hooks/useTheme.hook";
@@ -109,12 +110,15 @@ export default function Search() {
   const theme = useTheme();
 
   const [query, setQuery] = useState("");
+  const [searchMode, setSearchMode] = useState<"movies" | "shows">(
+    params.mode === "all" ? "movies" : params.mode || "movies",
+  );
   const debouncedQuery = useDebounce(query, 1000);
 
   const { data, isLoading, isFetching, isFetched, error } = useSearch(
     debouncedQuery,
     {
-      type: params.mode === "movies" ? "movie" : "tv",
+      type: searchMode === "movies" ? "movie" : "tv",
       page: 1,
       includeAdult: false,
     },
@@ -132,86 +136,93 @@ export default function Search() {
       color={"background"}
       gap={10}
     >
-      <ThemedTextInput
-        placeholder={
-          params.mode !== "all"
-            ? `Search ${changeCase(params.mode, "sentence")}`
-            : "Search Shows & Movies"
-        }
-        size={"xxl"}
-        style={{ fontWeight: "bold" }}
-        placeholderTextColor={theme.onSurface}
-        onChangeText={(text) => {
-          setQuery(text.toLowerCase());
-        }}
-        accessibilityLabel="Search input"
-        accessibilityHint={
-          params.mode !== "all"
-            ? `Search for ${changeCase(params.mode, "sentence")}`
-            : "Search for movies and TV shows"
-        }
-        ref={inputRef}
-        autoFocus
-        wrapper={
-          Platform.OS === "ios"
-            ? {
-                borderWidth: 0,
-                backgroundColor: "transparent",
-                flexGrow: 1,
-                pl: 20,
-              }
-            : {
-                radius: 40,
-                mx: 20,
-              }
-        }
-        leftSlot={
-          <>
-            {Platform.OS === "android" && (
-              <ThemedButton
-                icon={{ name: "arrow-back", source: "Ionicons" }}
-                type="text"
-                size="xs"
-                px={10}
-                viewProps={{
-                  accessibilityLabel: "Go back",
-                  accessibilityRole: "button",
-                }}
-                onPress={() => {
-                  router.back();
-                }}
-              />
-            )}
-          </>
-        }
-        // right slot that clears the search query
-        rightSlot={
-          <>
-            {query.length > 0 && (
-              <ThemedButton
-                icon={{ name: "close", source: "Ionicons" }}
-                type="text"
-                size="xs"
-                px={10}
-                viewProps={{
-                  accessibilityLabel: "Clear search",
-                  accessibilityRole: "button",
-                }}
-                onPress={() => {
-                  setQuery("");
-                  inputRef.current?.clear();
-                }}
-              />
-            )}
-          </>
-        }
-      />
+      <Box px={20} gap={10}>
+        <ThemedTextInput
+          placeholder={`Search ${changeCase(searchMode, "sentence")}`}
+          size={"xxl"}
+          style={{ fontWeight: "bold" }}
+          placeholderTextColor={theme.onSurface}
+          onChangeText={(text) => {
+            setQuery(text.toLowerCase());
+          }}
+          accessibilityLabel="Search input"
+          accessibilityHint={`Search for ${changeCase(searchMode, "sentence")}`}
+          ref={inputRef}
+          autoFocus
+          wrapper={
+            Platform.OS === "ios"
+              ? {
+                  borderWidth: 0,
+                  backgroundColor: "transparent",
+                  flexGrow: 1,
+                }
+              : {
+                  radius: 40,
+                }
+          }
+          leftSlot={
+            <>
+              {Platform.OS === "android" && (
+                <ThemedButton
+                  icon={{ name: "arrow-back", source: "Ionicons" }}
+                  type="text"
+                  size="xs"
+                  px={10}
+                  viewProps={{
+                    accessibilityLabel: "Go back",
+                    accessibilityRole: "button",
+                  }}
+                  onPress={() => {
+                    router.back();
+                  }}
+                />
+              )}
+            </>
+          }
+          // right slot that clears the search query
+          rightSlot={
+            <>
+              {query.length > 0 && (
+                <ThemedButton
+                  icon={{ name: "close", source: "Ionicons" }}
+                  type="text"
+                  size="xs"
+                  px={10}
+                  viewProps={{
+                    accessibilityLabel: "Clear search",
+                    accessibilityRole: "button",
+                  }}
+                  onPress={() => {
+                    setQuery("");
+                    inputRef.current?.clear();
+                  }}
+                />
+              )}
+            </>
+          }
+        />
+
+        {params.mode === "all" && (
+          <Box align="center">
+            <ThemedSegmentedPicker
+              options={["movies", "shows"] as const}
+              selectedValue={searchMode}
+              onSelect={({ option }) => setSearchMode(option)}
+              getLabel={(option) => changeCase(option, "title")}
+              getValue={(option) => option}
+              size="md"
+              width={200}
+            />
+          </Box>
+        )}
+      </Box>
       <SearchResults
         data={data?.results || []}
         isFetching={isFetching}
         isLoading={isLoading}
         isFetched={isFetched}
         error={error}
+        searchMode={searchMode}
       />
     </Box>
   );
@@ -224,16 +235,16 @@ const SearchResults = React.memo(
     isLoading,
     isFetched,
     error,
+    searchMode,
   }: {
     data: SearchResponse["results"];
     isFetching: boolean;
     isLoading: boolean;
     isFetched: boolean;
     error: any;
+    searchMode: "movies" | "shows";
   }) => {
     const insets = useSafeAreaInsets();
-
-    const params = useLocalSearchParams<{ mode: "movies" | "shows" }>();
 
     return (
       <>
@@ -288,7 +299,7 @@ const SearchResults = React.memo(
                 }}
                 onPress={() => {
                   const path =
-                    params.mode === "movies"
+                    searchMode === "movies"
                       ? `/movie/${item.id.toString()}`
                       : `/tv/${item.id.toString()}`;
                   router.push({
