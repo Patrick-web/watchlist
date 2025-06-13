@@ -1,12 +1,14 @@
-import { Image } from "expo-image";
+import { Image, ImageStyle } from "expo-image";
 import { Platform } from "react-native";
 import Box, { BoxProps } from "./reusables/Box";
 export default function FilmPosterBackground({
   url,
   wrapper,
+  imageStyle,
 }: {
   url: string;
   wrapper?: BoxProps;
+  imageStyle?: ImageStyle;
 }) {
   return (
     <Box
@@ -28,6 +30,7 @@ export default function FilmPosterBackground({
         style={{
           width: "100%",
           height: "100%",
+          ...imageStyle,
         }}
         blurRadius={200}
       />
