@@ -24,6 +24,7 @@ import ThemedErrorCard from "./reusables/ThemedErrorCard";
 import ThemedCard from "./reusables/ThemedCard";
 import ThemedActivityIndicator from "./reusables/ThemedActivityIndicator";
 import { Platform } from "react-native";
+import ThemedModal from "./reusables/ThemedModal";
 
 const POSTER_WIDTH = sWidth / 1.5;
 const POSTER_HEIGHT = POSTER_WIDTH * POSTER_RATIO;
@@ -42,7 +43,10 @@ export default function ShowDetailsModal({
 }: ShowDetailsModalProps) {
   const themeMode = useThemeMode();
 
+  const [showConfirmUnsubscribe, setShowConfirmUnsubscribe] = useState(false);
+
   function unSubscribe() {
+    setShowConfirmUnsubscribe(false);
     unsubscribeShow(show);
     Haptics?.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     onClose();
@@ -60,6 +64,10 @@ export default function ShowDetailsModal({
           }),
         },
       ],
+      opacity: withTiming(seasonsContainerOffset.value === 0 ? 1 : 0, {
+        duration: 200,
+        easing: Easing.inOut(Easing.quad),
+      }),
     };
   });
 
@@ -166,7 +174,7 @@ export default function ShowDetailsModal({
               labelProps={{
                 color: "white",
               }}
-              label={"Episodes"}
+              label={"Seasons"}
               icon={{
                 name: "playlist-play",
                 source: "MaterialCommunityIcons",
@@ -191,8 +199,38 @@ export default function ShowDetailsModal({
                 color: "white",
               }}
               direction="column"
-              onPress={unSubscribe}
+              onPress={() => {
+                setShowConfirmUnsubscribe(true);
+              }}
+              px={20}
             />
+            <ThemedModal
+              visible={showConfirmUnsubscribe}
+              title="Unsubscribe from Show?"
+              close={() => setShowConfirmUnsubscribe(false)}
+              icon={{
+                name: "bell-cancel-outline",
+                source: "MaterialCommunityIcons",
+              }}
+            >
+              <ThemedText>
+                This show will be removed from your subscriptions.
+              </ThemedText>
+              <Box block direction="row" gap={20} mt={10}>
+                <ThemedButton
+                  label={"Cancel"}
+                  flex={1}
+                  type="surface"
+                  onPress={() => setShowConfirmUnsubscribe(false)}
+                />
+                <ThemedButton
+                  label={"Unsubscribe"}
+                  flex={1}
+                  onPress={unSubscribe}
+                  color={"red"}
+                />
+              </Box>
+            </ThemedModal>
           </Box>
           <AnimatedBox
             block
