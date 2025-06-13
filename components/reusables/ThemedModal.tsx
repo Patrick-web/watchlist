@@ -2,9 +2,12 @@ import { sHeight } from "@/constants/dimensions.constant";
 import React, { ReactNode } from "react";
 import { Modal, ModalBaseProps, Pressable, ScrollView } from "react-native";
 import Animated, {
+  FadeInDown,
   SlideInDown,
   SlideInUp,
   ZoomInDown,
+  ZoomInEasyDown,
+  ZoomInEasyUp,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../hooks/useTheme.hook";
@@ -12,6 +15,7 @@ import Box, { BoxProps } from "./Box";
 import ThemedButton from "./ThemedButton";
 import ThemedIcon, { ThemedIconProps } from "./ThemedIcon";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
+import FilmPosterBackground from "../FilmPosterBackground";
 
 export default function ThemedModal({
   visible = false,
@@ -75,7 +79,7 @@ export default function ThemedModal({
             <Animated.View
               entering={
                 position === "center"
-                  ? ZoomInDown
+                  ? ZoomInEasyDown
                   : position === "bottom"
                     ? SlideInDown
                     : SlideInUp
@@ -112,11 +116,11 @@ export default function ThemedModal({
                     pt={!title && icon ? 20 : 0}
                   >
                     <Box flex={0.5}>{leftChild && leftChild}</Box>
-                    <Box flex={1} pb={10} align="center" gap={5}>
+                    <Box flex={1} align="center" gap={5}>
                       {icon && <ThemedIcon size={"xxl"} {...icon} />}
                       {title && (
                         <ThemedText
-                          fontWeight="semibold"
+                          fontWeight="bold"
                           align="center"
                           {...titleProps}
                         >
@@ -154,7 +158,7 @@ export default function ThemedModal({
                     ref={scrollViewRef}
                   >
                     <Box
-                      pa={15}
+                      px={15}
                       pb={position === "bottom" ? insets.bottom + 20 : 20}
                       {...containerProps}
                     >
