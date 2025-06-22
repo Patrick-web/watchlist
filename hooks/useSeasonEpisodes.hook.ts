@@ -40,8 +40,12 @@ const useSeasonEpisodes = (
         throw new Error("TV Show ID is required");
       }
 
-      if (seasonNumber === undefined || seasonNumber === null) {
-        throw new Error("Season number is required");
+      if (
+        seasonNumber === undefined ||
+        seasonNumber === null ||
+        seasonNumber < 0
+      ) {
+        throw new Error("Valid season number is required");
       }
 
       // Build the API URL
@@ -73,7 +77,11 @@ const useSeasonEpisodes = (
 
       return data;
     },
-    enabled: !!tvShowId && seasonNumber !== undefined && seasonNumber !== null && (options.enabled !== false),
+    enabled:
+      !!tvShowId &&
+      seasonNumber !== undefined &&
+      seasonNumber !== null &&
+      options.enabled !== false,
     retry: (failureCount, error) => shouldRetry(error, failureCount),
     retryDelay: getRetryDelay,
     staleTime: 15 * 60 * 1000, // 15 minutes (episodes don't change often)

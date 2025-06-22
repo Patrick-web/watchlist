@@ -1,30 +1,20 @@
 import React, { useState } from "react";
-import Box, { AnimatedBox } from "./reusables/Box";
+import Box from "./reusables/Box";
 import { Image } from "expo-image";
 import ThemedText from "./reusables/ThemedText";
 import ThemedButton from "./reusables/ThemedButton";
-import { POSTER_RATIO, sHeight, sWidth } from "@/constants/dimensions.constant";
+import { POSTER_RATIO, sWidth } from "@/constants/dimensions.constant";
 import { unsubscribeShow } from "@/valitio.store";
 import Haptics from "expo-haptics";
 import ThemedTrueSheet from "./reusables/TrueSheet";
 import { useThemeMode } from "@/hooks/useTheme.hook";
 import { TVShowDetailsResponse } from "@/types/tmdb.types";
-import { buildBackdropUrl, buildImageUrl } from "@/utils/api.utils";
+import { buildImageUrl } from "@/utils/api.utils";
 import FilmPosterBackground from "./FilmPosterBackground";
-import Animated, {
-  Easing,
-  FadeInDown,
-  useAnimatedRef,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
-import useSeasonEpisodes from "@/hooks/useSeasonEpisodes.hook";
-import ThemedErrorCard from "./reusables/ThemedErrorCard";
-import ThemedCard from "./reusables/ThemedCard";
-import ThemedActivityIndicator from "./reusables/ThemedActivityIndicator";
 import { Platform } from "react-native";
 import ThemedModal from "./reusables/ThemedModal";
+import ShowSeasonsModal from "./ShowSeasonsModal";
+import ShowEpisodesModal from "./ShowEpisodesModal";
 
 const POSTER_WIDTH = sWidth / 1.5;
 const POSTER_HEIGHT = POSTER_WIDTH * POSTER_RATIO;
@@ -44,6 +34,11 @@ export default function ShowDetailsModal({
   const themeMode = useThemeMode();
 
   const [showConfirmUnsubscribe, setShowConfirmUnsubscribe] = useState(false);
+  const [seasonsModalVisible, setSeasonsModalVisible] = useState(false);
+
+  const [selectedSeason, setSelectedSeason] = useState<
+    TVShowDetailsResponse["seasons"][0] | null
+  >(null);
 
   function unSubscribe() {
     setShowConfirmUnsubscribe(false);
@@ -52,45 +47,20 @@ export default function ShowDetailsModal({
     onClose();
   }
 
-  const scrollAnimatedRef = useAnimatedRef<Animated.ScrollView>();
-
-  const seasonsContainerOffset = useSharedValue(sHeight / 1.3);
-  const scrollWrapperStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: withTiming(seasonsContainerOffset.value, {
-            easing: Easing.inOut(Easing.quad),
-          }),
-        },
-      ],
-      opacity: withTiming(seasonsContainerOffset.value === 0 ? 1 : 0, {
-        duration: 200,
-        easing: Easing.inOut(Easing.quad),
-      }),
-    };
-  });
-
-  const [seasonsVisible, setSeasonsVisible] = useState(false);
-
-  function showSeasons() {
-    setSeasonsVisible(true);
-    seasonsContainerOffset.value = 0;
+  function handleShowSeasons() {
+    setSeasonsModalVisible(true);
+    onClose(); // Close the details modal since TrueSheet doesn't support stacking
   }
 
-  function hideSeasons() {
-    setSeasonsVisible(false);
-    seasonsContainerOffset.value = sHeight / 1.3;
+  function handleCloseSeasonsModal() {
+    setSeasonsModalVisible(false);
   }
 
   return (
     <>
       <ThemedTrueSheet
         visible={visible}
-        onDismiss={() => {
-          hideSeasons();
-          onClose();
-        }}
+        onDismiss={onClose}
         cornerRadius={Platform.OS === "ios" ? 60 : 0}
         blurTint={themeMode}
         grabber={false}
@@ -181,9 +151,7 @@ export default function ShowDetailsModal({
                 color: "white",
               }}
               direction="column"
-              onPress={() => {
-                showSeasons();
-              }}
+              onPress={handleShowSeasons}
               flex={1}
             />
             <ThemedButton
@@ -232,246 +200,26 @@ export default function ShowDetailsModal({
               </Box>
             </ThemedModal>
           </Box>
-          <AnimatedBox
-            block
-            style={
-              [
-                {
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  backgroundColor: "rgba(255,255,255,0.5)",
-                  height: sHeight / 1.3,
-                },
-                scrollWrapperStyles,
-              ] as any
-            }
-          >
-            <Image
-              source={buildBackdropUrl(show.poster_path)}
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: -1,
-              }}
-              blurRadius={400}
-            />
-            <Animated.ScrollView
-              ref={scrollAnimatedRef}
-              contentContainerStyle={{
-                padding: 20,
-              }}
-            >
-              <Box
-                block
-                justify="space-between"
-                align="center"
-                direction="row"
-                px={10}
-                pb={10}
-              >
-                <ThemedText color={"white"} size={"xl"} fontWeight="bold">
-                  Seasons
-                </ThemedText>
-                <ThemedButton
-                  icon={{ name: "chevron-down" }}
-                  color="rgba(0,0,0,0.3)"
-                  size="sm"
-                  onPress={() => {
-                    hideSeasons();
-                  }}
-                />
-              </Box>
-
-              {seasonsVisible &&
-                show.seasons
-                  .filter((season) => season.season_number >= 0)
-                  .sort((a, b) => a.season_number - b.season_number)
-                  .map((season, index) => (
-                    <RenderSeason
-                      key={season.id}
-                      season={season}
-                      showId={show.id}
-                      index={index}
-                    />
-                  ))}
-            </Animated.ScrollView>
-          </AnimatedBox>
         </Box>
       </ThemedTrueSheet>
+
+      <ShowSeasonsModal
+        show={show}
+        visible={seasonsModalVisible}
+        onClose={handleCloseSeasonsModal}
+        selectSeason={(season) => {
+          setSeasonsModalVisible(false);
+          setSelectedSeason(season);
+        }}
+      />
+      <ShowEpisodesModal
+        show={show}
+        season={selectedSeason}
+        visible={selectedSeason ? true : false}
+        onClose={() => {
+          setSelectedSeason(null);
+        }}
+      />
     </>
-  );
-}
-
-function RenderSeason({
-  season,
-  showId,
-  index,
-}: {
-  season: TVShowDetailsResponse["seasons"][0];
-  showId: number;
-  index: number;
-}) {
-  const hasPoster = season.poster_path;
-  const [showEpisodes, setShowEpisodes] = useState(false);
-
-  const {
-    data: seasonDetails,
-    isLoading,
-    error,
-  } = useSeasonEpisodes(showId, season.season_number, {
-    enabled: showEpisodes,
-  });
-
-  function handleSeasonPress(season: TVShowDetailsResponse["seasons"][0]) {
-    setShowEpisodes(!showEpisodes);
-    console.log("Pressed season:", season);
-  }
-
-  return (
-    <AnimatedBox
-      mb={20}
-      radius={70}
-      position={showEpisodes ? "absolute" : "relative"}
-      top={showEpisodes ? 0 : undefined}
-      left={showEpisodes ? 0 : undefined}
-      right={showEpisodes ? 0 : undefined}
-      bottom={showEpisodes ? 0 : undefined}
-      height={showEpisodes ? sHeight / 1.5 : undefined}
-      zIndex={showEpisodes ? 1 : 0}
-      viewProps={{
-        entering: FadeInDown.delay(index * 100)
-          .duration(300)
-          .springify(),
-      }}
-    >
-      {showEpisodes && (
-        <FilmPosterBackground url={buildImageUrl(season.poster_path)} />
-      )}
-      <ThemedButton
-        type="surface"
-        onPress={() => handleSeasonPress(season)}
-        radius={50}
-        radiusBottom={showEpisodes ? 0 : 50}
-        pa={0}
-        overflow="hidden"
-        color={"rgba(0,0,0,0.2)"}
-      >
-        <Box
-          direction="row"
-          gap={15}
-          align={showEpisodes && season.overview ? "flex-start" : "center"}
-          pa={15}
-          position="relative"
-          zIndex={2}
-        >
-          {hasPoster && (
-            <Image
-              source={buildImageUrl(season.poster_path)}
-              style={{
-                width: 70,
-                height: 70 * POSTER_RATIO,
-                borderRadius: 60,
-              }}
-            />
-          )}
-          <Box flex={1} gap={4}>
-            <ThemedText
-              fontWeight="medium"
-              size="md"
-              color="white"
-              textShadowColor="rgba(0,0,0,0.5)"
-              textShadowRadius={4}
-              textShadowOffset={{ width: 0, height: 2 }}
-            >
-              {season.name || `Season ${season.season_number}`}
-            </ThemedText>
-            {season.overview && (
-              <ThemedText size="sm" opacity={0.7} color="white">
-                {season.overview.length > 60 && !showEpisodes
-                  ? `${season.overview.substring(0, 60)}...`
-                  : season.overview}
-              </ThemedText>
-            )}
-          </Box>
-        </Box>
-      </ThemedButton>
-
-      {showEpisodes && (
-        <Box>
-          {isLoading && (
-            <ThemedCard
-              align="center"
-              color={"rgba(255,255,255,0.3)"}
-              ma={20}
-              radius={80}
-            >
-              <ThemedActivityIndicator color={"white"} />
-              <ThemedText size="sm" color="white">
-                Loading episodes...
-              </ThemedText>
-            </ThemedCard>
-          )}
-          {error && (
-            <ThemedErrorCard
-              title="Failed to load episodes"
-              error={error.message}
-            />
-          )}
-          {seasonDetails?.episodes && (
-            <Box height={sHeight / 1.65}>
-              <Animated.ScrollView
-                contentContainerStyle={{ padding: 10, paddingBottom: 40 }}
-              >
-                <Box gap={1} overflow="hidden" radius={40}>
-                  {seasonDetails.episodes.map((episode, index) => (
-                    <AnimatedBox
-                      key={episode.id}
-                      color="rgba(0,0,0,0.3)"
-                      pa={20}
-                      radius={0}
-                      gap={5}
-                      viewProps={{
-                        entering: FadeInDown.delay(index * 100)
-                          .duration(300)
-                          .springify(),
-                      }}
-                    >
-                      <ThemedText
-                        size="sm"
-                        fontWeight="medium"
-                        color="white"
-                        mb={4}
-                      >
-                        {episode.episode_number}. {episode.name}
-                      </ThemedText>
-                      {episode.overview && (
-                        <ThemedText size="xs" color="white">
-                          {episode.overview}
-                        </ThemedText>
-                      )}
-                      {episode.air_date && (
-                        <ThemedText
-                          size="xs"
-                          color="white"
-                          opacity={0.5}
-                          mt={4}
-                        >
-                          {new Date(episode.air_date).toDateString()}
-                        </ThemedText>
-                      )}
-                    </AnimatedBox>
-                  ))}
-                </Box>
-              </Animated.ScrollView>
-            </Box>
-          )}
-        </Box>
-      )}
-    </AnimatedBox>
   );
 }

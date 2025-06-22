@@ -14,7 +14,7 @@ export default function SubscribedShow({
   show: TVShowDetailsResponse;
 }) {
   const [showModal, setShowModal] = useState(false);
-
+  console.log(show);
   return (
     <>
       <ThemedButton

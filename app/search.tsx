@@ -203,15 +203,15 @@ export default function Search() {
         />
 
         {params.mode === "all" && (
-          <Box align="center">
+          <Box align="center" justify="center">
             <ThemedSegmentedPicker
               options={["movies", "shows"] as const}
               selectedValue={searchMode}
               onSelect={({ option }) => setSearchMode(option)}
               getLabel={(option) => changeCase(option, "title")}
               getValue={(option) => option}
-              size="md"
-              width={200}
+              width={180}
+              size="xs"
             />
           </Box>
         )}

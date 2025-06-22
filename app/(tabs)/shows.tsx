@@ -8,7 +8,6 @@ import { TVShowDetailsResponse } from "@/types/tmdb.types";
 import { PERSISTED_APP_STATE } from "@/valitio.store";
 import { router } from "expo-router";
 import { FlatList } from "react-native";
-import Reanimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSnapshot } from "valtio";
 
